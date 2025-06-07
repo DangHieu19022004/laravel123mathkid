@@ -9,7 +9,7 @@
             <div class="card-body">
                 <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
                 <p class="h5 text-muted">
-                    Hãy chia {{ $question['totalApples'] }} quả táo vào {{ $question['groups'] }} nhóm bằng nhau
+                    Hãy chia {{ $question['apples'] }} quả táo vào {{ $question['students'] }} nhóm bằng nhau
                 </p>
             </div>
         </div>
@@ -22,8 +22,8 @@
             <div class="alert alert-info">
                 <h3 class="h5 mb-3">🎯 Hướng dẫn chơi:</h3>
                 <ul class="text-start mb-0">
-                    <li>Có tổng cộng {{ $question['totalApples'] }} quả táo</li>
-                    <li>Bạn cần chia đều vào {{ $question['groups'] }} nhóm</li>
+                    <li>Có tổng cộng {{ $question['apples'] }} quả táo</li>
+                    <li>Bạn cần chia đều vào {{ $question['students'] }} nhóm</li>
                     <li>Kéo và thả táo vào từng nhóm</li>
                     <li>Mỗi nhóm phải có số táo bằng nhau</li>
                 </ul>
@@ -82,8 +82,8 @@ function checkAnswer() {
     
     const formData = new FormData();
     formData.append('group_counts', JSON.stringify(groupCounts));
-    formData.append('totalApples', {{ $question['totalApples'] }});
-    formData.append('groups', {{ $question['groups'] }});
+    formData.append('apples', {{ $question['apples'] }});
+    formData.append('students', {{ $question['students'] }});
     formData.append('_token', CSRF_TOKEN);
     
     console.log('Sending request to:', CHECK_URL);
@@ -125,7 +125,7 @@ function checkAnswer() {
             }
         } else {
             messageDiv.className = 'alert alert-warning';
-            const applesPerGroup = {{ $question['totalApples'] }} / {{ $question['groups'] }};
+            const applesPerGroup = {{ $question['apples'] }} / {{ $question['students'] }};
             messageDiv.innerHTML = `
                 <h4 class="alert-heading">⚠️ Hãy thử lại!</h4>
                 <p class="mb-0">Các nhóm chưa có số táo bằng nhau.</p>
@@ -133,7 +133,7 @@ function checkAnswer() {
                 <p class="mb-0">💡 Gợi ý: Mỗi nhóm cần có ${applesPerGroup} quả táo.</p>
                 <ul class="mb-0 mt-2">
                     ${groupCounts.map((count, i) => `
-                        <li>Nhóm ${i + 1}: ${count} táo ${count === applesPerGroup ? '✅' : '❌'}</li>
+                        <li>Nhóm ${i + 1}: ${count} táo ${count == applesPerGroup ? '✅' : '❌'}</li>
                     `).join('')}
                 </ul>
             `;
@@ -149,8 +149,8 @@ function checkAnswer() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const totalApples = {{ $question['totalApples'] }};
-    const groups = {{ $question['groups'] }};
+    const totalApples = {{ $question['apples'] }};
+    const groups = {{ $question['students'] }};
     
     // Initialize game
     function initGame() {

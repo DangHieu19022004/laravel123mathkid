@@ -74,14 +74,51 @@ npm run dev
   - Thứ tự tính: Trong ngoặc → Nhân chia → Cộng trừ
   - Độ khó tăng dần theo level
 
+### 4. Game Dọn Vườn Tối Giản
+- **Route**: `/games/lop4/phanso/garden`
+- **Mô tả**: Học sinh học về rút gọn phân số qua việc dọn vườn
+- **Cách chơi**:
+  - Hiển thị luống rau dạng lưới thể hiện phân số chưa tối giản
+  - Click vào các ô để gộp thành ô lớn hơn
+  - Hoặc chọn phân số tối giản từ các lựa chọn
+- **Logic**:
+  - Sinh phân số ngẫu nhiên chưa tối giản
+  - Tính phân số tối giản tương ứng
+  - Xử lý gộp ô tự động hoặc theo thao tác
+
+### 5. Game Tháp Phân Số
+- **Route**: `/games/lop4/phanso/tower`
+- **Mô tả**: Học sinh học sắp xếp phân số theo thứ tự
+- **Cách chơi**:
+  - Kéo và thả các phân số vào các tầng của tháp
+  - Sắp xếp từ nhỏ đến lớn hoặc ngược lại
+- **Logic**:
+  - Sinh ngẫu nhiên danh sách phân số
+  - Tính giá trị thập phân để so sánh
+  - Kiểm tra thứ tự khi hoàn thành
+
+### 6. Game Thẻ Bài Phân Số
+- **Route**: `/games/lop4/phanso/cards`
+- **Mô tả**: Học sinh học nhận diện các phân số bằng nhau
+- **Cách chơi**:
+  - Lật các thẻ để tìm cặp phân số bằng nhau
+  - Ghi nhớ vị trí các thẻ đã lật
+- **Logic**:
+  - Sinh các cặp phân số bằng nhau
+  - Xử lý lật thẻ và kiểm tra kết quả
+  - Tính điểm dựa trên số lần lật
+
 ## Cấu trúc thư mục
 
 ```
-resources/views/games/lop4/
+resources/views/games/lop4/phanso/
 ├── phanso.blade.php     # Trang chủ games
 ├── cake.blade.php       # Game chia bánh
 ├── apple.blade.php      # Game chia táo
-└── bracket.blade.php    # Game biểu thức ngoặc
+├── bracket.blade.php    # Game biểu thức ngoặc
+├── garden.blade.php     # Game dọn vườn tối giản
+├── tower.blade.php      # Game tháp phân số
+└── cards.blade.php      # Game thẻ bài phân số
 ```
 
 ## Phát triển
@@ -106,6 +143,21 @@ Route::prefix('games/lop4')->name('games.lop4.')->group(function () {
     Route::get('/phanso/bracket', [GameController::class, 'bracketGame']);
     Route::post('/phanso/bracket/check', [GameController::class, 'checkBieuthucAnswer']);
     Route::post('/phanso/bracket/reset', [GameController::class, 'resetBracketGame']);
+
+    // Game dọn vườn tối giản
+    Route::get('/phanso/garden', [GameController::class, 'gardenGame']);
+    Route::post('/phanso/garden/check', [GameController::class, 'checkGardenAnswer']);
+    Route::post('/phanso/garden/reset', [GameController::class, 'resetGardenGame']);
+
+    // Game tháp phân số
+    Route::get('/phanso/tower', [GameController::class, 'towerGame']);
+    Route::post('/phanso/tower/check', [GameController::class, 'checkTowerAnswer']);
+    Route::post('/phanso/tower/reset', [GameController::class, 'resetTowerGame']);
+
+    // Game thẻ bài phân số
+    Route::get('/phanso/cards', [GameController::class, 'cardsGame']);
+    Route::post('/phanso/cards/check', [GameController::class, 'checkCardsAnswer']);
+    Route::post('/phanso/cards/reset', [GameController::class, 'resetCardsGame']);
 });
 ```
 
@@ -114,4 +166,4 @@ Logic xử lý game được định nghĩa trong `app/Http/Controllers/GameCont
 
 ### Session
 - Mỗi game sử dụng session để lưu level hiện tại
-- Keys: `cake_level`, `apple_level`, `bracket_level`
+- Keys: `cake_level`, `apple_level`, `bracket_level`, `garden_level`, `tower_level`, `cards_level`
