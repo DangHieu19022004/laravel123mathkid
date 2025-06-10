@@ -19,15 +19,9 @@
                         <!-- Left Expression -->
                         <div class="col-md-4 text-center">
                             <div class="bg-light p-3 rounded shadow-sm">
-                                @foreach($question['left'] as $key => $item)
-                                    @if(is_array($item))
-                                        <span class="h4">
-                                            <sup>{{ $item['numerator'] }}</sup>⁄<sub>{{ $item['denominator'] }}</sub>
-                                        </span>
-                                    @else
-                                        <span class="h4 mx-2">{{ $item }}</span>
-                                    @endif
-                                @endforeach
+                                <span class="h4">
+                                    <sup>{{ $question['left']['numerator'] }}</sup>⁄<sub>{{ $question['left']['denominator'] }}</sub>
+                                </span>
                             </div>
                         </div>
 
@@ -49,15 +43,9 @@
                         <!-- Right Expression -->
                         <div class="col-md-4 text-center">
                             <div class="bg-light p-3 rounded shadow-sm">
-                                @foreach($question['right'] as $key => $item)
-                                    @if(is_array($item))
-                                        <span class="h4">
-                                            <sup>{{ $item['numerator'] }}</sup>⁄<sub>{{ $item['denominator'] }}</sub>
-                                        </span>
-                                    @else
-                                        <span class="h4 mx-2">{{ $item }}</span>
-                                    @endif
-                                @endforeach
+                                <span class="h4">
+                                    <sup>{{ $question['right']['numerator'] }}</sup>⁄<sub>{{ $question['right']['denominator'] }}</sub>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -100,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.comparison-btn');
     const feedback = document.getElementById('feedback');
     const scaleBeam = document.querySelector('.scale-beam');
-    const correctSymbol = '{{ $question["correct_symbol"] }}';
     let isAnswered = false;
 
     function animateScale(symbol) {
@@ -129,8 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    selected_symbol: selectedSymbol,
-                    correct_symbol: correctSymbol
+                    selected_symbol: selectedSymbol
                 })
             })
             .then(response => response.json())
@@ -175,9 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 .comparison-btn:hover {
     transform: scale(1.1);
-}
-.comparison-btn:active {
-    transform: scale(0.95);
 }
 </style>
 @endsection 

@@ -142,11 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                answer: answer,
-                correct_answer: {
-                    numerator: {{ $question['answer']['numerator'] }},
-                    denominator: {{ $question['answer']['denominator'] }}
-                }
+                numerator: answer.numerator,
+                denominator: answer.denominator
             })
         })
         .then(response => response.json())

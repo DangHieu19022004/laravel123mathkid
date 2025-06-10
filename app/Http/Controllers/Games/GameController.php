@@ -478,43 +478,82 @@ class GameController extends Controller
 
     public function checkCardsAnswer(Request $request)
     {
-        $level = session('cards_level', 1);
-        $question = $this->generateCardsQuestion($level);
-        
-        $selectedPairs = $request->input('selected_pairs', []);
-        $correct = true;
-        
-        // Check if all selected pairs are correct
-        foreach ($selectedPairs as $pair) {
-            $card1 = $question['cards'][$pair[0]];
-            $card2 = $question['cards'][$pair[1]];
+        try {
+            $level = session('cards_level', 1);
+            $question = $this->generateCardsQuestion($level);
             
-            if ($card1['pairId'] !== $card2['pairId']) {
-                $correct = false;
-                break;
+            $selectedPairs = $request->input('selected_pairs');
+            if (!is_array($selectedPairs)) {
+                throw new \Exception('Invalid pairs format');
             }
+            
+            // Check if we have the correct number of pairs
+            if (count($selectedPairs) !== count($question['pairs'])) {
+                return response()->json([
+                    'correct' => false,
+                    'next_level' => false,
+                    'message' => 'Chưa tìm đủ số cặp phân số bằng nhau!'
+                ]);
+            }
+            
+            $correct = true;
+            $foundPairIds = [];
+            
+            // Check if all selected pairs are correct
+            foreach ($selectedPairs as $pair) {
+                if (!isset($pair[0], $pair[1]) || !isset($question['cards'][$pair[0]], $question['cards'][$pair[1]])) {
+                    $correct = false;
+                    break;
+                }
+                
+                $card1 = collect($question['cards'])->firstWhere('id', $pair[0]);
+                $card2 = collect($question['cards'])->firstWhere('id', $pair[1]);
+                
+                
+                // Check if this pair matches
+                if ($card1['pairId'] !== $card2['pairId']) {
+                    $correct = false;
+                    break;
+                }
+                
+                // Track found pair IDs
+                $foundPairIds[] = $card1['pairId'];
+            }
+            
+            // Verify we found all unique pairs
+            $foundPairIds = array_unique($foundPairIds);
+            if (count($foundPairIds) !== count($question['pairs'])) {
+                $correct = false;
+            }
+            
+            if ($correct) {
+                // Only increment level if answer is correct and there's a next level
+                if ($level < 5) {
+                    session(['cards_level' => $level + 1]);
+                }
+                
+                return response()->json([
+                    'correct' => true,
+                    'next_level' => $level < 5,
+                    'message' => $level < 5 
+                        ? 'Tuyệt vời! Chuẩn bị chuyển sang cấp độ tiếp theo!' 
+                        : 'Chúc mừng! Bạn đã hoàn thành tất cả các cấp độ!'
+                ]);
+            }
+            
+            return response()->json([
+                'correct' => false,
+                'next_level' => false,
+                'message' => 'Các cặp phân số chưa khớp. Hãy thử lại nhé!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
         }
-        
-        // Check if all pairs were found
-        $foundPairIds = [];
-        foreach ($selectedPairs as $pair) {
-            $card1 = $question['cards'][$pair[0]];
-            $foundPairIds[] = $card1['pairId'];
-        }
-        $foundPairIds = array_unique($foundPairIds);
-        
-        if (count($foundPairIds) !== count($question['pairs'])) {
-            $correct = false;
-        }
-        
-        if ($correct && $level < 5) {
-            session(['cards_level' => $level + 1]);
-        }
-        
-        return response()->json([
-            'correct' => $correct,
-            'next_level' => $correct && $level < 5
-        ]);
     }
 
     public function resetCardsGame()
@@ -623,6 +662,7 @@ class GameController extends Controller
             1 => [
                 'dividend' => ['numerator' => 2, 'denominator' => 4],
                 'divisor' => ['numerator' => 1, 'denominator' => 2],
+                'answer' => ['numerator' => 1, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 1, 'denominator' => 1],
                     ['numerator' => 2, 'denominator' => 2],
@@ -632,6 +672,7 @@ class GameController extends Controller
             2 => [
                 'dividend' => ['numerator' => 3, 'denominator' => 6],
                 'divisor' => ['numerator' => 1, 'denominator' => 2],
+                'answer' => ['numerator' => 1, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 1, 'denominator' => 1],
                     ['numerator' => 2, 'denominator' => 2],
@@ -641,6 +682,7 @@ class GameController extends Controller
             3 => [
                 'dividend' => ['numerator' => 4, 'denominator' => 8],
                 'divisor' => ['numerator' => 1, 'denominator' => 2],
+                'answer' => ['numerator' => 1, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 1, 'denominator' => 1],
                     ['numerator' => 2, 'denominator' => 2],
@@ -650,6 +692,7 @@ class GameController extends Controller
             4 => [
                 'dividend' => ['numerator' => 6, 'denominator' => 9],
                 'divisor' => ['numerator' => 2, 'denominator' => 3],
+                'answer' => ['numerator' => 1, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 1, 'denominator' => 1],
                     ['numerator' => 2, 'denominator' => 2],
@@ -659,6 +702,7 @@ class GameController extends Controller
             5 => [
                 'dividend' => ['numerator' => 8, 'denominator' => 12],
                 'divisor' => ['numerator' => 2, 'denominator' => 3],
+                'answer' => ['numerator' => 1, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 1, 'denominator' => 1],
                     ['numerator' => 2, 'denominator' => 2],
@@ -737,6 +781,7 @@ class GameController extends Controller
             1 => [
                 'total' => ['numerator' => 4, 'denominator' => 1],
                 'people' => 2,
+                'answer' => ['numerator' => 2, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 2, 'denominator' => 1],
                     ['numerator' => 4, 'denominator' => 2]
@@ -746,6 +791,7 @@ class GameController extends Controller
             2 => [
                 'total' => ['numerator' => 6, 'denominator' => 1],
                 'people' => 2,
+                'answer' => ['numerator' => 3, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 3, 'denominator' => 1],
                     ['numerator' => 6, 'denominator' => 2]
@@ -755,6 +801,7 @@ class GameController extends Controller
             3 => [
                 'total' => ['numerator' => 6, 'denominator' => 1],
                 'people' => 3,
+                'answer' => ['numerator' => 2, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 2, 'denominator' => 1],
                     ['numerator' => 4, 'denominator' => 2]
@@ -764,6 +811,7 @@ class GameController extends Controller
             4 => [
                 'total' => ['numerator' => 8, 'denominator' => 1],
                 'people' => 4,
+                'answer' => ['numerator' => 2, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 2, 'denominator' => 1],
                     ['numerator' => 4, 'denominator' => 2]
@@ -773,6 +821,7 @@ class GameController extends Controller
             5 => [
                 'total' => ['numerator' => 10, 'denominator' => 1],
                 'people' => 5,
+                'answer' => ['numerator' => 2, 'denominator' => 1],
                 'answers' => [
                     ['numerator' => 2, 'denominator' => 1],
                     ['numerator' => 4, 'denominator' => 2]
@@ -891,10 +940,10 @@ class GameController extends Controller
             $level = session('balance_level', 1);
             $question = $this->generateBalanceQuestion($level);
             
-            $selectedSymbol = trim($request->input('symbol'));
+            $selectedSymbol = trim($request->input('selected_symbol'));
             
-            // Check if the selected symbol is valid
-            $correct = in_array($selectedSymbol, $question['valid_symbols']);
+            // Check if the selected symbol matches the correct symbol
+            $correct = $selectedSymbol === $question['correct_symbol'];
             
             if ($correct && $level < 5) {
                 session(['balance_level' => $level + 1]);
@@ -1041,35 +1090,35 @@ class GameController extends Controller
                 'numerator' => 3,
                 'denominator' => 8,
                 'level' => 1,
-                'answer' => ['numerator' => 3, 'denominator' => 8]
+                'answer' => ['numerator' => 3, 'denominator' => 8]  // 8 - (3 + 2) = 3 phần
             ],
             2 => [
                 'story' => 'Một miếng pizza được chia thành 6 phần bằng nhau. Mai ăn 2 phần, Lan ăn 1 phần. Hỏi còn lại bao nhiêu phần pizza?',
                 'numerator' => 3,
                 'denominator' => 6,
                 'level' => 2,
-                'answer' => ['numerator' => 3, 'denominator' => 6]
+                'answer' => ['numerator' => 3, 'denominator' => 6]  // 6 - (2 + 1) = 3 phần
             ],
             3 => [
                 'story' => 'Một thanh chocolate được chia thành 10 phần bằng nhau. Nam ăn 4 phần, Hoa ăn 3 phần. Hỏi còn lại bao nhiêu phần chocolate?',
                 'numerator' => 3,
                 'denominator' => 10,
                 'level' => 3,
-                'answer' => ['numerator' => 3, 'denominator' => 10]
+                'answer' => ['numerator' => 3, 'denominator' => 10]  // 10 - (4 + 3) = 3 phần
             ],
             4 => [
                 'story' => 'Một quả táo được chia thành 4 phần bằng nhau. Hùng ăn 1 phần, Minh ăn 1 phần. Hỏi còn lại bao nhiêu phần táo?',
                 'numerator' => 2,
                 'denominator' => 4,
                 'level' => 4,
-                'answer' => ['numerator' => 2, 'denominator' => 4]
+                'answer' => ['numerator' => 2, 'denominator' => 4]  // 4 - (1 + 1) = 2 phần
             ],
             5 => [
                 'story' => 'Một cái bánh kem được chia thành 12 phần bằng nhau. Tùng ăn 3 phần, Thảo ăn 4 phần. Hỏi còn lại bao nhiêu phần bánh?',
                 'numerator' => 5,
                 'denominator' => 12,
                 'level' => 5,
-                'answer' => ['numerator' => 5, 'denominator' => 12]
+                'answer' => ['numerator' => 5, 'denominator' => 12]  // 12 - (3 + 4) = 5 phần
             ]
         ];
 
@@ -1087,6 +1136,7 @@ class GameController extends Controller
                 'denominator' => (int) $request->input('denominator')
             ];
             
+            // Kiểm tra đáp án
             $correct = $answer['numerator'] === $question['answer']['numerator'] &&
                       $answer['denominator'] === $question['answer']['denominator'];
             
@@ -1115,55 +1165,256 @@ class GameController extends Controller
     // Sky Game Methods
     public function skyGame()
     {
-        return view('games.lop4.phanso.sky');
+        $level = session('sky_level', 1);
+        $question = $this->generateSkyQuestion($level);
+        return view('games.lop4.phanso.sky', compact('question'));
+    }
+
+    private function generateSkyQuestion($level)
+    {
+        $questions = [
+            1 => [
+                'level' => 1,
+                'fractions' => [
+                    ['numerator' => 1, 'denominator' => 2],
+                    ['numerator' => 2, 'denominator' => 4],
+                    ['numerator' => 3, 'denominator' => 4],
+                ],
+                'correct_index' => 2  // 3/4 là lớn nhất
+            ],
+            2 => [
+                'level' => 2,
+                'fractions' => [
+                    ['numerator' => 2, 'denominator' => 3],
+                    ['numerator' => 3, 'denominator' => 4],
+                    ['numerator' => 4, 'denominator' => 6],
+                ],
+                'correct_index' => 1  // 3/4 là lớn nhất
+            ],
+            3 => [
+                'level' => 3,
+                'fractions' => [
+                    ['numerator' => 5, 'denominator' => 6],
+                    ['numerator' => 3, 'denominator' => 4],
+                    ['numerator' => 7, 'denominator' => 8],
+                ],
+                'correct_index' => 0  // 5/6 là lớn nhất
+            ],
+            4 => [
+                'level' => 4,
+                'fractions' => [
+                    ['numerator' => 4, 'denominator' => 5],
+                    ['numerator' => 5, 'denominator' => 6],
+                    ['numerator' => 6, 'denominator' => 7],
+                ],
+                'correct_index' => 2  // 6/7 là lớn nhất
+            ],
+            5 => [
+                'level' => 5,
+                'fractions' => [
+                    ['numerator' => 7, 'denominator' => 8],
+                    ['numerator' => 8, 'denominator' => 9],
+                    ['numerator' => 9, 'denominator' => 10],
+                ],
+                'correct_index' => 1  // 8/9 là lớn nhất
+            ]
+        ];
+
+        return $questions[$level] ?? $questions[1];
     }
 
     public function checkSkyAnswer(Request $request)
     {
-        // Validate and process sky game answer
-        return response()->json(['success' => true]);
+        try {
+            $level = session('sky_level', 1);
+            $question = $this->generateSkyQuestion($level);
+            
+            $selectedIndex = (int) $request->input('selected_index');
+            $correct = $selectedIndex === $question['correct_index'];
+            
+            if ($correct && $level < 5) {
+                session(['sky_level' => $level + 1]);
+            }
+            
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function resetSkyGame()
     {
-        // Reset sky game progress
-        return redirect()->back();
+        session()->forget('sky_level');
+        return redirect()->route('games.lop4.phanso.sky');
     }
 
     // Remaining Cake Game Methods
     public function remainingCakeGame()
     {
-        return view('games.lop4.phanso.remaining_cake');
+        $level = session('remaining_cake_level', 1);
+        $question = $this->generateRemainingCakeQuestion($level);
+        return view('games.lop4.phanso.remaining_cake', compact('question'));
+    }
+
+    private function generateRemainingCakeQuestion($level)
+    {
+        $questions = [
+            1 => [
+                'level' => 1,
+                'eaten' => ['numerator' => 3, 'denominator' => 8],
+                'remaining' => ['numerator' => 5, 'denominator' => 8]  // 8/8 - 3/8 = 5/8
+            ],
+            2 => [
+                'level' => 2,
+                'eaten' => ['numerator' => 2, 'denominator' => 6],
+                'remaining' => ['numerator' => 4, 'denominator' => 6]  // 6/6 - 2/6 = 4/6
+            ],
+            3 => [
+                'level' => 3,
+                'eaten' => ['numerator' => 5, 'denominator' => 12],
+                'remaining' => ['numerator' => 7, 'denominator' => 12]  // 12/12 - 5/12 = 7/12
+            ],
+            4 => [
+                'level' => 4,
+                'eaten' => ['numerator' => 3, 'denominator' => 10],
+                'remaining' => ['numerator' => 7, 'denominator' => 10]  // 10/10 - 3/10 = 7/10
+            ],
+            5 => [
+                'level' => 5,
+                'eaten' => ['numerator' => 4, 'denominator' => 9],
+                'remaining' => ['numerator' => 5, 'denominator' => 9]  // 9/9 - 4/9 = 5/9
+            ]
+        ];
+
+        return $questions[$level] ?? $questions[1];
     }
 
     public function checkRemainingCakeAnswer(Request $request)
     {
-        // Validate and process remaining cake game answer
-        return response()->json(['success' => true]);
+        try {
+            $level = session('remaining_cake_level', 1);
+            $question = $this->generateRemainingCakeQuestion($level);
+            
+            $numerator = (int) $request->input('numerator');
+            $denominator = (int) $request->input('denominator');
+            
+            // Kiểm tra đáp án
+            $remainingNumerator = $question['remaining']['numerator'];
+            $remainingDenominator = $question['remaining']['denominator'];
+            
+            // So sánh phân số (a/b = c/d nếu a*d = b*c)
+            $correct = ($numerator * $remainingDenominator) === ($denominator * $remainingNumerator);
+            
+            if ($correct && $level < 5) {
+                session(['remaining_cake_level' => $level + 1]);
+            }
+            
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function resetRemainingCakeGame()
     {
-        // Reset remaining cake game progress
-        return redirect()->back();
+        session()->forget('remaining_cake_level');
+        return redirect()->route('games.lop4.phanso.remaining_cake');
     }
 
     // Sentence Game Methods
     public function sentenceGame()
     {
-        return view('games.lop4.phanso.sentence');
+        $level = session('sentence_level', 1);
+        $question = $this->generateSentenceQuestion($level);
+        return view('games.lop4.phanso.sentence', compact('question'));
+    }
+
+    private function generateSentenceQuestion($level)
+    {
+        $questions = [
+            1 => [
+                'level' => 1,
+                'text' => 'Một cái bánh được chia làm 4 phần bằng nhau. An ăn 1 phần, Bình ăn 2 phần. Hỏi An và Bình đã ăn bao nhiêu phần bánh?',
+                'answer' => ['numerator' => 3, 'denominator' => 4],
+                'hint' => 'Cộng số phần bánh mà An và Bình đã ăn: 1/4 + 2/4 = 3/4'
+            ],
+            2 => [
+                'level' => 2,
+                'text' => 'Một thanh chocolate được chia làm 6 phần bằng nhau. Mai ăn 2 phần, Lan ăn 3 phần. Hỏi Mai và Lan đã ăn bao nhiêu phần chocolate?',
+                'answer' => ['numerator' => 5, 'denominator' => 6],
+                'hint' => 'Cộng số phần chocolate mà Mai và Lan đã ăn: 2/6 + 3/6 = 5/6'
+            ],
+            3 => [
+                'level' => 3,
+                'text' => 'Một miếng pizza được chia làm 8 phần bằng nhau. Nam ăn 3 phần, Hoa ăn 2 phần. Hỏi Nam và Hoa đã ăn bao nhiêu phần pizza?',
+                'answer' => ['numerator' => 5, 'denominator' => 8],
+                'hint' => 'Cộng số phần pizza mà Nam và Hoa đã ăn: 3/8 + 2/8 = 5/8'
+            ],
+            4 => [
+                'level' => 4,
+                'text' => 'Một quả táo được chia làm 10 phần bằng nhau. Tùng ăn 4 phần, Thảo ăn 3 phần. Hỏi Tùng và Thảo đã ăn bao nhiêu phần táo?',
+                'answer' => ['numerator' => 7, 'denominator' => 10],
+                'hint' => 'Cộng số phần táo mà Tùng và Thảo đã ăn: 4/10 + 3/10 = 7/10'
+            ],
+            5 => [
+                'level' => 5,
+                'text' => 'Một cái bánh kem được chia làm 12 phần bằng nhau. Hùng ăn 5 phần, Minh ăn 4 phần. Hỏi Hùng và Minh đã ăn bao nhiêu phần bánh?',
+                'answer' => ['numerator' => 9, 'denominator' => 12],
+                'hint' => 'Cộng số phần bánh mà Hùng và Minh đã ăn: 5/12 + 4/12 = 9/12'
+            ]
+        ];
+
+        return $questions[$level] ?? $questions[1];
     }
 
     public function checkSentenceAnswer(Request $request)
     {
-        // Validate and process sentence game answer
-        return response()->json(['success' => true]);
+        try {
+            $level = session('sentence_level', 1);
+            $question = $this->generateSentenceQuestion($level);
+            
+            $numerator = (int) $request->input('numerator');
+            $denominator = (int) $request->input('denominator');
+            
+            // Kiểm tra đáp án
+            $answerNumerator = $question['answer']['numerator'];
+            $answerDenominator = $question['answer']['denominator'];
+            
+            // So sánh phân số (a/b = c/d nếu a*d = b*c)
+            $correct = ($numerator * $answerDenominator) === ($denominator * $answerNumerator);
+            
+            if ($correct && $level < 5) {
+                session(['sentence_level' => $level + 1]);
+            }
+            
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function resetSentenceGame()
     {
-        // Reset sentence game progress
-        return redirect()->back();
+        session()->forget('sentence_level');
+        return redirect()->route('games.lop4.phanso.sentence');
     }
 
     // Word Hunt Game Methods
@@ -1236,76 +1487,140 @@ class GameController extends Controller
     public function lostCityGame()
     {
         $level = session('lost_city_level', 1);
-        $question = $this->generateLostCityQuestion($level);
+        $question = session('lost_city_question');
+        
+        if (!$question) {
+            $question = $this->generateLostCityQuestion($level);
+            session(['lost_city_question' => $question]);
+        }
+        
         return view('games.lop4.phanso.lost_city', compact('question'));
     }
 
     private function generateLostCityQuestion($level)
     {
-        $questions = [
-            1 => [
-                'streets' => [
-                    ['name' => 'Đường số _/2', 'answer' => '1'],
-                    ['name' => 'Đường số _/4', 'answer' => '2'],
-                    ['name' => 'Đường số _/8', 'answer' => '4']
-                ],
-                'hint' => 'Điền số thích hợp để tạo các phân số bằng 1/2'
-            ],
-            2 => [
-                'streets' => [
-                    ['name' => 'Đường số _/3', 'answer' => '2'],
-                    ['name' => 'Đường số _/6', 'answer' => '4'],
-                    ['name' => 'Đường số _/9', 'answer' => '6']
-                ],
-                'hint' => 'Điền số thích hợp để tạo các phân số bằng 2/3'
-            ],
-            3 => [
-                'streets' => [
-                    ['name' => 'Đường số _/4', 'answer' => '3'],
-                    ['name' => 'Đường số _/8', 'answer' => '6'],
-                    ['name' => 'Đường số _/12', 'answer' => '9']
-                ],
-                'hint' => 'Điền số thích hợp để tạo các phân số bằng 3/4'
-            ],
-            4 => [
-                'streets' => [
-                    ['name' => 'Đường số _/5', 'answer' => '4'],
-                    ['name' => 'Đường số _/10', 'answer' => '8'],
-                    ['name' => 'Đường số _/15', 'answer' => '12']
-                ],
-                'hint' => 'Điền số thích hợp để tạo các phân số bằng 4/5'
-            ],
-            5 => [
-                'streets' => [
-                    ['name' => 'Đường số _/6', 'answer' => '5'],
-                    ['name' => 'Đường số _/12', 'answer' => '10'],
-                    ['name' => 'Đường số _/18', 'answer' => '15']
-                ],
-                'hint' => 'Điền số thích hợp để tạo các phân số bằng 5/6'
-            ]
+        // Định nghĩa phạm vi số cho từng cấp độ
+        $ranges = [
+            1 => ['min' => 2, 'max' => 10],    // Cấp độ 1: Số nhỏ, dễ chia
+            2 => ['min' => 10, 'max' => 20],   // Cấp độ 2: Số trung bình
+            3 => ['min' => 20, 'max' => 50],   // Cấp độ 3: Số lớn hơn
+            4 => ['min' => 30, 'max' => 100],  // Cấp độ 4: Số lớn
+            5 => ['min' => 50, 'max' => 200]   // Cấp độ 5: Số rất lớn
         ];
-        $question = $questions[$level] ?? $questions[1];
-        $question['level'] = $level;
-        return $question;
+
+        $range = $ranges[$level];
+        $streets = [];
+
+        // Tạo 3 câu hỏi cho mỗi cấp độ
+        for ($i = 0; $i < 3; $i++) {
+            // Tạo số bị chia (total) và số chia (divisor) sao cho chia hết
+            do {
+                $total = rand($range['min'], $range['max']);
+                // Lấy các ước số của total trong phạm vi phù hợp với cấp độ
+                $divisors = [];
+                for ($d = 2; $d <= min(12, $total); $d++) {
+                    if ($total % $d == 0) {
+                        $divisors[] = $d;
+                    }
+                }
+                // Chọn ngẫu nhiên một ước số
+                if (!empty($divisors)) {
+                    $divisor = $divisors[array_rand($divisors)];
+                    $result = $total / $divisor;
+                    // Kiểm tra xem kết quả có phù hợp không
+                    if ($result >= 2 && $result <= ($range['max'] / 2)) {
+                        break;
+                    }
+                }
+            } while (true);
+
+            // Tạo câu hỏi với các dạng khác nhau tùy theo cấp độ
+            $questionTypes = [
+                // Cấp độ 1-2: Câu hỏi đơn giản
+                [
+                    'description' => "Một phần ___ của $total là $result",
+                    'hint' => "$result = $total ÷ ___"
+                ],
+                // Cấp độ 3-4: Thêm từ ngữ toán học
+                [
+                    'description' => "Khi chia $total cho ___ thì được $result",
+                    'hint' => "$total ÷ ___ = $result"
+                ],
+                // Cấp độ 5: Câu hỏi phức tạp hơn
+                [
+                    'description' => "Số ___ là số chia khi chia $total được $result",
+                    'hint' => "$total ÷ ___ = $result"
+                ]
+            ];
+
+            // Chọn loại câu hỏi phù hợp với cấp độ
+            $questionType = $level <= 2 ? $questionTypes[0] : 
+                          ($level <= 4 ? $questionTypes[1] : $questionTypes[2]);
+
+            $streetNames = [
+                ['name' => 'Đường Phân Số', 'icon' => '🔢'],
+                ['name' => 'Phố Toán Học', 'icon' => '📐'],
+                ['name' => 'Ngõ Số Học', 'icon' => '📏'],
+                ['name' => 'Đường Tính Toán', 'icon' => '➗'],
+                ['name' => 'Phố Chia Số', 'icon' => '✖️'],
+                ['name' => 'Ngõ Phép Tính', 'icon' => '➕'],
+                ['name' => 'Đường Số Học', 'icon' => '📊'],
+                ['name' => 'Phố Toán Tư Duy', 'icon' => '🎯'],
+                ['name' => 'Ngõ Suy Luận', 'icon' => '🎲']
+            ];
+
+            $streetName = $streetNames[array_rand($streetNames)];
+
+            $streets[] = [
+                'id' => $i + 1,
+                'name' => $streetName['name'] . ' ' . $streetName['icon'],
+                'description' => $questionType['description'],
+                'answer' => (string)$divisor,
+                'hint' => $questionType['hint']
+            ];
+        }
+
+        return [
+            'level' => $level,
+            'streets' => $streets,
+            'hint' => match($level) {
+                1 => 'Hãy tìm số chia để có kết quả đúng',
+                2 => 'Thử chia số lớn cho số nhỏ hơn',
+                3 => 'Tìm số chia phù hợp để được kết quả',
+                4 => 'Suy luận từ kết quả để tìm số chia',
+                5 => 'Vận dụng kỹ năng tính toán nâng cao',
+                default => 'Điền số thích hợp vào chỗ trống'
+            }
+        ];
     }
 
     public function checkLostCityAnswer(Request $request)
     {
         $level = session('lost_city_level', 1);
-        $question = $this->generateLostCityQuestion($level);
+        $question = session('lost_city_question');
+        
+        if (!$question) {
+            return response()->json([
+                'correct' => false,
+                'error' => 'Phiên làm việc đã hết hạn'
+            ]);
+        }
         
         $answers = $request->input('answers', []);
         $correct = true;
         
         foreach ($question['streets'] as $index => $street) {
-            if (!isset($answers[$index]) || $answers[$index] !== $street['answer']) {
+            if (!isset($answers[$index]) || (string)$answers[$index] !== $street['answer']) {
                 $correct = false;
                 break;
             }
         }
         
-        if ($correct && $level < 5) {
-            session(['lost_city_level' => $level + 1]);
+        if ($correct) {
+            if ($level < 5) {
+                session(['lost_city_level' => $level + 1]);
+                session()->forget('lost_city_question'); // Clear current questions for next level
+            }
         }
         
         return response()->json([
@@ -1316,7 +1631,7 @@ class GameController extends Controller
 
     public function resetLostCityGame()
     {
-        session()->forget('lost_city_level');
+        session()->forget(['lost_city_level', 'lost_city_question']);
         return redirect()->route('games.lop4.phanso.lost_city');
     }
 
@@ -1411,13 +1726,19 @@ class GameController extends Controller
     }
 
     // Helper method for checking equivalent fractions
-    private function checkEquivalentFractions($fractions, $target)
+    private function checkEquivalentFractions($selectedFractions, $target)
     {
-        foreach ($fractions as $fraction) {
-            if (!$this->areFractionsEqual($fraction, $target)) {
+        // Parse target fraction
+        list($targetNum, $targetDen) = array_map('intval', explode('/', $target));
+        
+        // Check each selected fraction
+        foreach ($selectedFractions as $fraction) {
+            list($num, $den) = array_map('intval', explode('/', $fraction));
+            if ($num * $targetDen !== $den * $targetNum) {
                 return false;
             }
         }
+        
         return true;
     }
 

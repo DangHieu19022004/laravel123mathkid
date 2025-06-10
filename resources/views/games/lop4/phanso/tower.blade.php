@@ -119,11 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     checkButton.addEventListener('click', function() {
         const currentOrder = Array.from(tower.querySelectorAll('.fraction-card'))
-            .map(card => card.dataset.fraction);
+            .map(card => parseInt(card.id.split('-')[1]));
 
         const formData = new FormData();
         formData.append('order', JSON.stringify(currentOrder));
-        formData.append('correct_order', JSON.stringify(CORRECT_ORDER));
         formData.append('_token', CSRF_TOKEN);
 
         fetch(CHECK_URL, {

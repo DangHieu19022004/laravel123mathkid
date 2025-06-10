@@ -7,13 +7,16 @@
         <h1 class="display-4 mb-4">Thẻ Bài Phân Số 🃏</h1>
         <div class="card d-inline-block mb-4">
             <div class="card-body">
-                <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
+                <h2 class="h4 mb-3">Cấp độ <span id="current-level">{{ $question['level'] }}</span>/5</h2>
                 <p class="h5 text-muted">
                     Tìm các cặp phân số bằng nhau
                 </p>
             </div>
         </div>
     </div>
+
+    <!-- Message Area - Fixed position -->
+    <div id="message" class="alert-float d-none" role="alert"></div>
 
     <!-- Game Area -->
     <div class="row justify-content-center mb-5">
@@ -58,8 +61,6 @@
 
     <!-- Controls -->
     <div class="text-center">
-        <div id="message" class="alert d-none my-3"></div>
-
         <form id="resetForm" action="{{ route('games.lop4.phanso.cards.reset') }}" method="POST" class="mt-3">
             @csrf
             <button type="submit" class="btn btn-link text-decoration-none">
@@ -75,15 +76,16 @@
 
 @push('scripts')
 <script>
-const CHECK_URL = '{{ route('games.lop4.phanso.cards.check') }}';
-const CSRF_TOKEN = '{{ csrf_token() }}';
-const TOTAL_PAIRS = {{ count($question['pairs']) }};
+const CHECK_URL = '{!! route('games.lop4.phanso.cards.check') !!}';
+const CSRF_TOKEN = '{!! csrf_token() !!}';
+const TOTAL_PAIRS = {!! count($question['pairs']) !!};
 
 let hasFlippedCard = false;
 let lockBoard = false;
 let firstCard, secondCard;
 let flips = 0;
 let pairs = 0;
+let matchedPairs = [];
 
 function flipCard() {
     if (lockBoard) return;
@@ -112,30 +114,51 @@ function checkForMatch() {
         disableCards();
         pairs++;
         document.getElementById('pairs').textContent = pairs;
+        
+        // Show success message for matching pair
+        showMessage('success', `
+            <h4 class="alert-heading">🎉 Tuyệt vời!</h4>
+            <p class="mb-0">Bạn đã tìm thấy một cặp phân số bằng nhau!</p>
+        `);
+        
+        // Store the matched pair
+        matchedPairs.push([
+            parseInt(firstCard.dataset.id),
+            parseInt(secondCard.dataset.id)
+        ]);
 
-        // Check if all pairs are found
-        if (pairs === TOTAL_PAIRS) {
+        // Check if we found all pairs
+        if (pairs >= TOTAL_PAIRS) {
+            // Lock the board immediately
+            lockBoard = true;
+            
             // Send answer to server
-            const formData = new FormData();
-            formData.append('_token', CSRF_TOKEN);
-
             fetch(CHECK_URL, {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': CSRF_TOKEN,
                     'Accept': 'application/json'
                 },
-                body: formData
+                body: JSON.stringify({
+                    selected_pairs: matchedPairs,
+                    _token: CSRF_TOKEN
+                })
             })
             .then(response => response.json())
             .then(data => {
-                const messageDiv = document.getElementById('message');
-                messageDiv.classList.remove('d-none');
-                
                 if (data.correct) {
-                    messageDiv.className = 'alert alert-success animate-bounce';
-                    messageDiv.textContent = '🎉 Tuyệt vời! Cùng tiếp tục nào!';
+                    // Lock the board immediately
+                    lockBoard = true;
                     
+                    // Show success message
+                    showMessage('success', `
+                        <h4 class="alert-heading">🎉 Chúc mừng!</h4>
+                        <p class="mb-0">Bạn đã tìm thấy tất cả các cặp phân số bằng nhau!</p>
+                        <p class="mt-2 mb-0">Đang chuyển sang cấp độ tiếp theo...</p>
+                    `);
+
+                    // Play confetti animation
                     if (typeof confetti !== 'undefined') {
                         confetti({
                             particleCount: 100,
@@ -144,25 +167,43 @@ function checkForMatch() {
                         });
                     }
 
-                    // Force reload after a short delay
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    // Automatically go to next level after a short delay
+                    if (data.next_level) {
+                        setTimeout(() => {
+                            window.location.href = "{{ route('games.lop4.phanso.cards') }}";
+                        }, 2000);
+                    } else {
+                        showMessage('success', `
+                            <h4 class="alert-heading">🎉 Chúc mừng!</h4>
+                            <p class="mb-0">🏆 Bạn đã hoàn thành tất cả các cấp độ!</p>
+                        `);
+                    }
+                } else {
+                    // Show error if server validation fails
+                    showMessage('danger', `
+                        <h4 class="alert-heading">❌ Có lỗi xảy ra</h4>
+                        <p class="mb-0">${data.message || 'Vui lòng thử lại'}</p>
+                    `);
+                    resetGame();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                const messageDiv = document.getElementById('message');
-                messageDiv.classList.remove('d-none');
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.textContent = 'Có lỗi xảy ra, vui lòng thử lại!';
+                showMessage('danger', `
+                    <h4 class="alert-heading">❌ Lỗi kết nối</h4>
+                    <p class="mb-0">Vui lòng thử lại sau</p>
+                `);
+                resetGame();
             });
         }
     } else {
+        // Show message for incorrect match
+        showMessage('danger', `
+            <h4 class="alert-heading">❌ Chưa đúng</h4>
+            <p class="mb-0">Hai phân số này không bằng nhau. Hãy thử lại nhé!</p>
+        `);
         unflipCards();
     }
-
-    [firstCard, secondCard] = [null, null];
 }
 
 function disableCards() {
@@ -184,6 +225,40 @@ function unflipCards() {
 function resetBoard() {
     [hasFlippedCard, lockBoard] = [false, false];
     [firstCard, secondCard] = [null, null];
+}
+
+function showMessage(type, html) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.classList.remove('d-none', 'alert-success', 'alert-danger', 'show');
+    messageDiv.classList.add(`alert-${type}`);
+    messageDiv.innerHTML = html;
+    
+    // Force a reflow before adding the show class
+    void messageDiv.offsetWidth;
+    messageDiv.classList.add('show');
+    
+    // Auto hide message after 2 seconds for non-final messages
+    if (!html.includes('Đang chuyển sang cấp độ tiếp theo')) {
+        setTimeout(() => {
+            messageDiv.classList.remove('show');
+            setTimeout(() => {
+                messageDiv.classList.add('d-none');
+            }, 300); // Wait for fade out animation
+        }, 2000);
+    }
+}
+
+function resetGame() {
+    lockBoard = false;
+    pairs = 0;
+    document.getElementById('pairs').textContent = pairs;
+    matchedPairs = [];
+    
+    // Re-enable and flip back all cards
+    document.querySelectorAll('.memory-card').forEach(card => {
+        card.classList.remove('flip');
+        card.addEventListener('click', flipCard);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -261,14 +336,56 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #6c757d;
 }
 
-.animate-bounce {
-    animation: bounce 0.5s;
+#message {
+    font-size: 1.2rem;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* New styles for floating message */
+.alert-float {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 90%;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.alert-float.show {
+    opacity: 1;
+}
+
+.alert-float.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-float.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
 }
 </style>
-@endpush
-@endsection 
+@endpush 

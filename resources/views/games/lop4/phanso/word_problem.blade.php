@@ -100,10 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const feedback = document.getElementById('feedback');
     const canvas = document.getElementById('visualCanvas');
     const ctx = canvas.getContext('2d');
-    const correctAnswer = {
-        numerator: {{ $question['answer']['numerator'] }},
-        denominator: {{ $question['answer']['denominator'] }}
-    };
     let isAnswered = false;
 
     // Draw initial visualization
@@ -128,12 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.arc(150, 100, 80, 0, 2 * Math.PI);
         ctx.stroke();
         // Draw divisions based on denominator
-        const totalParts = {{ $question['answer']['denominator'] }};
+        const totalParts = {{ $question['denominator'] }};
         for (let i = 0; i < totalParts; i++) {
             ctx.beginPath();
             ctx.moveTo(150, 100);
-            ctx.lineTo(150 + 80 * Math.cos(2 * Math.PI * i / totalParts),
-                      100 + 80 * Math.sin(2 * Math.PI * i / totalParts));
+            ctx.lineTo(
+                150 + 80 * Math.cos(2 * Math.PI * i / totalParts),
+                100 + 80 * Math.sin(2 * Math.PI * i / totalParts)
+            );
             ctx.stroke();
         }
     }
@@ -141,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function drawRectangle() {
         ctx.strokeRect(50, 50, 200, 100);
         // Draw divisions
-        const totalParts = {{ $question['answer']['denominator'] }};
+        const totalParts = {{ $question['denominator'] }};
         const width = 200 / totalParts;
         for (let i = 1; i < totalParts; i++) {
             ctx.beginPath();
@@ -185,8 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                answer: answer,
-                correct_answer: correctAnswer
+                numerator: answer.numerator,
+                denominator: answer.denominator
             })
         })
         .then(response => response.json())

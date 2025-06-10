@@ -141,6 +141,14 @@ document.addEventListener('DOMContentLoaded', function() {
             denominator: parseInt(denominatorInput.value)
         };
 
+        // Validate input
+        if (isNaN(answer.numerator) || isNaN(answer.denominator) || answer.denominator <= 0) {
+            messageDiv.className = 'alert alert-danger';
+            messageDiv.innerHTML = 'Vui lòng nhập số hợp lệ!';
+            messageDiv.classList.remove('d-none');
+            return;
+        }
+
         // Disable form
         numeratorInput.disabled = true;
         denominatorInput.disabled = true;
@@ -155,11 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                answer: answer,
-                correct_answer: {
-                    numerator: {{ $question['remaining']['numerator'] }},
-                    denominator: {{ $question['remaining']['denominator'] }}
-                }
+                numerator: answer.numerator,
+                denominator: answer.denominator
             })
         })
         .then(response => response.json())
