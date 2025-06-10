@@ -8,7 +8,7 @@
         <!-- Cake Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🍰</div>
                     <h5 class="card-title">Chia Bánh</h5>
                     <p class="card-text">Tập chia bánh thành các phần bằng nhau và tô màu theo phân số.</p>
@@ -24,9 +24,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $cakeProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $cakeLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.cake') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.cake') }}" class="btn btn-primary mt-3">
                         {{ $cakeLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -34,7 +37,7 @@
         <!-- Apple Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🍎</div>
                     <h5 class="card-title">Chia Táo</h5>
                     <p class="card-text">Chia số táo cho số học sinh để hiểu về phân số.</p>
@@ -50,9 +53,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $appleProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $appleLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.apple') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.apple') }}" class="btn btn-primary mt-3">
                         {{ $appleLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -60,7 +66,7 @@
         <!-- Bracket Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🎯</div>
                     <h5 class="card-title">Biểu Thức</h5>
                     <p class="card-text">Tính giá trị biểu thức phân số có dấu ngoặc.</p>
@@ -76,9 +82,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $bracketProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $bracketLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.bracket') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.bracket') }}" class="btn btn-primary mt-3">
                         {{ $bracketLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -86,7 +95,7 @@
         <!-- Garden Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🌺</div>
                     <h5 class="card-title">Vườn Hoa</h5>
                     <p class="card-text">Rút gọn phân số qua việc chăm sóc vườn hoa.</p>
@@ -102,9 +111,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $gardenProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $gardenLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.garden') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                         <a href="{{ route('games.lop4.phanso.garden') }}" class="btn btn-primary mt-3">
                         {{ $gardenLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -112,7 +124,7 @@
         <!-- Tower Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🏰</div>
                     <h5 class="card-title">Xây Tháp</h5>
                     <p class="card-text">Sắp xếp các phân số theo thứ tự tăng dần để xây tháp.</p>
@@ -128,9 +140,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $towerProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $towerLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.tower') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.tower') }}" class="btn btn-primary mt-3">
                         {{ $towerLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -138,7 +153,7 @@
         <!-- Cards Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🃏</div>
                     <h5 class="card-title">Thẻ Bài</h5>
                     <p class="card-text">Ghép các thẻ bài chứa phân số bằng nhau.</p>
@@ -154,9 +169,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $cardsProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $cardsLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.cards') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.cards') }}" class="btn btn-primary mt-3">
                         {{ $cardsLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -164,7 +182,7 @@
         <!-- Compare Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">⚖️</div>
                     <h5 class="card-title">Ai Nhiều Hơn?</h5>
                     <p class="card-text">So sánh hai phân số để tìm ra giá trị lớn hơn.</p>
@@ -180,9 +198,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $compareProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $compareLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.compare') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.compare') }}" class="btn btn-primary mt-3">
                         {{ $compareLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -190,7 +211,7 @@
         <!-- Division Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">➗</div>
                     <h5 class="card-title">Phép Chia</h5>
                     <p class="card-text">Liên hệ giữa phép chia và phân số.</p>
@@ -206,9 +227,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $divisionProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $divisionLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.division') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.division') }}" class="btn btn-primary mt-3">
                         {{ $divisionLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -216,7 +240,7 @@
         <!-- Fair Share Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🤝</div>
                     <h5 class="card-title">Chia Đều</h5>
                     <p class="card-text">Học cách chia đều các vật thể thành phân số.</p>
@@ -232,9 +256,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $fairShareProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $fairShareLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.fair_share') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.fair_share') }}" class="btn btn-primary mt-3">
                         {{ $fairShareLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -242,7 +269,7 @@
         <!-- Balance Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">⚖️</div>
                     <h5 class="card-title">Cân Bằng Hai Bên</h5>
                     <p class="card-text">So sánh hai biểu thức phân số bằng cách chọn dấu >, < hoặc =.</p>
@@ -258,9 +285,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $balanceProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $balanceLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.balance') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.balance') }}" class="btn btn-primary mt-3">
                         {{ $balanceLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -268,7 +298,7 @@
         <!-- Pattern Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🎯</div>
                     <h5 class="card-title">Tâm Nhảy Phân Số</h5>
                     <p class="card-text">Tìm ra quy luật và điền phân số tiếp theo trong dãy số.</p>
@@ -284,9 +314,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $patternProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $patternLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.pattern') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.pattern') }}" class="btn btn-primary mt-3">
                         {{ $patternLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -294,7 +327,7 @@
         <!-- Word Problem Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">📚</div>
                     <h5 class="card-title">Bài Toán Có Lời Văn</h5>
                     <p class="card-text">Giải các bài toán thực tế liên quan đến phân số.</p>
@@ -310,9 +343,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $wordProblemProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $wordProblemLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.word_problem') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.word_problem') }}" class="btn btn-primary mt-3">
                         {{ $wordProblemLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -320,7 +356,7 @@
         <!-- Sky Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🌤️</div>
                     <h5 class="card-title">Bầu Trời Phân Số</h5>
                     <p class="card-text">Tìm các phân số bằng nhau trên bầu trời.</p>
@@ -336,9 +372,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $skyProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $skyLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.sky') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.sky') }}" class="btn btn-primary mt-3">
                         {{ $skyLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -346,7 +385,7 @@
         <!-- Remaining Cake Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🍰</div>
                     <h5 class="card-title">Miếng Bánh Còn Lại</h5>
                     <p class="card-text">Tính phần bánh còn lại sau khi ăn.</p>
@@ -362,9 +401,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $remainingCakeProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $remainingCakeLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.remaining_cake') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.remaining_cake') }}" class="btn btn-primary mt-3">
                         {{ $remainingCakeLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -372,7 +414,7 @@
         <!-- Sentence Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">📝</div>
                     <h5 class="card-title">Ghép Câu Phân Số</h5>
                     <p class="card-text">Ghép các từ để tạo câu về phân số.</p>
@@ -388,9 +430,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $sentenceProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $sentenceLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.sentence') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.sentence') }}" class="btn btn-primary mt-3">
                         {{ $sentenceLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -398,7 +443,7 @@
         <!-- Word Hunt Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🔍</div>
                     <h5 class="card-title">Săn Cụm Từ Phân Số</h5>
                     <p class="card-text">Tìm các phân số bằng nhau theo gợi ý.</p>
@@ -414,9 +459,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $wordHuntProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $wordHuntLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.word_hunt') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.word_hunt') }}" class="btn btn-primary mt-3">
                         {{ $wordHuntLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -424,7 +472,7 @@
         <!-- Lost City Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🏛️</div>
                     <h5 class="card-title">Thành Phố Bị Lạc</h5>
                     <p class="card-text">Điền số thích hợp vào tên đường để hoàn thiện phân số.</p>
@@ -440,9 +488,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $lostCityProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $lostCityLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.lost_city') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.lost_city') }}" class="btn btn-primary mt-3">
                         {{ $lostCityLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -450,7 +501,7 @@
         <!-- Equal Groups Game -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🎯</div>
                     <h5 class="card-title">Sếp Lớp Đểu Bằng</h5>
                     <p class="card-text">Kéo các phân số vào nhóm tương ứng.</p>
@@ -466,9 +517,12 @@
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ $equalGroupsProgress }}%"></div>
                     </div>
                     <p class="mt-2 small text-muted">Cấp độ {{ $equalGroupsLevel }}/5</p>
-                    <a href="{{ route('games.lop4.phanso.equal_groups') }}" class="btn btn-primary mt-3">
+                    <div class="mt-3">
+                        <a href="{{ route('games.lop4.phanso.equal_groups') }}" class="btn btn-primary mt-3">
                         {{ $equalGroupsLevel > 1 ? 'Tiếp tục' : 'Bắt đầu' }}
                     </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -476,7 +530,7 @@
         <!-- Placeholder for future games -->
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm bg-light">
-                <div class="card-body text-center">
+                <div class="card-body justify-content-between text-center d-flex flex-column">
                     <div class="display-4 mb-3">🎮</div>
                     <h5 class="card-title text-muted">Sắp ra mắt</h5>
                     <p class="card-text text-muted">Các trò chơi mới đang được phát triển...</p>
@@ -489,8 +543,8 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="card-title">Hướng dẫn</h4>
+                <div class="card-body justify-content-between">
+          d-flex flex-column           <h4 class="card-title">Hướng dẫn</h4>
                     <ul class="list-unstyled">
                         <li class="mb-2">
                             <i class="fas fa-star text-warning"></i>

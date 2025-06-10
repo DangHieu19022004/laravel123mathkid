@@ -3,6 +3,22 @@
 ## Mục tiêu
 Giúp học sinh học về phân số thông qua việc chia bánh sinh nhật thành các phần bằng nhau và chọn số phần theo yêu cầu.
 
+## Yêu cầu hệ thống
+- PHP >= 7.4
+- Laravel >= 8.0
+- Node.js >= 14.0
+- MySQL >= 5.7
+
+## Cài đặt
+1. Clone repository
+2. Chạy `composer install`
+3. Chạy `npm install`
+4. Copy `.env.example` thành `.env`
+5. Chạy `php artisan key:generate`
+6. Cấu hình database trong `.env`
+7. Chạy `php artisan migrate`
+8. Chạy `npm run dev`
+
 ## Cấu trúc game
 
 ### 1. Giao diện
