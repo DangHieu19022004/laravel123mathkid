@@ -3,6 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Games\GameController;
 use App\Http\Controllers\Games\MeasurementGameController;
+use App\Http\Controllers\Games\HinhHocGameController;
+use App\Http\Controllers\Games\DaySoQuyLuatController;
+use App\Http\Controllers\Games\GiaiToanLoiVanController;
+use App\Http\Controllers\Games\KhamPhaPhanSoController;
+use App\Http\Controllers\Games\SoTuNhienVaCacPhepTinhController;
+use App\Http\Controllers\Games\ThongKeBieuDoController;
+use App\Http\Controllers\Games\ThuThachDoLuongController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +94,80 @@ Route::prefix('games/lop4')->name('games.lop4.')->group(function () {
     Route::get('/phanso/sentence', [GameController::class, 'sentenceGame'])->name('phanso.sentence');
     Route::post('/phanso/sentence/check', [GameController::class, 'checkSentenceAnswer'])->name('phanso.sentence.check');
     Route::post('/phanso/sentence/reset', [GameController::class, 'resetSentenceGame'])->name('phanso.sentence.reset');
+
+    // Khám Phá Phân Số routes
+    Route::prefix('kham-pha-phan-so')->name('kham-pha-phan-so.')->group(function () {
+        Route::get('/', [KhamPhaPhanSoController::class, 'index'])->name('index');
+        Route::get('/apple', [KhamPhaPhanSoController::class, 'appleGame'])->name('apple');
+        Route::post('/apple/check', [KhamPhaPhanSoController::class, 'checkAppleAnswer'])->name('apple.check');
+        Route::get('/apple/reset', [KhamPhaPhanSoController::class, 'resetAppleGame'])->name('apple.reset');
+
+        Route::get('/balance', [KhamPhaPhanSoController::class, 'balanceGame'])->name('balance');
+        Route::post('/balance/check', [KhamPhaPhanSoController::class, 'checkBalanceAnswer'])->name('balance.check');
+        Route::get('/balance/reset', [KhamPhaPhanSoController::class, 'resetBalanceGame'])->name('balance.reset');
+
+        Route::get('/bracket', [KhamPhaPhanSoController::class, 'bracketGame'])->name('bracket');
+        Route::post('/bracket/check', [KhamPhaPhanSoController::class, 'checkBracketAnswer'])->name('bracket.check');
+        Route::get('/bracket/reset', [KhamPhaPhanSoController::class, 'resetBracketGame'])->name('bracket.reset');
+
+        Route::get('/cake', [KhamPhaPhanSoController::class, 'cakeGame'])->name('cake');
+        Route::post('/cake/check', [KhamPhaPhanSoController::class, 'checkCakeAnswer'])->name('cake.check');
+        Route::get('/cake/reset', [KhamPhaPhanSoController::class, 'resetCakeGame'])->name('cake.reset');
+
+        Route::get('/cards', [KhamPhaPhanSoController::class, 'cardsGame'])->name('cards');
+        Route::post('/cards/check', [KhamPhaPhanSoController::class, 'checkCardsAnswer'])->name('cards.check');
+        Route::get('/cards/reset', [KhamPhaPhanSoController::class, 'resetCardsGame'])->name('cards.reset');
+
+        Route::get('/compare', [KhamPhaPhanSoController::class, 'compareGame'])->name('compare');
+        Route::post('/compare/check', [KhamPhaPhanSoController::class, 'checkCompareAnswer'])->name('compare.check');
+        Route::get('/compare/reset', [KhamPhaPhanSoController::class, 'resetCompareGame'])->name('compare.reset');
+
+        Route::get('/division', [KhamPhaPhanSoController::class, 'divisionGame'])->name('division');
+        Route::post('/division/check', [KhamPhaPhanSoController::class, 'checkDivisionAnswer'])->name('division.check');
+        Route::get('/division/reset', [KhamPhaPhanSoController::class, 'resetDivisionGame'])->name('division.reset');
+
+        Route::get('/equal-groups', [KhamPhaPhanSoController::class, 'equalGroupsGame'])->name('equal_groups');
+
+        Route::get('/fair-share', [KhamPhaPhanSoController::class, 'fairShare'])->name('fair_share');
+
+        Route::get('/garden', [KhamPhaPhanSoController::class, 'gardenGame'])->name('garden');
+        Route::post('/garden/check', [KhamPhaPhanSoController::class, 'checkGardenAnswer'])->name('garden.check');
+        Route::get('/garden/reset', [KhamPhaPhanSoController::class, 'resetGardenGame'])->name('garden.reset');
+
+        Route::get('/lost-city', [KhamPhaPhanSoController::class, 'lostCityGame'])->name('lost_city');
+        Route::post('/lost-city/check', [KhamPhaPhanSoController::class, 'checkLostCityAnswer'])->name('lost_city.check');
+        Route::get('/lost-city/reset', [KhamPhaPhanSoController::class, 'resetLostCityGame'])->name('lost_city.reset');
+
+        Route::get('/pattern', [KhamPhaPhanSoController::class, 'patternGame'])->name('pattern');
+        Route::post('/pattern/check', [KhamPhaPhanSoController::class, 'checkPatternAnswer'])->name('pattern.check');
+        Route::get('/pattern/reset', [KhamPhaPhanSoController::class, 'resetPatternGame'])->name('pattern.reset');
+
+        Route::get('/phanso', [KhamPhaPhanSoController::class, 'phanso'])->name('phanso');
+
+        Route::get('/remaining-cake', [KhamPhaPhanSoController::class, 'remainingCakeGame'])->name('remaining_cake');
+        Route::post('/remaining-cake/check', [KhamPhaPhanSoController::class, 'checkRemainingCakeAnswer'])->name('remaining_cake.check');
+        Route::get('/remaining-cake/reset', [KhamPhaPhanSoController::class, 'resetRemainingCakeGame'])->name('remaining_cake.reset');
+
+        Route::get('/sentence', [KhamPhaPhanSoController::class, 'sentenceGame'])->name('sentence');
+        Route::post('/sentence/check', [KhamPhaPhanSoController::class, 'checkSentenceAnswer'])->name('sentence.check');
+        Route::get('/sentence/reset', [KhamPhaPhanSoController::class, 'resetSentenceGame'])->name('sentence.reset');
+
+        Route::get('/sky', [KhamPhaPhanSoController::class, 'skyGame'])->name('sky');
+        Route::post('/sky/check', [KhamPhaPhanSoController::class, 'checkSkyAnswer'])->name('sky.check');
+        Route::get('/sky/reset', [KhamPhaPhanSoController::class, 'resetSkyGame'])->name('sky.reset');
+
+        Route::get('/tower', [KhamPhaPhanSoController::class, 'towerGame'])->name('tower');
+        Route::post('/tower/check', [KhamPhaPhanSoController::class, 'checkTowerAnswer'])->name('tower.check');
+        Route::get('/tower/reset', [KhamPhaPhanSoController::class, 'resetTowerGame'])->name('tower.reset');
+
+        Route::get('/word-hunt', [KhamPhaPhanSoController::class, 'wordHuntGame'])->name('word_hunt');
+        Route::post('/word-hunt/check', [KhamPhaPhanSoController::class, 'checkWordHuntAnswer'])->name('word_hunt.check');
+        Route::get('/word-hunt/reset', [KhamPhaPhanSoController::class, 'resetWordHuntGame'])->name('word_hunt.reset');
+
+        Route::get('/word-problem', [KhamPhaPhanSoController::class, 'wordProblemGame'])->name('word_problem');
+        Route::post('/word-problem/check', [KhamPhaPhanSoController::class, 'checkWordProblemAnswer'])->name('word_problem.check');
+        Route::get('/word-problem/reset', [KhamPhaPhanSoController::class, 'resetWordProblemGame'])->name('word_problem.reset');
+    });
 });
 
 Route::middleware(['web'])->group(function () {
@@ -261,4 +342,53 @@ Route::prefix('games/lop4/dailuongvadoluong')->name('games.lop4.dailuongvadoluon
     Route::get('/advanced-time', [MeasurementGameController::class, 'advancedTimeGame'])->name('advanced_time');
     Route::post('/advanced-time/check', [MeasurementGameController::class, 'checkAdvancedTimeAnswer'])->name('advanced_time.check');
     Route::get('/advanced-time/reset', [MeasurementGameController::class, 'resetAdvancedTimeGame'])->name('advanced_time.reset');
+});
+
+Route::prefix('games/lop4/bi-an-hinh-hoc')->name('games.lop4.bi_an_hinh_hoc.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.bi_an_hinh_hoc.bi_an_hinh_hoc'); })->name('index');
+    Route::get('/area-calculation', [HinhHocGameController::class, 'areaCalculationGame'])->name('area_calculation');
+    Route::get('/perimeter-calculation', [HinhHocGameController::class, 'perimeterCalculationGame'])->name('perimeter_calculation');
+    Route::get('/angle-measurement', [HinhHocGameController::class, 'angleMeasurementGame'])->name('angle_measurement');
+    Route::get('/volume-measurement', [HinhHocGameController::class, 'volumeMeasurementGame'])->name('volume_measurement');
+});
+
+Route::prefix('games/lop4/day-so-quy-luat')->name('games.lop4.day_so_quy_luat.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.day_so_quy_luat.day_so_quy_luat'); })->name('index');
+    Route::get('/pattern', [DaySoQuyLuatController::class, 'patternGame'])->name('pattern');
+    Route::post('/pattern/check', [DaySoQuyLuatController::class, 'checkAnswer'])->name('pattern.check');
+    Route::get('/pattern/reset', [DaySoQuyLuatController::class, 'resetGame'])->name('pattern.reset');
+});
+
+Route::prefix('games/lop4/giai-toan-loi-van')->name('games.lop4.giai_toan_loi_van.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.giai_toan_loi_van.giai_toan_loi_van'); })->name('index');
+    Route::get('/lost-city', [GiaiToanLoiVanController::class, 'lostCity'])->name('lost_city');
+    Route::post('/lost-city/check', [GiaiToanLoiVanController::class, 'checkLostCityAnswer'])->name('lost_city.check');
+    Route::get('/lost-city/reset', [GiaiToanLoiVanController::class, 'resetLostCity'])->name('lost_city.reset');
+    Route::get('/word-problem', [GiaiToanLoiVanController::class, 'wordProblemGame'])->name('word_problem');
+    Route::post('/word-problem/check', [GiaiToanLoiVanController::class, 'checkAnswer'])->name('word_problem.check');
+    Route::get('/word-problem/reset', [GiaiToanLoiVanController::class, 'resetGame'])->name('word_problem.reset');
+});
+
+Route::prefix('games/lop4/so-tu-nhien-va-cac-phep-tinh')->name('games.lop4.so_tu_nhien_va_cac_phep_tinh.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.so_tu_nhien_va_cac_phep_tinh.so_tu_nhien_va_cac_phep_tinh'); })->name('index');
+    Route::get('/number-place-value', [SoTuNhienVaCacPhepTinhController::class, 'numberPlaceValueGame'])->name('number_place_value');
+    Route::get('/addition-subtraction', [SoTuNhienVaCacPhepTinhController::class, 'additionSubtractionGame'])->name('addition_subtraction');
+    Route::get('/multiplication-division', [SoTuNhienVaCacPhepTinhController::class, 'multiplicationDivisionGame'])->name('multiplication_division');
+    Route::get('/mixed-operations', [SoTuNhienVaCacPhepTinhController::class, 'mixedOperationsGame'])->name('mixed_operations');
+});
+
+Route::prefix('games/lop4/thong-ke-bieu-do')->name('games.lop4.thong_ke_bieu_do.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.thong_ke_bieu_do.thong_ke_bieu_do'); })->name('index');
+    Route::get('/data-collection', [ThongKeBieuDoController::class, 'dataCollectionGame'])->name('data_collection');
+    Route::get('/bar-chart', [ThongKeBieuDoController::class, 'barChartGame'])->name('bar_chart');
+    Route::get('/line-chart', [ThongKeBieuDoController::class, 'lineChartGame'])->name('line_chart');
+    Route::get('/pie-chart', [ThongKeBieuDoController::class, 'pieChartGame'])->name('pie_chart');
+});
+
+Route::prefix('games/lop4/thu-thach-do-luong')->name('games.lop4.thu_thach_do_luong.')->group(function () {
+    Route::get('/', function() { return view('games.lop4.thu_thach_do_luong.thu_thach_do_luong'); })->name('index');
+    Route::get('/length-measurement', [ThuThachDoLuongController::class, 'lengthMeasurementGame'])->name('length_measurement');
+    Route::get('/weight-measurement', [ThuThachDoLuongController::class, 'weightMeasurementGame'])->name('weight_measurement');
+    Route::get('/time-measurement', [ThuThachDoLuongController::class, 'timeMeasurementGame'])->name('time_measurement');
+    Route::get('/money-calculation', [ThuThachDoLuongController::class, 'moneyCalculationGame'])->name('money_calculation');
 });
