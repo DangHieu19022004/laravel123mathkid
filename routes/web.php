@@ -260,7 +260,9 @@ Route::middleware(['web'])->group(function () {
     Route::get('/games/lop4/phanso/equal-groups/reset', [GameController::class, 'resetEqualGroupsGame'])->name('games.lop4.phanso.equal_groups.reset');
 
     // Main Game Hub Route
-    Route::get('/games/lop4/phanso', [GameController::class, 'index'])->name('games.lop4.phanso');
+    Route::get('/games/lop4/phanso', function() {
+        return view('games.lop4.phanso.index');
+    })->name('games.lop4.phanso.index');
 });
 
 // Measurement and Units Games Routes
@@ -392,3 +394,7 @@ Route::prefix('games/lop4/thu-thach-do-luong')->name('games.lop4.thu_thach_do_lu
     Route::get('/time-measurement', [ThuThachDoLuongController::class, 'timeMeasurementGame'])->name('time_measurement');
     Route::get('/money-calculation', [ThuThachDoLuongController::class, 'moneyCalculationGame'])->name('money_calculation');
 });
+
+Route::get('/games/lop4', function() {
+    return view('games.lop4.index');
+})->name('games.lop4.index');
