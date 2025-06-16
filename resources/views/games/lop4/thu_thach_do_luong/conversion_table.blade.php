@@ -125,9 +125,36 @@ const levels = [
             { km: 1.2, m: 1200, cm: 120000, mm: 1200000 }
         ],
         draggables: [0.03, 30, 3000, 30000, 1.2, 1200, 120000, 1200000, 0.3, 3, 300, 300000]
+    },
+    // Level 4: Đơn vị hỗn hợp, nhiều hàng hơn
+    {
+        headers: ['Kilomét (km)', 'Mét (m)', 'Decimét (dm)', 'Centimét (cm)', 'Milimét (mm)'],
+        rows: [
+            { km: 0.05, m: 50, dm: 500, cm: 5000, mm: 50000 },
+            { km: 2.3, m: 2300, dm: 23000, cm: 230000, mm: 2300000 },
+            { km: 0.8, m: 800, dm: 8000, cm: 80000, mm: 800000 }
+        ],
+        draggables: [0.05, 50, 500, 5000, 50000, 2.3, 2300, 23000, 230000, 2300000, 0.8, 800, 8000, 80000, 800000]
+    },
+    // Level 5: Đơn vị hỗn hợp, số thập phân, nhiều hàng
+    {
+        headers: ['Kilomét (km)', 'Mét (m)', 'Decimét (dm)', 'Centimét (cm)', 'Milimét (mm)'],
+        rows: [
+            { km: 0.12, m: 120, dm: 1200, cm: 12000, mm: 120000 },
+            { km: 1.75, m: 1750, dm: 17500, cm: 175000, mm: 1750000 },
+            { km: 0.6, m: 600, dm: 6000, cm: 60000, mm: 600000 },
+            { km: 3.5, m: 3500, dm: 35000, cm: 350000, mm: 3500000 }
+        ],
+        draggables: [0.12, 120, 1200, 12000, 120000, 1.75, 1750, 17500, 175000, 1750000, 0.6, 600, 6000, 60000, 600000, 3.5, 3500, 35000, 350000, 3500000]
     }
 ];
+const LEVEL_KEY = 'conversion_table_level';
 let currentLevel = 0;
+
+function getCurrentLevel() {
+    const stored = localStorage.getItem(LEVEL_KEY);
+    return stored !== null ? parseInt(stored) : 0;
+}
 
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -147,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const levelSpan = document.getElementById('level');
     const maxLevelSpan = document.getElementById('max-level');
     maxLevelSpan.textContent = levels.length;
+
+    currentLevel = getCurrentLevel();
 
     function renderTable(levelIdx) {
         const level = levels[levelIdx];
@@ -321,16 +350,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    resetBtn.addEventListener('click', function() {
-        renderDraggables(currentLevel);
-        resetDropzones();
-        messageEl.classList.add('hidden');
-        nextLevelBtn.classList.add('hidden');
-    });
+    // Đảm bảo gắn sự kiện đúng và reload mạnh
+    if (resetBtn) {
+        console.log('Đã tìm thấy nút reset');
+        resetBtn.addEventListener('click', function() {
+            console.log('Đã bấm nút chơi lại');
+            currentLevel = 0;
+            renderTable(currentLevel);
+            renderDraggables(currentLevel);
+            resetDropzones();
+            messageEl.classList.add('hidden');
+            nextLevelBtn.classList.add('hidden');
+        });
+    } else {
+        console.log('Không tìm thấy nút reset!');
+    }
 
     nextLevelBtn.addEventListener('click', function() {
         if (currentLevel < levels.length - 1) {
             currentLevel++;
+            localStorage.setItem(LEVEL_KEY, currentLevel);
             levelSpan.textContent = currentLevel + 1;
             renderTable(currentLevel);
             renderDraggables(currentLevel);

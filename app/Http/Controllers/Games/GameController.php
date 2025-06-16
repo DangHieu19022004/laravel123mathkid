@@ -67,12 +67,6 @@ class GameController extends Controller
         ]);
     }
 
-    public function resetCakeGame()
-    {
-        session()->forget('cake_level');
-        return redirect()->route('games.lop4.phanso.cake');
-    }
-
     // Apple Game Methods
     public function appleGame()
     {
@@ -120,12 +114,6 @@ class GameController extends Controller
             'correct' => $correct,
             'next_level' => $correct && $level < 5
         ]);
-    }
-
-    public function resetAppleGame()
-    {
-        session()->forget('apple_level');
-        return redirect()->route('games.lop4.phanso.apple');
     }
 
     // Bracket Game Methods
@@ -214,12 +202,6 @@ class GameController extends Controller
         ]);
     }
 
-    public function resetBracketGame()
-    {
-        session()->forget('bracket_level');
-        return redirect()->route('games.lop4.phanso.bracket');
-    }
-
     // Garden Game Methods
     public function gardenGame()
     {
@@ -298,12 +280,6 @@ class GameController extends Controller
             'correct' => $correct,
             'next_level' => $correct && $level < 5
         ]);
-    }
-
-    public function resetGardenGame()
-    {
-        session()->forget('garden_level');
-        return redirect()->route('games.lop4.phanso.garden');
     }
 
     // Tower Game Methods
@@ -391,12 +367,6 @@ class GameController extends Controller
                 'details' => $e->getMessage()
             ], 400);
         }
-    }
-
-    public function resetTowerGame()
-    {
-        session()->forget('tower_level');
-        return redirect()->route('games.lop4.phanso.tower');
     }
 
     // Cards Game Methods
@@ -556,12 +526,6 @@ class GameController extends Controller
         }
     }
 
-    public function resetCardsGame()
-    {
-        session()->forget('cards_level');
-        return redirect()->route('games.lop4.phanso.cards');
-    }
-
     // Helper method for checking fraction order
     private function checkFractionOrder($answer, $fractions, $order)
     {
@@ -640,12 +604,6 @@ class GameController extends Controller
             'correct' => $correct,
             'next_level' => $correct && $level < 5
         ]);
-    }
-
-    public function resetCompareGame()
-    {
-        session()->forget('compare_level');
-        return redirect()->route('games.lop4.phanso.compare');
     }
 
     // Division Game Methods
@@ -761,12 +719,6 @@ class GameController extends Controller
         return view('games.lop4.phanso.division', compact('question'));
     }
 
-    public function resetDivisionGame()
-    {
-        session()->forget('division_level');
-        return redirect()->route('games.lop4.phanso.division');
-    }
-
     // Fair Share Game Methods
     public function fairShareGame()
     {
@@ -880,12 +832,6 @@ class GameController extends Controller
         return view('games.lop4.phanso.fair_share', compact('question'));
     }
 
-    public function resetFairShareGame()
-    {
-        session()->forget('fair_share_level');
-        return redirect()->route('games.lop4.phanso.fair_share');
-    }
-
     // Balance Game Methods
     public function balanceGame()
     {
@@ -959,12 +905,6 @@ class GameController extends Controller
                 'details' => $e->getMessage()
             ], 400);
         }
-    }
-
-    public function resetBalanceGame()
-    {
-        session()->forget('balance_level');
-        return redirect()->route('games.lop4.phanso.balance');
     }
 
     // Pattern Game Methods
@@ -1045,12 +985,6 @@ class GameController extends Controller
             'correct' => $correct,
             'next_level' => $correct && $level < 5
         ]);
-    }
-
-    public function resetPatternGame()
-    {
-        session()->forget('pattern_level');
-        return redirect()->route('games.lop4.phanso.pattern');
     }
 
     // Helper method for comparing fractions
@@ -1156,12 +1090,6 @@ class GameController extends Controller
         }
     }
 
-    public function resetWordProblemGame()
-    {
-        session()->forget('word_problem_level');
-        return redirect()->route('games.lop4.phanso.word_problem');
-    }
-
     // Sky Game Methods
     public function skyGame()
     {
@@ -1248,12 +1176,6 @@ class GameController extends Controller
         }
     }
 
-    public function resetSkyGame()
-    {
-        session()->forget('sky_level');
-        return redirect()->route('games.lop4.phanso.sky');
-    }
-
     // Remaining Cake Game Methods
     public function remainingCakeGame()
     {
@@ -1325,12 +1247,6 @@ class GameController extends Controller
                 'details' => $e->getMessage()
             ], 400);
         }
-    }
-
-    public function resetRemainingCakeGame()
-    {
-        session()->forget('remaining_cake_level');
-        return redirect()->route('games.lop4.phanso.remaining_cake');
     }
 
     // Sentence Game Methods
@@ -1411,12 +1327,6 @@ class GameController extends Controller
         }
     }
 
-    public function resetSentenceGame()
-    {
-        session()->forget('sentence_level');
-        return redirect()->route('games.lop4.phanso.sentence');
-    }
-
     // Word Hunt Game Methods
     public function wordHuntGame()
     {
@@ -1475,12 +1385,6 @@ class GameController extends Controller
             'correct' => $correct,
             'next_level' => $correct && $level < 5
         ]);
-    }
-
-    public function resetWordHuntGame()
-    {
-        session()->forget('word_hunt_level');
-        return redirect()->route('games.lop4.phanso.word_hunt');
     }
 
     // Lost City Game Methods
@@ -1629,12 +1533,6 @@ class GameController extends Controller
         ]);
     }
 
-    public function resetLostCityGame()
-    {
-        session()->forget(['lost_city_level', 'lost_city_question']);
-        return redirect()->route('games.lop4.phanso.lost_city');
-    }
-
     // Equal Groups Game Methods
     public function equalGroupsGame()
     {
@@ -1719,12 +1617,6 @@ class GameController extends Controller
         ]);
     }
 
-    public function resetEqualGroupsGame()
-    {
-        session()->forget('equal_groups_level');
-        return redirect()->route('games.lop4.phanso.equal_groups');
-    }
-
     // Helper method for checking equivalent fractions
     private function checkEquivalentFractions($selectedFractions, $target)
     {
@@ -1752,4 +1644,186 @@ class GameController extends Controller
         
         return abs($value1 - $value2) < 0.000001;
     }
+
+    private function generateVolumeMeasurementQuestion($level)
+    {
+        $questions = [
+            1 => [
+                'level' => 1,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '🥤', 'object' => 'Ly nước', 'volume' => 250, 'unit' => 'ml'],
+                    ['emoji' => '🧃', 'object' => 'Hộp nước ép', 'volume' => 200, 'unit' => 'ml'],
+                    ['emoji' => '🥛', 'object' => 'Ly sữa', 'volume' => 300, 'unit' => 'ml']
+                ],
+                'answer_index' => 2
+            ],
+            2 => [
+                'level' => 2,
+                'type' => 'min',
+                'objects' => [
+                    ['emoji' => '🍶', 'object' => 'Bình nước', 'volume' => 1.5, 'unit' => 'l'],
+                    ['emoji' => '🧉', 'object' => 'Bình trà', 'volume' => 1, 'unit' => 'l'],
+                    ['emoji' => '🥤', 'object' => 'Chai nước', 'volume' => 2, 'unit' => 'l']
+                ],
+                'answer_index' => 1
+            ],
+            3 => [
+                'level' => 3,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '🪣', 'object' => 'Xô nước', 'volume' => 5, 'unit' => 'l'],
+                    ['emoji' => '🪣', 'object' => 'Thùng nước', 'volume' => 10, 'unit' => 'l'],
+                    ['emoji' => '🪣', 'object' => 'Bể nước', 'volume' => 20, 'unit' => 'l']
+                ],
+                'answer_index' => 2
+            ],
+            4 => [
+                'level' => 4,
+                'type' => 'min',
+                'objects' => [
+                    ['emoji' => '🏊', 'object' => 'Bể bơi nhỏ', 'volume' => 50, 'unit' => 'm³'],
+                    ['emoji' => '🏊', 'object' => 'Bể bơi vừa', 'volume' => 100, 'unit' => 'm³'],
+                    ['emoji' => '🏊', 'object' => 'Bể bơi lớn', 'volume' => 200, 'unit' => 'm³']
+                ],
+                'answer_index' => 0
+            ],
+            5 => [
+                'level' => 5,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '🌊', 'object' => 'Hồ nước', 'volume' => 1000, 'unit' => 'm³'],
+                    ['emoji' => '🌊', 'object' => 'Sông nhỏ', 'volume' => 5000, 'unit' => 'm³'],
+                    ['emoji' => '🌊', 'object' => 'Hồ lớn', 'volume' => 10000, 'unit' => 'm³']
+                ],
+                'answer_index' => 2
+            ]
+        ];
+
+        return $questions[$level] ?? $questions[1];
+    }
+
+    public function volumeMeasurementGame()
+    {
+        $level = session('volume_measurement_level', 1);
+        $question = $this->generateVolumeMeasurementQuestion($level);
+        return view('games.lop4.bi_an_hinh_hoc.volume_measurement', compact('question'));
+    }
+
+    public function checkVolumeMeasurementAnswer(Request $request)
+    {
+        try {
+            $level = session('volume_measurement_level', 1);
+            $question = $this->generateVolumeMeasurementQuestion($level);
+            
+            $selectedIndex = (int) $request->input('selected_index');
+            $correct = $selectedIndex === $question['answer_index'];
+            
+            if ($correct && $level < 5) {
+                session(['volume_measurement_level' => $level + 1]);
+            }
+            
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    private function generateAreaMeasurementQuestion($level)
+    {
+        $questions = [
+            1 => [
+                'level' => 1,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '🔺', 'object' => 'Tam giác', 'area' => 24, 'unit' => 'cm²', 'description' => 'Đáy: 8cm, Chiều cao: 6cm'],
+                    ['emoji' => '🔺', 'object' => 'Tam giác', 'area' => 30, 'unit' => 'cm²', 'description' => 'Đáy: 10cm, Chiều cao: 6cm'],
+                    ['emoji' => '🔺', 'object' => 'Tam giác', 'area' => 36, 'unit' => 'cm²', 'description' => 'Đáy: 12cm, Chiều cao: 6cm']
+                ],
+                'answer_index' => 2
+            ],
+            2 => [
+                'level' => 2,
+                'type' => 'min',
+                'objects' => [
+                    ['emoji' => '⬡', 'object' => 'Hình thang', 'area' => 40, 'unit' => 'cm²', 'description' => 'Đáy lớn: 10cm, Đáy nhỏ: 6cm, Chiều cao: 5cm'],
+                    ['emoji' => '⬡', 'object' => 'Hình thang', 'area' => 45, 'unit' => 'cm²', 'description' => 'Đáy lớn: 12cm, Đáy nhỏ: 6cm, Chiều cao: 5cm'],
+                    ['emoji' => '⬡', 'object' => 'Hình thang', 'area' => 50, 'unit' => 'cm²', 'description' => 'Đáy lớn: 14cm, Đáy nhỏ: 6cm, Chiều cao: 5cm']
+                ],
+                'answer_index' => 0
+            ],
+            3 => [
+                'level' => 3,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '⬜', 'object' => 'Hình chữ nhật', 'area' => 48, 'unit' => 'cm²', 'description' => 'Chiều dài: 8cm, Chiều rộng: 6cm'],
+                    ['emoji' => '⬜', 'object' => 'Hình chữ nhật', 'area' => 60, 'unit' => 'cm²', 'description' => 'Chiều dài: 10cm, Chiều rộng: 6cm'],
+                    ['emoji' => '⬜', 'object' => 'Hình chữ nhật', 'area' => 72, 'unit' => 'cm²', 'description' => 'Chiều dài: 12cm, Chiều rộng: 6cm']
+                ],
+                'answer_index' => 2
+            ],
+            4 => [
+                'level' => 4,
+                'type' => 'min',
+                'objects' => [
+                    ['emoji' => '⭕', 'object' => 'Hình tròn', 'area' => 28.26, 'unit' => 'cm²', 'description' => 'Bán kính: 3cm'],
+                    ['emoji' => '⭕', 'object' => 'Hình tròn', 'area' => 50.24, 'unit' => 'cm²', 'description' => 'Bán kính: 4cm'],
+                    ['emoji' => '⭕', 'object' => 'Hình tròn', 'area' => 78.5, 'unit' => 'cm²', 'description' => 'Bán kính: 5cm']
+                ],
+                'answer_index' => 0
+            ],
+            5 => [
+                'level' => 5,
+                'type' => 'max',
+                'objects' => [
+                    ['emoji' => '🔷', 'object' => 'Hình bình hành', 'area' => 40, 'unit' => 'cm²', 'description' => 'Đáy: 8cm, Chiều cao: 5cm'],
+                    ['emoji' => '🔷', 'object' => 'Hình bình hành', 'area' => 50, 'unit' => 'cm²', 'description' => 'Đáy: 10cm, Chiều cao: 5cm'],
+                    ['emoji' => '🔷', 'object' => 'Hình bình hành', 'area' => 60, 'unit' => 'cm²', 'description' => 'Đáy: 12cm, Chiều cao: 5cm']
+                ],
+                'answer_index' => 2
+            ]
+        ];
+
+        return $questions[$level] ?? $questions[1];
+    }
+
+    public function areaMeasurementGame()
+    {
+        $level = session('area_measurement_level', 1);
+        $question = $this->generateAreaMeasurementQuestion($level);
+        return view('games.lop4.bi_an_hinh_hoc.area_measurement', compact('question'));
+    }
+
+    public function checkAreaMeasurementAnswer(Request $request)
+    {
+        try {
+            $level = session('area_measurement_level', 1);
+            $question = $this->generateAreaMeasurementQuestion($level);
+            
+            $selectedIndex = (int) $request->input('selected_index');
+            $correct = $selectedIndex === $question['answer_index'];
+            
+            if ($correct && $level < 5) {
+                session(['area_measurement_level' => $level + 1]);
+            }
+            
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    // ... existing code ...
 } 

@@ -167,8 +167,8 @@
         }
     ];
 
-    let currentLevel = {{ session('equal_groups_level', 1) }};
-    let totalLevels = levels.length;
+    let currentLevel = parseInt(localStorage.getItem('equalGroupsLevel') || '0');
+    const totalLevels = levels.length;
     let sortables = [];
 
     function initializeGame() {
@@ -177,7 +177,7 @@
     }
 
     function generateLevel() {
-        const level = levels[currentLevel - 1];
+        const level = levels[currentLevel];
         
         // Clear previous sortables
         sortables.forEach(sortable => sortable.destroy());
@@ -236,13 +236,13 @@
     }
 
     function updateLevel() {
-        $('#current-level').text(currentLevel);
-        const progress = ((currentLevel - 1) / totalLevels) * 100;
+        $('#current-level').text(currentLevel + 1);
+        const progress = ((currentLevel) / totalLevels) * 100;
         $('#progress-bar').css('width', progress + '%');
     }
 
     function checkAnswer() {
-        const level = levels[currentLevel - 1];
+        const level = levels[currentLevel];
         let isCorrect = true;
 
         // Check if all cards have been sorted into groups
@@ -286,7 +286,7 @@
                 title: 'Chính xác!',
                 text: 'Bạn đã phân nhóm đúng tất cả các phân số!'
             }).then(() => {
-                if (currentLevel < totalLevels) {
+                if (currentLevel < totalLevels - 1) {
                     $('#check-answer').addClass('d-none');
                     $('#next-level').removeClass('d-none');
                 } else {
@@ -296,7 +296,10 @@
                         text: 'Bạn đã hoàn thành tất cả các cấp độ!',
                         confirmButtonText: 'Chơi lại'
                     }).then(() => {
-                        window.location.href = '{{ route("games.lop4.phanso.equal_groups.reset") }}';
+                        currentLevel = 0;
+                        localStorage.removeItem('equalGroupsLevel');
+                        updateLevel();
+                        generateLevel();
                     });
                 }
             });
@@ -349,50 +352,31 @@
         $('#check-answer').click(checkAnswer);
 
         $('#next-level').click(function() {
-            console.log('Current level before next:', currentLevel);
-            
-            if (currentLevel < totalLevels) {
+            if (currentLevel < totalLevels - 1) {
                 currentLevel++;
-                console.log('Moving to level:', currentLevel);
-                
-                // Lưu level mới vào session thông qua AJAX
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-                
-                $.ajax({
-                    url: '{{ route("games.lop4.phanso.equal_groups.check") }}',
-                    method: 'POST',
-                    data: {
-                        level: currentLevel - 1  // Gửi level hiện tại
-                    }
-                });
-                
-                // Cập nhật UI ngay lập tức không cần đợi response
+                localStorage.setItem('equalGroupsLevel', currentLevel);
                 updateLevel();
                 generateLevel();
                 $('#next-level').addClass('d-none');
                 $('#check-answer').removeClass('d-none');
-                
-                // Hiển thị thông báo chuyển cấp
                 Swal.fire({
                     icon: 'success',
                     title: 'Chuyển cấp!',
-                    text: 'Chào mừng bạn đến với cấp độ ' + currentLevel,
+                    text: 'Chào mừng bạn đến với cấp độ ' + (currentLevel + 1),
                     showConfirmButton: false,
                     timer: 1500
                 });
             } else {
-                // Đã hoàn thành tất cả các cấp
                 Swal.fire({
                     icon: 'success',
                     title: 'Chúc mừng!',
                     text: 'Bạn đã hoàn thành tất cả các cấp độ!',
                     confirmButtonText: 'Chơi lại'
                 }).then(() => {
-                    window.location.href = '{{ route("games.lop4.phanso.equal_groups.reset") }}';
+                    currentLevel = 0;
+                    localStorage.removeItem('equalGroupsLevel');
+                    updateLevel();
+                    generateLevel();
                 });
             }
         });

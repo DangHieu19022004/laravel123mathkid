@@ -81,10 +81,12 @@ class HinhHocGameController extends Controller
             $min = min(array_column($objects, 'volume_ml'));
             foreach ($objects as $i => $o) if ($o['volume_ml'] == $min) $answer_index = $i;
         }
+        $level = session('volume_measurement_level', 1);
         return [
             'objects' => $objects,
             'type' => $type,
-            'answer_index' => $answer_index
+            'answer_index' => $answer_index,
+            'level' => $level
         ];
     }
     public function angleMeasurementGame()

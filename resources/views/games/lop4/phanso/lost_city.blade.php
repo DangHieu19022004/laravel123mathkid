@@ -176,6 +176,9 @@
                 $('#check-answer').click();
             }
         });
+
+        let currentLevel = parseInt(localStorage.getItem('lostCityLevel') || '0');
+        const totalLevels = 5;
     });
 </script>
 @endsection 

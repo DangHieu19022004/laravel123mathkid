@@ -19,55 +19,38 @@
                     </div>
 
                     <div id="game-container" class="mb-4">
-                        <div class="row">
-                            <div class="col-12">
-                                <div id="city-map" class="position-relative">
-                                    @foreach($question['streets'] as $street)
-                                    <div class="street-container mb-4 p-3 border rounded">
-                                        <h5 class="street-name mb-3">
-                                            <i class="fas fa-road me-2"></i>{{ $street['name'] }}
-                                        </h5>
-                                        <div class="street-description mb-3">
-                                            {{ $street['description'] }}
-                                        </div>
-                                        <div class="input-group">
-                                            <input type="number" class="form-control street-input" 
-                                                data-id="{{ $street['id'] }}" placeholder="Điền số">
-                                            <button class="btn btn-outline-secondary hint-btn" type="button"
-                                                data-hint="{{ $street['hint'] }}">
-                                                <i class="fas fa-lightbulb"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    @endforeach
+                        <div id="city-map">
+                            @foreach($question['streets'] as $index => $street)
+                            <div class="street-container mb-4 p-3 border rounded">
+                                <h5 class="street-name mb-2">
+                                    <i class="fas fa-road me-2"></i>{{ $street['name'] }}
+                                </h5>
+                                <p class="street-description mb-3">{{ $street['description'] }}</p>
+                                <div class="input-group mb-1">
+                                    <input type="text" class="form-control street-input" data-index="{{ $index }}" placeholder="Điền số">
+                                    <button type="button" class="btn btn-outline-secondary hint-btn" data-hint="{{ $street['hint'] }}">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </button>
                                 </div>
+                                <div class="text-danger small hint-text d-none"></div>
                             </div>
+                            @endforeach
                         </div>
-
-                        <div class="text-center mt-4">
-                            <button id="check-answer" class="btn btn-primary btn-lg">
-                                Kiểm tra
-                            </button>
-                            <button id="next-level" class="btn btn-success btn-lg d-none">
-                                Tiếp theo
-                            </button>
+                        <div class="text-center mt-3">
+                            <button id="check-answer" class="btn btn-primary btn-lg">Kiểm tra</button>
+                            <button id="next-level" class="btn btn-success btn-lg d-none">Tiếp theo</button>
                         </div>
                     </div>
 
                     <div class="progress mb-3">
-                        <div id="progress-bar" class="progress-bar" role="progressbar" 
-                             style="width: {{ ($question['level'] - 1) * 20 }}%"></div>
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: {{ ($question['level'] - 1) * 20 }}%"></div>
                     </div>
 
-                    <!-- Controls -->
-                    <div class="text-center mt-4">
-                        <form action="{{ route('games.lop4.giai_toan_loi_van.lost_city.reset') }}" method="GET" class="d-inline">
-                            <button type="submit" class="btn btn-link text-decoration-none">
-                                Chơi lại từ đầu
-                            </button>
-                        </form>
-
-                        <a href="{{ route('games.lop4.giai_toan_loi_van.index') }}" class="btn btn-link text-decoration-none">
+                    <div class="text-center mt-3">
+                        <button id="reset-btn" class="btn btn-link">
+                            <i class="fas fa-redo"></i> Chơi lại từ đầu
+                        </button>
+                        <a href="{{ route('games.lop4.giai_toan_loi_van.index') }}" class="btn btn-link">
                             ← Quay lại danh sách
                         </a>
                     </div>
@@ -80,111 +63,73 @@
 
 @section('scripts')
 <script>
-    $(document).ready(function() {
-        // Add custom styles
-        $('<style>')
-            .text(`
-                .street-container {
-                    background-color: #f8f9fa;
-                    transition: all 0.3s ease;
-                }
-                .street-container:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
-                .street-name {
-                    color: #2196f3;
-                }
-                .hint-btn:hover {
-                    background-color: #e3f2fd;
-                }
-            `)
-            .appendTo('head');
+document.addEventListener('DOMContentLoaded', function() {
+    const totalLevels = 5;
+    // Lấy level từ localStorage hoặc fallback
+    let stored = parseInt(localStorage.getItem('lostCityLevel'), 10);
+    let currentLevel = isNaN(stored) ? ({{ $question['level'] }} - 1) : stored;
 
-        // Handle hint button clicks
-        $('.hint-btn').click(function() {
-            const hint = $(this).data('hint');
-            Swal.fire({
-                icon: 'info',
-                title: 'Gợi ý',
-                text: hint
-            });
+    // Cập nhật hiển thị
+    document.getElementById('current-level').textContent = currentLevel + 1;
+    document.getElementById('progress-bar').style.width = (currentLevel * 20) + '%';
+
+    // Xác định xem có cần %
+    const percentMap = @json(array_map(fn($s) => str_ends_with($s['answer'], '%'), $question['streets']));
+
+    // Hint button
+    document.querySelectorAll('.hint-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            Swal.fire({ icon: 'info', title: 'Gợi ý', text: btn.dataset.hint });
         });
+    });
 
-        // Handle check answer button
-        $('#check-answer').click(function() {
-            const answers = {};
-            $('.street-input').each(function() {
-                const id = $(this).data('id');
-                answers[id - 1] = $(this).val();
-            });
-
-            $.ajax({
-                url: '{{ route("games.lop4.giai_toan_loi_van.lost_city.check") }}',
-                method: 'POST',
-                data: {
-                    answers: answers,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.correct) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Chính xác!',
-                            text: 'Bạn đã tìm đúng tất cả các con số!'
-                        }).then(() => {
-                            if (response.next_level) {
-                                $('#check-answer').addClass('d-none');
-                                $('#next-level').removeClass('d-none');
-                            } else {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Chúc mừng!',
-                                    text: 'Bạn đã hoàn thành tất cả các cấp độ!',
-                                    confirmButtonText: 'Chơi lại'
-                                }).then(() => {
-                                    window.location.href = '{{ route("games.lop4.giai_toan_loi_van.lost_city.reset") }}';
-                                });
-                            }
-                        });
+    // Kiểm tra đáp án
+    document.getElementById('check-answer').addEventListener('click', () => {
+        const answers = {};
+        document.querySelectorAll('.street-input').forEach(input => {
+            let raw = input.value.trim();
+            let val = raw.replace(/[^0-9%]/g, '');
+            const idx = parseInt(input.dataset.index, 10);
+            if (percentMap[idx] && val && !val.endsWith('%')) val += '%';
+            answers[idx] = val;
+        });
+        fetch('{{ route("games.lop4.giai_toan_loi_van.lost_city.check") }}', {
+            method: 'POST', headers: {'Content-Type': 'application/json','X-CSRF-TOKEN': '{{ csrf_token() }}'},
+            body: JSON.stringify({ answers })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.correct) {
+                Swal.fire({ icon: 'success', title: 'Chính xác!', text: 'Bạn đã hoàn thành cấp độ này!' })
+                .then(() => {
+                    if (data.next_level) {
+                        currentLevel++;
+                        localStorage.setItem('lostCityLevel', currentLevel);
+                        document.getElementById('check-answer').classList.add('d-none');
+                        document.getElementById('next-level').classList.remove('d-none');
                     } else {
-                        // Hiển thị gợi ý cho các câu trả lời sai
-                        response.wrong_answers.forEach(wrong => {
-                            const streetElement = $('.street-container:has(input[data-id="' + wrong.street + '"])');
-                            if (streetElement.length > 0) {
-                                const hintElement = streetElement.find('.hint');
-                                hintElement.text('Gợi ý: ' + wrong.hint);
-                                hintElement.show();
-                            }
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Chưa đúng!',
-                            text: 'Hãy thử lại nhé!'
+                        Swal.fire({ icon: 'success', title: 'Hoàn thành!', text: 'Bạn đã hoàn thành tất cả cấp độ!', confirmButtonText: 'Chơi lại' })
+                        .then(() => {
+                            localStorage.removeItem('lostCityLevel');
+                            window.location.reload();
                         });
                     }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Có lỗi xảy ra',
-                        text: 'Vui lòng thử lại sau!'
-                    });
-                }
-            });
-        });
-
-        // Handle next level button
-        $('#next-level').click(function() {
-            window.location.reload();
-        });
-
-        // Handle enter key
-        $('.street-input').keypress(function(e) {
-            if(e.which == 13) {
-                $('#check-answer').click();
+                });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Chưa đúng!', text: 'Hãy thử lại!' });
             }
         });
     });
+
+    // Next level
+    document.getElementById('next-level').addEventListener('click', () => window.location.reload());
+    // Reset
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        if (confirm('Bạn có muốn chơi lại từ đầu?')) {
+            localStorage.removeItem('lostCityLevel');
+            window.location.reload();
+        }
+    });
+});
 </script>
-@endsection 
+@endsection

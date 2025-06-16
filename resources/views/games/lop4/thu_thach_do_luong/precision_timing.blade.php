@@ -82,7 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
         { target: 45, allowedError: 1 },
         { target: 60, allowedError: 1 }
     ];
-    let currentLevel = 0;
+    let currentLevel = parseInt(localStorage.getItem('precisionTimingLevel') || '0');
+    const totalLevels = levels.length;
 
     const startBtn = document.getElementById('start');
     const stopBtn = document.getElementById('stop');
@@ -174,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hiển thị thông báo dựa trên độ chính xác
         if (difference <= levels[currentLevel].allowedError) {
             showMessage('🎉 Chính xác! Bạn đã qua màn này!', 'bg-green-500');
-            if (currentLevel < levels.length - 1) {
+            if (currentLevel < totalLevels - 1) {
                 nextLevelBtn.classList.remove('hidden');
             } else {
                 showMessage('🏆 Chúc mừng! Bạn đã hoàn thành tất cả màn chơi!', 'bg-green-600');
@@ -200,18 +201,24 @@ document.addEventListener('DOMContentLoaded', function() {
     startBtn.addEventListener('click', startTimer);
     stopBtn.addEventListener('click', stopTimer);
     nextLevelBtn.addEventListener('click', function() {
-        setLevel(currentLevel + 1);
+        if (currentLevel < totalLevels - 1) {
+            currentLevel++;
+            localStorage.setItem('precisionTimingLevel', currentLevel);
+            setLevel(currentLevel);
+        }
     });
     resetGameBtn.addEventListener('click', function() {
+        currentLevel = 0;
+        localStorage.removeItem('precisionTimingLevel');
         attempts = 0;
         bestScore = Infinity;
         bestScoreSpan.textContent = '-';
         attemptsSpan.textContent = '0';
-        setLevel(0);
+        setLevel(currentLevel);
     });
 
     // Khởi tạo màn đầu tiên
-    setLevel(0);
+    setLevel(currentLevel);
 });
 </script>
 @endsection 
