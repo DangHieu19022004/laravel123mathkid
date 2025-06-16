@@ -93,7 +93,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('games.lop4.phanso') }}">
+                        <a class="nav-link" href="{{ route('games.lop4.index') }}">
                             <i class="fas fa-gamepad"></i> Trò Chơi
                         </a>
                     </li>
