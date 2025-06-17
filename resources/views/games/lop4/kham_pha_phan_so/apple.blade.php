@@ -7,9 +7,9 @@
         <h1 class="display-4 mb-4">Chia Táo 🍎</h1>
         <div class="card d-inline-block mb-4">
             <div class="card-body">
-                <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
-                <p class="h5 text-muted">
-                    Hãy chia {{ $question['apples'] }} quả táo vào {{ $question['students'] }} nhóm bằng nhau
+                <h2 class="h4 mb-3">Cấp độ <span id="current-level"></span>/5</h2>
+                <p class="h5 text-muted" id="instruction-text">
+                    <!-- Instruction will be set by JS -->
                 </p>
             </div>
         </div>
@@ -22,8 +22,8 @@
             <div class="alert alert-info">
                 <h3 class="h5 mb-3">🎯 Hướng dẫn chơi:</h3>
                 <ul class="text-start mb-0">
-                    <li>Có tổng cộng {{ $question['apples'] }} quả táo</li>
-                    <li>Bạn cần chia đều vào {{ $question['students'] }} nhóm</li>
+                    <li>Có tổng cộng <span id="total-apples"></span> quả táo</li>
+                    <li>Bạn cần chia đều vào <span id="total-groups"></span> nhóm</li>
                     <li>Kéo và thả táo vào từng nhóm</li>
                     <li>Mỗi nhóm phải có số táo bằng nhau</li>
                 </ul>
@@ -33,264 +33,139 @@
         <!-- Apple Source -->
         <div class="col-12 mb-4">
             <div class="card">
-                <div class="card-body text-center" id="apple-source">
-                    <!-- Apples will be added here -->
-                </div>
+                <div class="card-body text-center" id="apple-source"></div>
             </div>
         </div>
 
         <!-- Apple Groups -->
         <div class="col-12">
-            <div class="row g-4 justify-content-center" id="apple-groups">
-                <!-- Groups will be added here -->
-            </div>
+            <div class="row g-4 justify-content-center" id="apple-groups"></div>
         </div>
     </div>
 
     <!-- Controls -->
     <div class="text-center">
-        <button type="button" onclick="checkAnswer()" class="btn btn-game mb-3">
-            Kiểm tra
-        </button>
-
+        <button id="check-btn" class="btn btn-game mb-3">Kiểm tra</button>
         <div id="message" class="alert d-none my-3"></div>
-
-        <form id="resetForm" action="{{ url(route('games.lop4.phanso.apple.reset')) }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="btn btn-link text-decoration-none">
-                Chơi lại từ đầu
-            </button>
-        </form>
-
-        <a href="{{ url(route('games.lop4.phanso')) }}" class="btn btn-link text-decoration-none">
-            ← Quay lại danh sách
-        </a>
+        <button id="reset-btn" class="btn btn-link text-decoration-none">Chơi lại từ đầu</button>
+        <a href="{{ url('/games/lop4/kham-pha-phan-so') }}" class="btn btn-link text-decoration-none">← Quay lại danh sách</a>
     </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
-const BASE_URL = '{{ url('/') }}';
-const CHECK_URL = '{{ url(route('games.lop4.phanso.apple.check')) }}';
-const CSRF_TOKEN = '{{ csrf_token() }}';
+// Các câu hỏi được định nghĩa sẵn tại client
+const questions = {
+    1: { apples: 4, students: 2 },
+    2: { apples: 6, students: 3 },
+    3: { apples: 8, students: 4 },
+    4: { apples: 10, students: 5 },
+    5: { apples: 12, students: 6 }
+};
+const maxLevel = 5;
 
-function checkAnswer() {
-    console.log('Checking answer...');
-    const groups = document.querySelectorAll('.droppable');
-    const groupCounts = Array.from(groups).map(group => group.children.length);
-    console.log('Group counts:', groupCounts);
-    
-    const formData = new FormData();
-    formData.append('group_counts', JSON.stringify(groupCounts));
-    formData.append('apples', {{ $question['apples'] }});
-    formData.append('students', {{ $question['students'] }});
-    formData.append('_token', CSRF_TOKEN);
-    
-    console.log('Sending request to:', CHECK_URL);
-    
-    fetch(CHECK_URL, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': CSRF_TOKEN
-        },
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        console.log('Response received:', response);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Data:', data);
-        const messageDiv = document.getElementById('message');
-        messageDiv.classList.remove('d-none');
-        
-        if (data.correct) {
-            messageDiv.className = 'alert alert-success animate-bounce';
-            messageDiv.textContent = '🎉 Tuyệt vời! Cùng tiếp tục nào! 🎉';
-            
-            if (typeof confetti !== 'undefined') {
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#ff69b4', '#ff1493', '#ff69b4', '#dda0dd']
-                });
-            }
+document.addEventListener('DOMContentLoaded', () => {
+    // Lấy level từ localStorage, mặc định 1
+    let level = parseInt(localStorage.getItem('appleLevel'), 10);
+    if (isNaN(level) || !questions[level]) level = 1;
+    localStorage.setItem('appleLevel', level);
 
-            if (data.next_level) {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            }
-        } else {
-            messageDiv.className = 'alert alert-warning';
-            const applesPerGroup = {{ $question['apples'] }} / {{ $question['students'] }};
-            messageDiv.innerHTML = `
-                <h4 class="alert-heading">⚠️ Hãy thử lại!</h4>
-                <p class="mb-0">Các nhóm chưa có số táo bằng nhau.</p>
-                <hr>
-                <p class="mb-0">💡 Gợi ý: Mỗi nhóm cần có ${applesPerGroup} quả táo.</p>
-                <ul class="mb-0 mt-2">
-                    ${groupCounts.map((count, i) => `
-                        <li>Nhóm ${i + 1}: ${count} táo ${count == applesPerGroup ? '✅' : '❌'}</li>
-                    `).join('')}
-                </ul>
-            `;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        const messageDiv = document.getElementById('message');
-        messageDiv.classList.remove('d-none');
-        messageDiv.className = 'alert alert-danger';
-        messageDiv.textContent = 'Có lỗi xảy ra, vui lòng thử lại!';
-    });
-}
+    const { apples, students } = questions[level];
 
-document.addEventListener('DOMContentLoaded', function() {
-    const totalApples = {{ $question['apples'] }};
-    const groups = {{ $question['students'] }};
-    
-    // Initialize game
-    function initGame() {
-        // Create apple source
-        const source = document.getElementById('apple-source');
-        source.innerHTML = '';
-        for (let i = 0; i < totalApples; i++) {
-            const apple = createApple();
-            source.appendChild(apple);
-        }
-        
-        // Create groups
-        const groupsContainer = document.getElementById('apple-groups');
-        groupsContainer.innerHTML = '';
-        for (let i = 0; i < groups; i++) {
-            const group = createGroup(i + 1);
-            groupsContainer.appendChild(group);
-        }
-        
-        // Initialize drag and drop
-        initDragAndDrop();
-    }
-    
-    function createApple() {
+    // Hiển thị level, apples và groups
+    document.getElementById('current-level').textContent = level;
+    document.getElementById('total-apples').textContent = apples;
+    document.getElementById('total-groups').textContent = students;
+
+    // Tạo các quả táo
+    const source = document.getElementById('apple-source');
+    source.innerHTML = '';
+    for (let i = 0; i < apples; i++) {
         const apple = document.createElement('div');
         apple.className = 'apple draggable';
         apple.draggable = true;
-        apple.innerHTML = '🍎';
-        return apple;
+        apple.textContent = '🍎';
+        source.appendChild(apple);
     }
-    
-    function createGroup(number) {
+
+    // Tạo các nhóm
+    const container = document.getElementById('apple-groups');
+    container.innerHTML = '';
+    for (let i = 1; i <= students; i++) {
         const col = document.createElement('div');
         col.className = 'col-md-4';
-        
-        const group = document.createElement('div');
-        group.className = 'card h-100 apple-group';
-        group.innerHTML = `
-            <div class="card-header text-center">
-                Nhóm ${number}
-            </div>
-            <div class="card-body droppable" data-group="${number}">
-                <!-- Apples will be dropped here -->
+        col.innerHTML = `
+            <div class="card h-100 apple-group">
+                <div class="card-header text-center">Nhóm ${i}</div>
+                <div class="card-body droppable" data-group="${i}"></div>
             </div>
         `;
-        
-        col.appendChild(group);
-        return col;
+        container.appendChild(col);
     }
-    
-    function initDragAndDrop() {
-        const draggables = document.querySelectorAll('.draggable');
+
+    // Khởi tạo drag & drop
+    initDragAndDrop();
+
+    // Xử lý kiểm tra
+    document.getElementById('check-btn').addEventListener('click', () => {
         const droppables = document.querySelectorAll('.droppable');
-        
-        draggables.forEach(draggable => {
-            draggable.addEventListener('dragstart', () => {
-                draggable.classList.add('dragging');
-            });
-            
-            draggable.addEventListener('dragend', () => {
-                draggable.classList.remove('dragging');
-            });
-        });
-        
-        droppables.forEach(droppable => {
-            droppable.addEventListener('dragover', e => {
-                e.preventDefault();
-                droppable.classList.add('drag-over');
-            });
-            
-            droppable.addEventListener('dragleave', () => {
-                droppable.classList.remove('drag-over');
-            });
-            
-            droppable.addEventListener('drop', e => {
-                e.preventDefault();
-                droppable.classList.remove('drag-over');
-                const apple = document.querySelector('.dragging');
-                if (apple) {
-                    droppable.appendChild(apple);
-                }
-            });
-        });
-    }
-    
-    initGame();
+        const counts = Array.from(droppables).map(d => d.children.length);
+        const expected = apples / students;
+        const allEqual = counts.every(c => c === expected);
+        const message = document.getElementById('message');
+        message.classList.remove('d-none');
+
+        if (allEqual) {
+            message.className = 'alert alert-success';
+            message.textContent = '🎉 Đúng rồi!';
+            // Lên level tiếp theo nếu chưa max
+            if (level < maxLevel) {
+                localStorage.setItem('appleLevel', level + 1);
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                message.textContent += ' Bạn đã hoàn thành tất cả cấp độ!';
+            }
+        } else {
+            message.className = 'alert alert-warning';
+            message.innerHTML = `⚠️ Chưa đúng! Mỗi nhóm cần có ${expected} táo.`;
+        }
+    });
+
+    // Xử lý reset
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        if (confirm('Chơi lại từ đầu?')) {
+            localStorage.removeItem('appleLevel');
+            setTimeout(() => location.reload(), 200);
+        }
+    });
 });
+
+function initDragAndDrop() {
+    document.querySelectorAll('.draggable').forEach(el => {
+        el.addEventListener('dragstart', () => el.classList.add('dragging'));
+        el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    });
+    document.querySelectorAll('.droppable').forEach(drop => {
+        drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
+        drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+        drop.addEventListener('drop', e => {
+            e.preventDefault();
+            drop.classList.remove('drag-over');
+            const apple = document.querySelector('.dragging');
+            if (apple) drop.appendChild(apple);
+        });
+    });
+}
 </script>
 @endpush
 
 @push('styles')
 <style>
-.btn-game {
-    background: linear-gradient(45deg, #ff69b4, #ff1493);
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 1.2rem;
-    transition: transform 0.2s;
-}
-.btn-game:hover {
-    transform: scale(1.05);
-    color: white;
-}
-.animate-bounce {
-    animation: bounce 0.5s;
-}
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-.apple {
-    display: inline-block;
-    font-size: 2rem;
-    margin: 5px;
-    cursor: grab;
-    user-select: none;
-}
-.apple.dragging {
-    opacity: 0.5;
-    cursor: grabbing;
-}
-.apple-group {
-    min-height: 200px;
-    border: 2px dashed #ddd;
-    transition: border-color 0.3s;
-}
-.apple-group .card-header {
-    background-color: #f8f9fa;
-    font-weight: bold;
-}
-.droppable {
-    padding: 1rem;
-    min-height: 150px;
-}
-.droppable.drag-over {
-    background-color: #f8f9fa;
-    border-color: #ff69b4;
-}
+.btn-game { background: linear-gradient(45deg,#ff69b4,#ff1493); color:#fff; padding:10px 30px; border:none; border-radius:25px; }
+.apple { font-size:2rem; margin:5px; cursor:grab; }
+.apple.dragging { opacity:0.5; cursor:grabbing; }
+.apple-group { border:2px dashed #ddd; min-height:150px; padding:1rem; }
+.droppable.drag-over { background:#f8f9fa; border-color:#ff1493; }
 </style>
 @endpush
-@endsection 

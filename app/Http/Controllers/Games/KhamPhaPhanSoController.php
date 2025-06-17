@@ -59,11 +59,7 @@ class KhamPhaPhanSoController extends Controller
         ]);
     }
 
-    public function resetAppleGame()
-    {
-        session()->forget('apple_level');
-        return redirect()->route('games.lop4.phanso.apple');
-    }
+    
     // Balance Game Methods
     public function balanceGame()
     {

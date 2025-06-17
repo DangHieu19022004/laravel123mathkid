@@ -161,9 +161,5 @@ class DaySoQuyLuatController extends Controller
         ]);
     }
 
-    public function resetGame()
-    {
-        session(['pattern_level' => 1]);
-        return redirect()->route('games.lop4.day_so_quy_luat.pattern');
-    }
+    
 } 
