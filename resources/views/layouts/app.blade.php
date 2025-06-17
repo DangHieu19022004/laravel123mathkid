@@ -3,90 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Toán Lớp 4</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <style>
-        body {
-            min-height: 100vh;
-            background: #f8fafc;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .game-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .btn-game {
-            background: #10b981;
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 9999px;
-            border: none;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-        .btn-game:hover {
-            background: #059669;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .cake-container {
-            width: 400px;
-            height: 400px;
-            margin: 0 auto;
-        }
-        .cake-piece {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .cake-piece:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(-5%); }
-            50% { transform: translateY(0); }
-        }
-        .animate-bounce {
-            animation: bounce 1s infinite;
-        }
-    </style>
+    {{-- {!! SEO::generate(true) !!} --}}
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('styles')
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">Game Toán Lớp 4</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-           
+<body class="bg-gradient-to-br from-yellow-50 via-white to-blue-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="/" class="text-2xl font-extrabold text-orange-600 tracking-wide hover:opacity-80 transition-all">
+            🎓 Game Toán Lớp 4
+        </a>
+        <div class="hidden md:flex items-center gap-4">
+            <a href="/" class="text-sm font-medium text-gray-600 hover:text-orange-600 transition">Trang chủ</a>
+            <a href="#games" class="text-sm font-medium text-gray-600 hover:text-orange-600 transition">Chủ đề</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <main>
-        @yield('content')
-    </main>
+<!-- Main Content -->
+<main class="flex-grow">
+    @yield('content')
+</main>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Footer -->
+<footer class="bg-white mt-8 py-6 text-center text-sm text-gray-500 border-t border-gray-100">
+    © {{ date('Y') }} Game Toán Lớp 4. Được phát triển với ❤️.
+</footer>
 
-    @stack('scripts')
+<!-- jQuery nếu cần -->
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+
+@stack('scripts')
+
 </body>
-</html> 
+</html>

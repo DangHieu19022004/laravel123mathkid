@@ -1,0 +1,40 @@
+/* Custom animations */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(-5%);
+    }
+    50% {
+        transform: translateY(0);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+/* Custom styles for the cake game */
+.cake-piece {
+    transition: fill 0.3s ease;
+}
+
+.cake-piece:hover {
+    filter: brightness(0.95);
+}
+
+/* Game container styles */
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Button styles */
+.btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full
+    shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl
+    active:scale-95 font-bold text-lg;
+}
+
+.btn-secondary {
+    @apply px-4 py-2 text-pink-600 hover:text-pink-800 underline transition-colors;
+}

@@ -1,0 +1,59 @@
+body {
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.btn-game {
+    background: #10b981;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    border: none;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-game:hover {
+    background: #059669;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.cake-container {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.cake-piece {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cake-piece:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(-5%);
+    }
+    50% {
+        transform: translateY(0);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
