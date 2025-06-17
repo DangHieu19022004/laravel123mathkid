@@ -9,12 +9,12 @@ return [
          * The default configurations to be used by the meta generator.
          */
         'defaults'       => [
-            'title'        => "It's Over 9000!", // set false to total remove
+            'title'        => 'Game Toán Lớp 4 - Học Toán Qua Trò Chơi Tương Tác', // set false to total remove
             'titleBefore'  => false, // Put defaults.title before page title, like 'It's Over 9000! - Dashboard'
-            'description'  => 'For those who helped create the Genki Dama', // set false to total remove
+            'description'  => 'Khám phá thế giới toán học thú vị với các trò chơi tương tác giúp học sinh lớp 4 rèn luyện kỹ năng tính toán và tư duy logic một cách hiệu quả.', // set false to total remove
             'separator'    => ' - ',
-            'keywords'     => [],
-            'canonical'    => false, // Set to null or 'full' to use Url::full(), set to 'current' to use Url::current(), set false to total remove
+            'keywords'     => ['game toán lớp 4', 'học toán qua trò chơi', 'phân số', 'hình học', 'đo lường', 'thống kê', 'dãy số quy luật', 'giải toán có lời văn'],
+            'canonical'    => 'current', // Set to null or 'full' to use Url::full(), set to 'current' to use Url::current(), set false to total remove
             'robots'       => false, // Set to 'all', 'none' or any combination of index/noindex and follow/nofollow
         ],
         /*
@@ -36,11 +36,11 @@ return [
          * The default configurations to be used by the opengraph generator.
          */
         'defaults' => [
-            'title'       => 'Over 9000 Thousand!', // set false to total remove
-            'description' => 'For those who helped create the Genki Dama', // set false to total remove
+            'title'       => 'Game Toán Lớp 4 - Học Toán Qua Trò Chơi Tương Tác', // set false to total remove
+            'description' => 'Khám phá thế giới toán học thú vị với các trò chơi tương tác giúp học sinh lớp 4 rèn luyện kỹ năng tính toán và tư duy logic một cách hiệu quả.', // set false to total remove
             'url'         => false, // Set null for using Url::current(), set false to total remove
-            'type'        => false,
-            'site_name'   => false,
+            'type'        => 'website',
+            'site_name'   => 'Game Toán Lớp 4',
             'images'      => [],
         ],
     ],
@@ -58,10 +58,10 @@ return [
          * The default configurations to be used by the json-ld generator.
          */
         'defaults' => [
-            'title'       => 'Over 9000 Thousand!', // set false to total remove
-            'description' => 'For those who helped create the Genki Dama', // set false to total remove
+            'title'       => 'Game Toán Lớp 4 - Học Toán Qua Trò Chơi Tương Tác', // set false to total remove
+            'description' => 'Khám phá thế giới toán học thú vị với các trò chơi tương tác giúp học sinh lớp 4 rèn luyện kỹ năng tính toán và tư duy logic một cách hiệu quả.', // set false to total remove
             'url'         => false, // Set to null or 'full' to use Url::full(), set to 'current' to use Url::current(), set false to total remove
-            'type'        => 'WebPage',
+            'type'        => 'EducationalApplication',
             'images'      => [],
         ],
     ],
