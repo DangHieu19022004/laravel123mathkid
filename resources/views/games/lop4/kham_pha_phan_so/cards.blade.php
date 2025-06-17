@@ -86,6 +86,8 @@ let firstCard, secondCard;
 let flips = 0;
 let pairs = 0;
 let matchedPairs = [];
+let currentLevel = parseInt(localStorage.getItem('cardsLevel') || '0');
+const totalLevels = 5;
 
 function flipCard() {
     if (lockBoard) return;

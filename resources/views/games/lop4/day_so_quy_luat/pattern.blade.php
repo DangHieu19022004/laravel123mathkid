@@ -8,7 +8,7 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Cấp độ {{ $question['level'] }}</h3>
+                    <h3 class="mb-0">Cấp độ <span id="levelNum"></span>/5</h3>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
@@ -69,12 +69,8 @@
 
                     <!-- Navigation Buttons -->
                     <div class="text-center mt-4">
-                        <a href="{{ route('games.lop4.day_so_quy_luat.pattern.reset') }}" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> Chơi lại
-                        </a>
-                        <a href="{{ route('games.lop4.day_so_quy_luat.index') }}" class="btn btn-primary">
-                            <i class="fas fa-home"></i> Về trang chính
-                        </a>
+                        <button id="next-btn" class="btn btn-primary" style="display:none;"><i class="fas fa-arrow-right"></i> Tiếp tục</button>
+                        <button id="reset-btn" class="btn btn-secondary"><i class="fas fa-redo"></i> Chơi lại</button>
                     </div>
                 </div>
             </div>
@@ -86,93 +82,72 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const totalLevels = 5;
+    // Load saved or default to controller level-1
+    let stored = parseInt(localStorage.getItem('patternLevel'), 10);
+    const initial = isNaN(stored) ? {{ $question['level'] - 1 }} : stored;
+    let currentLevel = initial;
+
+    // Update UI
+    const levelNum = document.getElementById('levelNum');
+    const seq = document.querySelectorAll('.fraction-box');
+    const progWidth = (currentLevel + 1) / totalLevels * 100;
+    levelNum.textContent = currentLevel + 1;
+
+    // Elements
     const form = document.getElementById('answer-form');
-    const numeratorInput = document.getElementById('numerator');
-    const denominatorInput = document.getElementById('denominator');
+    const numInput = document.getElementById('numerator');
+    const denInput = document.getElementById('denominator');
     const feedback = document.getElementById('feedback');
-    const correctAnswer = {
-        numerator: {{ $question['answer']['numerator'] }},
-        denominator: {{ $question['answer']['denominator'] }}
-    };
-    let isAnswered = false;
+    const nextBtn = document.getElementById('next-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let answered = false;
+    const correct = { numerator: {{ $question['answer']['numerator'] }}, denominator: {{ $question['answer']['denominator'] }} };
 
     form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (isAnswered) return;
+        e.preventDefault(); if (answered) return;
+        const ans = { numerator: +numInput.value, denominator: +denInput.value };
+        numInput.disabled = true; denInput.disabled = true; form.querySelector('button').disabled = true;
+        answered = true;
 
-        const answer = {
-            numerator: parseInt(numeratorInput.value),
-            denominator: parseInt(denominatorInput.value)
-        };
-
-        // Disable form
-        numeratorInput.disabled = true;
-        denominatorInput.disabled = true;
-        form.querySelector('button').disabled = true;
-        isAnswered = true;
-
-        // Send answer to server
-        fetch('{{ route("games.lop4.day_so_quy_luat.pattern.check") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                answer: answer,
-                correct_answer: correctAnswer
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
-            
-            if (data.correct) {
-                feedback.classList.add('alert-success');
-                feedback.innerHTML = 'Đúng rồi! Bạn đã tìm ra quy luật! 🎉';
-                
-                // If there's a next level, redirect after 1.5 seconds
-                if (data.next_level) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                }
-            } else {
-                feedback.classList.add('alert-danger');
-                feedback.innerHTML = 'Chưa đúng. Hãy quan sát kỹ quy luật và thử lại! 🤔';
-                
-                // Reset after 1.5 seconds
-                setTimeout(() => {
-                    isAnswered = false;
-                    numeratorInput.disabled = false;
-                    denominatorInput.disabled = false;
-                    form.querySelector('button').disabled = false;
-                    numeratorInput.value = '';
-                    denominatorInput.value = '';
-                    feedback.classList.add('d-none');
-                }, 1500);
+        // Check locally
+        if (ans.numerator===correct.numerator && ans.denominator===correct.denominator) {
+            feedback.className = 'alert alert-success';
+            feedback.textContent = 'Đúng rồi! 🎉';
+            // advance
+            if (currentLevel < totalLevels-1) {
+                currentLevel++;
+                localStorage.setItem('patternLevel', currentLevel);
+                nextBtn.style.display='inline-block';
             }
-        });
+        } else {
+            feedback.className = 'alert alert-danger';
+            feedback.textContent = 'Chưa đúng. 🤔';
+            // allow retry after timeout
+            setTimeout(()=>{
+                answered=false;
+                numInput.disabled=false; denInput.disabled=false; form.querySelector('button').disabled=false;
+                numInput.value=''; denInput.value=''; feedback.classList.add('d-none');
+            },1500);
+        }
+        feedback.classList.remove('d-none');
+    });
+
+    nextBtn.addEventListener('click', () => location.reload());
+    resetBtn.addEventListener('click', () => {
+        if(confirm('Chơi lại từ đầu?')){
+            localStorage.removeItem('patternLevel');
+            location.reload();
+        }
     });
 });
 </script>
 
 <style>
-.fraction-box {
-    position: relative;
-    display: inline-block;
-}
-.arrow-right {
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.fraction-box:last-child .arrow-right {
-    display: none;
-}
-input[type="number"] {
-    width: 80px;
-}
+.fraction-box { position: relative; display:inline-block; }
+.arrow-right{position:absolute; right:-25px; top:50%; transform:translateY(-50%);} 
+.fraction-box:last-child .arrow-right{display:none;}
+input[type=number]{width:80px;}
 </style>
-@endsection 
+@endsection

@@ -176,6 +176,11 @@
                 $('#check-answer').click();
             }
         });
+
+        let currentLevel = parseInt(localStorage.getItem('lostCityLevel') || '0');
+        const totalLevels = 5;
+
+        // Thêm logic chuyển cấp, lưu localStorage, reset tương tự mẫu conversion_table
     });
 </script>
 @endsection 

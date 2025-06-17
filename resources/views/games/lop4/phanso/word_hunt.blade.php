@@ -49,13 +49,6 @@
 
                     <!-- Controls -->
                     <div class="text-center mt-4">
-                        <form id="resetForm" action="{{ route('games.lop4.phanso.word_hunt.reset') }}" method="POST" class="mt-3">
-                            @csrf
-                            <button type="submit" class="btn btn-link text-decoration-none">
-                                Chơi lại từ đầu
-                            </button>
-                        </form>
-
                         <a href="{{ route('games.lop4.phanso') }}" class="btn btn-link text-decoration-none">
                             ← Quay lại danh sách
                         </a>
@@ -68,7 +61,7 @@
 
 @push('scripts')
 <script>
-    const currentLevel = {{ $question['level'] }};
+    let currentLevel = parseInt(localStorage.getItem('wordHuntLevel') || '0');
     const totalLevels = 5;
     let selectedObjects = new Set();
 
@@ -158,6 +151,8 @@
                     text: 'Bạn đã tìm đúng tất cả các phân số!'
                 }).then(() => {
                     if (data.next_level) {
+                        currentLevel++;
+                        localStorage.setItem('wordHuntLevel', currentLevel);
                         window.location.reload();
                     }
                 });
@@ -201,6 +196,14 @@
         generateScene();
 
         $('#check-answer').click(checkAnswer);
+
+        $('#next-level').click(function() {
+            if (currentLevel < totalLevels - 1) {
+                currentLevel++;
+                localStorage.setItem('wordHuntLevel', currentLevel);
+                window.location.reload();
+            }
+        });
     });
 </script>
 @endpush

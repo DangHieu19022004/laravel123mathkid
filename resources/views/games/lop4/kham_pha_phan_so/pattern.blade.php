@@ -95,6 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
         denominator: {{ $question['answer']['denominator'] }}
     };
     let isAnswered = false;
+    let currentLevel = parseInt(localStorage.getItem('patternLevel') || '0');
+    const totalLevels = 5;
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -134,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // If there's a next level, redirect after 1.5 seconds
                 if (data.next_level) {
                     setTimeout(() => {
+                        currentLevel++;
+                        localStorage.setItem('patternLevel', currentLevel);
                         window.location.reload();
                     }, 1500);
                 }
