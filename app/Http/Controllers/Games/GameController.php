@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Games;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class GameController extends Controller
+class GameController extends AbstractGroupGameController
 {
-    // Main Game Hub
-    public function index()
-    {
-        return view('games.lop4.phanso.phanso');
-    }
+    protected string $group = 'phan_so';
 
     // Base Games
     public function cakeGame()
@@ -47,20 +43,20 @@ class GameController extends Controller
     {
         $level = session('cake_level', 1);
         $question = $this->generateCakeQuestion($level);
-        
+
         $selectedPieces = json_decode($request->input('selected_pieces'), true);
         $numerator = $request->input('numerator');
-        
+
         // Check if correct number of pieces are selected
         $correct = count($selectedPieces) === $question['numerator'];
-        
+
         if ($correct) {
             // If current level completed, increment level
             if ($level < 5) {
                 session(['cake_level' => $level + 1]);
             }
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -93,10 +89,10 @@ class GameController extends Controller
     {
         $level = session('apple_level', 1);
         $question = $this->generateAppleQuestion($level);
-        
+
         $groupCounts = json_decode($request->input('group_counts'), true);
         $applesPerGroup = $question['apples'] / $question['students'];
-        
+
         // Kiểm tra xem mỗi nhóm có đúng số táo không
         $correct = true;
         foreach ($groupCounts as $count) {
@@ -105,11 +101,11 @@ class GameController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['apple_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -128,7 +124,7 @@ class GameController extends Controller
     {
         $questions = [
             1 => [
-                'expression' => '(1/2 + 1/4)', 
+                'expression' => '(1/2 + 1/4)',
                 'answer' => ['numerator' => 3, 'denominator' => 4],
                 'options' => [
                     ['numerator' => 1, 'denominator' => 2],
@@ -138,7 +134,7 @@ class GameController extends Controller
                 ]
             ],
             2 => [
-                'expression' => '(2/3 + 1/6)', 
+                'expression' => '(2/3 + 1/6)',
                 'answer' => ['numerator' => 5, 'denominator' => 6],
                 'options' => [
                     ['numerator' => 1, 'denominator' => 2],
@@ -148,7 +144,7 @@ class GameController extends Controller
                 ]
             ],
             3 => [
-                'expression' => '(3/4 - 1/4)', 
+                'expression' => '(3/4 - 1/4)',
                 'answer' => ['numerator' => 1, 'denominator' => 2],
                 'options' => [
                     ['numerator' => 1, 'denominator' => 4],
@@ -158,7 +154,7 @@ class GameController extends Controller
                 ]
             ],
             4 => [
-                'expression' => '(1/2 + 1/3)', 
+                'expression' => '(1/2 + 1/3)',
                 'answer' => ['numerator' => 5, 'denominator' => 6],
                 'options' => [
                     ['numerator' => 2, 'denominator' => 3],
@@ -168,7 +164,7 @@ class GameController extends Controller
                 ]
             ],
             5 => [
-                'expression' => '(2/3 - 1/6)', 
+                'expression' => '(2/3 - 1/6)',
                 'answer' => ['numerator' => 1, 'denominator' => 2],
                 'options' => [
                     ['numerator' => 1, 'denominator' => 3],
@@ -187,15 +183,15 @@ class GameController extends Controller
     {
         $level = session('bracket_level', 1);
         $question = $this->generateBracketQuestion($level);
-        
+
         $answer = $request->input('answer');
-        $correct = $answer['numerator'] == $question['answer']['numerator'] && 
+        $correct = $answer['numerator'] == $question['answer']['numerator'] &&
                   $answer['denominator'] == $question['answer']['denominator'];
-        
+
         if ($correct && $level < 5) {
             session(['bracket_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -263,19 +259,19 @@ class GameController extends Controller
     {
         $level = session('garden_level', 1);
         $question = $this->generateGardenQuestion($level);
-        
+
         $answer = [
             'numerator' => (int) $request->input('numerator'),
             'denominator' => (int) $request->input('denominator')
         ];
-        
+
         $correct = $answer['numerator'] === $question['simplifiedNumerator'] &&
                   $answer['denominator'] === $question['simplifiedDenominator'];
-        
+
         if ($correct && $level < 5) {
             session(['garden_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -345,18 +341,18 @@ class GameController extends Controller
         try {
             $level = session('tower_level', 1);
             $question = $this->generateTowerQuestion($level);
-            
+
             $selectedOrder = json_decode($request->input('order'), true);
             if (!is_array($selectedOrder)) {
                 throw new \Exception('Invalid order format');
             }
-            
+
             $correct = $selectedOrder === $question['correctOrder'];
-            
+
             if ($correct && $level < 5) {
                 session(['tower_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -451,12 +447,12 @@ class GameController extends Controller
         try {
             $level = session('cards_level', 1);
             $question = $this->generateCardsQuestion($level);
-            
+
             $selectedPairs = $request->input('selected_pairs');
             if (!is_array($selectedPairs)) {
                 throw new \Exception('Invalid pairs format');
             }
-            
+
             // Check if we have the correct number of pairs
             if (count($selectedPairs) !== count($question['pairs'])) {
                 return response()->json([
@@ -465,58 +461,58 @@ class GameController extends Controller
                     'message' => 'Chưa tìm đủ số cặp phân số bằng nhau!'
                 ]);
             }
-            
+
             $correct = true;
             $foundPairIds = [];
-            
+
             // Check if all selected pairs are correct
             foreach ($selectedPairs as $pair) {
                 if (!isset($pair[0], $pair[1]) || !isset($question['cards'][$pair[0]], $question['cards'][$pair[1]])) {
                     $correct = false;
                     break;
                 }
-                
+
                 $card1 = collect($question['cards'])->firstWhere('id', $pair[0]);
                 $card2 = collect($question['cards'])->firstWhere('id', $pair[1]);
-                
-                
+
+
                 // Check if this pair matches
                 if ($card1['pairId'] !== $card2['pairId']) {
                     $correct = false;
                     break;
                 }
-                
+
                 // Track found pair IDs
                 $foundPairIds[] = $card1['pairId'];
             }
-            
+
             // Verify we found all unique pairs
             $foundPairIds = array_unique($foundPairIds);
             if (count($foundPairIds) !== count($question['pairs'])) {
                 $correct = false;
             }
-            
+
             if ($correct) {
                 // Only increment level if answer is correct and there's a next level
                 if ($level < 5) {
                     session(['cards_level' => $level + 1]);
                 }
-                
+
                 return response()->json([
                     'correct' => true,
                     'next_level' => $level < 5,
-                    'message' => $level < 5 
-                        ? 'Tuyệt vời! Chuẩn bị chuyển sang cấp độ tiếp theo!' 
+                    'message' => $level < 5
+                        ? 'Tuyệt vời! Chuẩn bị chuyển sang cấp độ tiếp theo!'
                         : 'Chúc mừng! Bạn đã hoàn thành tất cả các cấp độ!'
                 ]);
             }
-            
+
             return response()->json([
                 'correct' => false,
                 'next_level' => false,
                 'message' => 'Các cặp phân số chưa khớp. Hãy thử lại nhé!'
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
@@ -534,7 +530,7 @@ class GameController extends Controller
             list($num, $den) = explode('/', $fraction);
             return $num / $den;
         }, $fractions);
-        
+
         if ($order === 'ascending') {
             $sorted = $decimals;
             sort($sorted);
@@ -592,14 +588,14 @@ class GameController extends Controller
     {
         $level = session('compare_level', 1);
         $question = $this->generateCompareQuestion($level);
-        
+
         $selectedSymbol = $request->input('selected_symbol');
         $correct = $selectedSymbol === $question['correct_symbol'];
-        
+
         if ($correct && $level < 5) {
             session(['compare_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -679,26 +675,26 @@ class GameController extends Controller
         try {
             $level = session('division_level', 1);
             $question = $this->generateDivisionQuestion($level);
-            
+
             $answer = [
                 'numerator' => (int) $request->input('numerator'),
                 'denominator' => (int) $request->input('denominator')
             ];
-            
+
             // Check if the answer matches any of the valid answers
             $correct = false;
             foreach ($question['answers'] as $validAnswer) {
-                if ($answer['numerator'] * $validAnswer['denominator'] === 
+                if ($answer['numerator'] * $validAnswer['denominator'] ===
                     $answer['denominator'] * $validAnswer['numerator']) {
                     $correct = true;
                     break;
                 }
             }
-            
+
             if ($correct && $level < 5) {
                 session(['division_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -792,26 +788,26 @@ class GameController extends Controller
         try {
             $level = session('fair_share_level', 1);
             $question = $this->generateFairShareQuestion($level);
-            
+
             $answer = [
                 'numerator' => (int) $request->input('numerator'),
                 'denominator' => (int) $request->input('denominator')
             ];
-            
+
             // Check if the answer matches any of the valid answers
             $correct = false;
             foreach ($question['answers'] as $validAnswer) {
-                if ($answer['numerator'] * $validAnswer['denominator'] === 
+                if ($answer['numerator'] * $validAnswer['denominator'] ===
                     $answer['denominator'] * $validAnswer['numerator']) {
                     $correct = true;
                     break;
                 }
             }
-            
+
             if ($correct && $level < 5) {
                 session(['fair_share_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -885,16 +881,16 @@ class GameController extends Controller
         try {
             $level = session('balance_level', 1);
             $question = $this->generateBalanceQuestion($level);
-            
+
             $selectedSymbol = trim($request->input('selected_symbol'));
-            
+
             // Check if the selected symbol matches the correct symbol
             $correct = $selectedSymbol === $question['correct_symbol'];
-            
+
             if ($correct && $level < 5) {
                 session(['balance_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -973,14 +969,14 @@ class GameController extends Controller
     {
         $level = session('pattern_level', 1);
         $question = $this->generatePatternQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = $answer === $question['answer'];
-        
+
         if ($correct && $level < 5) {
             session(['pattern_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -992,10 +988,10 @@ class GameController extends Controller
     {
         list($num1, $den1) = explode('/', $fraction1);
         list($num2, $den2) = explode('/', $fraction2);
-        
+
         $value1 = $num1 / $den1;
         $value2 = $num2 / $den2;
-        
+
         switch ($operator) {
             case '>':
                 return $value1 > $value2;
@@ -1064,20 +1060,20 @@ class GameController extends Controller
         try {
             $level = session('word_problem_level', 1);
             $question = $this->generateWordProblem($level);
-            
+
             $answer = [
                 'numerator' => (int) $request->input('numerator'),
                 'denominator' => (int) $request->input('denominator')
             ];
-            
+
             // Kiểm tra đáp án
             $correct = $answer['numerator'] === $question['answer']['numerator'] &&
                       $answer['denominator'] === $question['answer']['denominator'];
-            
+
             if ($correct && $level < 5) {
                 session(['word_problem_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1156,14 +1152,14 @@ class GameController extends Controller
         try {
             $level = session('sky_level', 1);
             $question = $this->generateSkyQuestion($level);
-            
+
             $selectedIndex = (int) $request->input('selected_index');
             $correct = $selectedIndex === $question['correct_index'];
-            
+
             if ($correct && $level < 5) {
                 session(['sky_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1222,21 +1218,21 @@ class GameController extends Controller
         try {
             $level = session('remaining_cake_level', 1);
             $question = $this->generateRemainingCakeQuestion($level);
-            
+
             $numerator = (int) $request->input('numerator');
             $denominator = (int) $request->input('denominator');
-            
+
             // Kiểm tra đáp án
             $remainingNumerator = $question['remaining']['numerator'];
             $remainingDenominator = $question['remaining']['denominator'];
-            
+
             // So sánh phân số (a/b = c/d nếu a*d = b*c)
             $correct = ($numerator * $remainingDenominator) === ($denominator * $remainingNumerator);
-            
+
             if ($correct && $level < 5) {
                 session(['remaining_cake_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1300,21 +1296,21 @@ class GameController extends Controller
         try {
             $level = session('sentence_level', 1);
             $question = $this->generateSentenceQuestion($level);
-            
+
             $numerator = (int) $request->input('numerator');
             $denominator = (int) $request->input('denominator');
-            
+
             // Kiểm tra đáp án
             $answerNumerator = $question['answer']['numerator'];
             $answerDenominator = $question['answer']['denominator'];
-            
+
             // So sánh phân số (a/b = c/d nếu a*d = b*c)
             $correct = ($numerator * $answerDenominator) === ($denominator * $answerNumerator);
-            
+
             if ($correct && $level < 5) {
                 session(['sentence_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1373,14 +1369,14 @@ class GameController extends Controller
     {
         $level = session('word_hunt_level', 1);
         $question = $this->generateWordHuntQuestion($level);
-        
+
         $selectedFractions = $request->input('selected_fractions', []);
         $correct = $this->checkEquivalentFractions($selectedFractions, $question['target']);
-        
+
         if ($correct && $level < 5) {
             session(['word_hunt_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -1392,12 +1388,12 @@ class GameController extends Controller
     {
         $level = session('lost_city_level', 1);
         $question = session('lost_city_question');
-        
+
         if (!$question) {
             $question = $this->generateLostCityQuestion($level);
             session(['lost_city_question' => $question]);
         }
-        
+
         return view('games.lop4.phanso.lost_city', compact('question'));
     }
 
@@ -1458,7 +1454,7 @@ class GameController extends Controller
             ];
 
             // Chọn loại câu hỏi phù hợp với cấp độ
-            $questionType = $level <= 2 ? $questionTypes[0] : 
+            $questionType = $level <= 2 ? $questionTypes[0] :
                           ($level <= 4 ? $questionTypes[1] : $questionTypes[2]);
 
             $streetNames = [
@@ -1502,31 +1498,31 @@ class GameController extends Controller
     {
         $level = session('lost_city_level', 1);
         $question = session('lost_city_question');
-        
+
         if (!$question) {
             return response()->json([
                 'correct' => false,
                 'error' => 'Phiên làm việc đã hết hạn'
             ]);
         }
-        
+
         $answers = $request->input('answers', []);
         $correct = true;
-        
+
         foreach ($question['streets'] as $index => $street) {
             if (!isset($answers[$index]) || (string)$answers[$index] !== $street['answer']) {
                 $correct = false;
                 break;
             }
         }
-        
+
         if ($correct) {
             if ($level < 5) {
                 session(['lost_city_level' => $level + 1]);
                 session()->forget('lost_city_question'); // Clear current questions for next level
             }
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -1589,16 +1585,16 @@ class GameController extends Controller
     {
         $level = session('equal_groups_level', 1);
         $question = $this->generateEqualGroupsQuestion($level);
-        
+
         $groups = $request->input('groups', []);
         $correct = true;
-        
+
         foreach ($question['groups'] as $index => $group) {
             if (!isset($groups[$index])) {
                 $correct = false;
                 break;
             }
-            
+
             foreach ($groups[$index] as $fraction) {
                 if (!$this->areFractionsEqual($fraction, $group['value'])) {
                     $correct = false;
@@ -1606,11 +1602,11 @@ class GameController extends Controller
                 }
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['equal_groups_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -1622,7 +1618,7 @@ class GameController extends Controller
     {
         // Parse target fraction
         list($targetNum, $targetDen) = array_map('intval', explode('/', $target));
-        
+
         // Check each selected fraction
         foreach ($selectedFractions as $fraction) {
             list($num, $den) = array_map('intval', explode('/', $fraction));
@@ -1630,7 +1626,7 @@ class GameController extends Controller
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -1638,10 +1634,10 @@ class GameController extends Controller
     {
         list($num1, $den1) = explode('/', $fraction1);
         list($num2, $den2) = explode('/', $fraction2);
-        
+
         $value1 = $num1 / $den1;
         $value2 = $num2 / $den2;
-        
+
         return abs($value1 - $value2) < 0.000001;
     }
 
@@ -1715,14 +1711,14 @@ class GameController extends Controller
         try {
             $level = session('volume_measurement_level', 1);
             $question = $this->generateVolumeMeasurementQuestion($level);
-            
+
             $selectedIndex = (int) $request->input('selected_index');
             $correct = $selectedIndex === $question['answer_index'];
-            
+
             if ($correct && $level < 5) {
                 session(['volume_measurement_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1805,14 +1801,14 @@ class GameController extends Controller
         try {
             $level = session('area_measurement_level', 1);
             $question = $this->generateAreaMeasurementQuestion($level);
-            
+
             $selectedIndex = (int) $request->input('selected_index');
             $correct = $selectedIndex === $question['answer_index'];
-            
+
             if ($correct && $level < 5) {
                 session(['area_measurement_level' => $level + 1]);
             }
-            
+
             return response()->json([
                 'correct' => $correct,
                 'next_level' => $correct && $level < 5
@@ -1826,4 +1822,4 @@ class GameController extends Controller
     }
 
     // ... existing code ...
-} 
+}

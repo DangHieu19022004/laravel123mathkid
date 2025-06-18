@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Games;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ThuThachDoLuongController extends Controller
+class ThuThachDoLuongController extends AbstractGroupGameController
 {
+    protected string $group = 'thu_thach_do_luong';
+
     // 15. Thời Gian Nâng Cao Game
     public function advancedTimeGame()
     {
@@ -60,7 +61,7 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('advanced_time_level', 1);
         $question = $this->generateAdvancedTimeQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = false;
 
@@ -75,11 +76,11 @@ class ThuThachDoLuongController extends Controller
             $endTime = $this->addMinutesToTime($question['start_time'], $question['duration']);
             $correct = $answer === $endTime;
         }
-        
+
         if ($correct && $level < 5) {
             session(['advanced_time_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -122,7 +123,7 @@ class ThuThachDoLuongController extends Controller
                 'units' => 'g'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -132,10 +133,10 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('fruit_weighing_level', 1);
         $question = $this->generateFruitWeighingQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = false;
-        
+
         if ($question['leftFruit']['weight'] > $question['rightFruit']['weight']) {
             $correct = $answer === 'left';
         } elseif ($question['leftFruit']['weight'] < $question['rightFruit']['weight']) {
@@ -143,11 +144,11 @@ class ThuThachDoLuongController extends Controller
         } else {
             $correct = $answer === 'equal';
         }
-        
+
         if ($correct && $level < 5) {
             session(['fruit_weighing_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -201,7 +202,7 @@ class ThuThachDoLuongController extends Controller
                 'options' => [2.5, 25, 0.25, 250]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -211,14 +212,14 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('unit_conversion_level', 1);
         $question = $this->generateUnitConversionQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = $this->convertUnit($question['value'], $question['fromUnit'], $question['toUnit']) == $answer;
-        
+
         if ($correct && $level < 5) {
             session(['unit_conversion_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -235,7 +236,7 @@ class ThuThachDoLuongController extends Controller
             'ml_l' => 0.001,
             'l_ml' => 1000
         ];
-        
+
         $key = "{$fromUnit}_{$toUnit}";
         return $value * $conversions[$key];
     }
@@ -315,7 +316,7 @@ class ThuThachDoLuongController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -325,10 +326,10 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('conversion_table_level', 1);
         $question = $this->generateConversionTableQuestion($level);
-        
+
         $answers = json_decode($request->input('answers'), true);
         $correct = true;
-        
+
         foreach ($answers as $index => $answer) {
             $value = $question['values'][$index];
             $converted = $this->convertMeasurement(
@@ -336,17 +337,17 @@ class ThuThachDoLuongController extends Controller
                 $value['unit'],
                 $question['target_unit'] ?? $question['conversions'][$value['unit']]['to']
             );
-            
+
             if (abs($converted - $answer) > 0.01) {
                 $correct = false;
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['conversion_table_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -363,7 +364,7 @@ class ThuThachDoLuongController extends Controller
             'l_ml' => 1000,
             'ml_l' => 0.001
         ];
-        
+
         $key = "{$fromUnit}_{$toUnit}";
         return $value * ($conversions[$key] ?? 1);
     }
@@ -420,7 +421,7 @@ class ThuThachDoLuongController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -430,15 +431,15 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('distance_comparison_level', 1);
         $question = $this->generateDistanceComparisonQuestion($level);
-        
+
         $answer = json_decode($request->input('answer'), true);
         $distances = array_map(function($d) {
             return $this->convertToMeters($d['value'], $d['unit']);
         }, $question['distances']);
-        
+
         $sortedDistances = $distances;
         sort($sortedDistances);
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($distances[$position] !== $sortedDistances[$index]) {
@@ -446,11 +447,11 @@ class ThuThachDoLuongController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['distance_comparison_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -569,7 +570,7 @@ class ThuThachDoLuongController extends Controller
                 'description' => 'Bấm giờ đúng 1 phút'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -579,15 +580,15 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('precision_timing_level', 1);
         $question = $this->generatePrecisionTimingQuestion($level);
-        
+
         $duration = $request->input('duration');
         $error = abs($duration - $question['targetDuration']);
         $correct = $error <= $question['allowedError'];
-        
+
         if ($correct && $level < 5) {
             session(['precision_timing_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -637,7 +638,7 @@ class ThuThachDoLuongController extends Controller
                 'type' => 'minutes'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -647,14 +648,14 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('time_adventure_level', 1);
         $question = $this->generateTimeAdventureQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = $this->calculateEndTime($question['startTime'], $question['duration'], $question['type']) === $answer;
-        
+
         if ($correct && $level < 5) {
             session(['time_adventure_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -734,15 +735,15 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('time_comparison_level', 1);
         $question = $this->generateTimeComparisonQuestion($level);
-        
+
         $answer = $request->input('answer');
         $times = array_map(function($t) {
             return $t['hours'] * 60 + $t['minutes'];
         }, $question['times']);
-        
+
         $sortedTimes = $times;
         sort($sortedTimes);
-        
+
         // Validate answer
         if (!is_array($answer) || count($answer) !== count($times)) {
             return response()->json([
@@ -771,7 +772,7 @@ class ThuThachDoLuongController extends Controller
                 ], 200);
             }
         }
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($times[$position] !== $sortedTimes[$index]) {
@@ -779,11 +780,11 @@ class ThuThachDoLuongController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['time_comparison_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -845,15 +846,15 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('weight_estimation_level', 1);
         $question = $this->generateWeightEstimationQuestion($level);
-        
+
         $answer = $request->input('answer');
         $difference = abs($answer - $question['actual_weight']);
         $correct = $difference <= $question['tolerance'];
-        
+
         if ($correct && $level < 5) {
             session(['weight_estimation_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -918,7 +919,7 @@ class ThuThachDoLuongController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -928,15 +929,15 @@ class ThuThachDoLuongController extends Controller
     {
         $level = session('weight_sorting_level', 1);
         $question = $this->generateWeightSortingQuestion($level);
-        
+
         $answer = json_decode($request->input('answer'), true);
         $weights = array_map(function($w) {
             return $this->convertToGrams($w['value'], $w['unit']);
         }, $question['weights']);
-        
+
         $sortedWeights = $weights;
         sort($sortedWeights);
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($weights[$position] !== $sortedWeights[$index]) {
@@ -944,11 +945,11 @@ class ThuThachDoLuongController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['weight_sorting_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -965,4 +966,4 @@ class ThuThachDoLuongController extends Controller
         session()->forget('weight_sorting_level');
         return redirect()->route('games.lop4.dailuongvadoluong.weight_sorting');
     }
-} 
+}

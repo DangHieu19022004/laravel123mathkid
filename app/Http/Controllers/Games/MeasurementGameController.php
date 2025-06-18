@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Games;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class MeasurementGameController extends Controller
+class MeasurementGameController extends AbstractGroupGameController
 {
-    // Main Game Hub
-    public function index()
-    {
-        return view('games.lop4.dailuongvadoluong.dailuongvadoluong');
-    }
+    protected string $group = 'do_luong_va_don_vi';
 
     // 1. Cân Táo Cân Cam Game
     public function fruitWeighingGame()
@@ -50,7 +46,7 @@ class MeasurementGameController extends Controller
                 'units' => 'g'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -60,10 +56,10 @@ class MeasurementGameController extends Controller
     {
         $level = session('fruit_weighing_level', 1);
         $question = $this->generateFruitWeighingQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = false;
-        
+
         if ($question['leftFruit']['weight'] > $question['rightFruit']['weight']) {
             $correct = $answer === 'left';
         } elseif ($question['leftFruit']['weight'] < $question['rightFruit']['weight']) {
@@ -71,11 +67,11 @@ class MeasurementGameController extends Controller
         } else {
             $correct = $answer === 'equal';
         }
-        
+
         if ($correct && $level < 5) {
             session(['fruit_weighing_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -125,7 +121,7 @@ class MeasurementGameController extends Controller
                 'type' => 'minutes'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -135,14 +131,14 @@ class MeasurementGameController extends Controller
     {
         $level = session('time_adventure_level', 1);
         $question = $this->generateTimeAdventureQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = $this->calculateEndTime($question['startTime'], $question['duration'], $question['type']) === $answer;
-        
+
         if ($correct && $level < 5) {
             session(['time_adventure_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -208,7 +204,7 @@ class MeasurementGameController extends Controller
                 'options' => [2.5, 25, 0.25, 250]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -218,14 +214,14 @@ class MeasurementGameController extends Controller
     {
         $level = session('unit_conversion_level', 1);
         $question = $this->generateUnitConversionQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = $this->convertUnit($question['value'], $question['fromUnit'], $question['toUnit']) == $answer;
-        
+
         if ($correct && $level < 5) {
             session(['unit_conversion_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -242,7 +238,7 @@ class MeasurementGameController extends Controller
             'ml_l' => 0.001,
             'l_ml' => 1000
         ];
-        
+
         $key = "{$fromUnit}_{$toUnit}";
         return $value * $conversions[$key];
     }
@@ -300,7 +296,7 @@ class MeasurementGameController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -310,15 +306,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('distance_comparison_level', 1);
         $question = $this->generateDistanceComparisonQuestion($level);
-        
+
         $answer = json_decode($request->input('answer'), true);
         $distances = array_map(function($d) {
             return $this->convertToMeters($d['value'], $d['unit']);
         }, $question['distances']);
-        
+
         $sortedDistances = $distances;
         sort($sortedDistances);
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($distances[$position] !== $sortedDistances[$index]) {
@@ -326,11 +322,11 @@ class MeasurementGameController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['distance_comparison_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -400,7 +396,7 @@ class MeasurementGameController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -410,15 +406,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('weight_sorting_level', 1);
         $question = $this->generateWeightSortingQuestion($level);
-        
+
         $answer = json_decode($request->input('answer'), true);
         $weights = array_map(function($w) {
             return $this->convertToGrams($w['value'], $w['unit']);
         }, $question['weights']);
-        
+
         $sortedWeights = $weights;
         sort($sortedWeights);
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($weights[$position] !== $sortedWeights[$index]) {
@@ -426,11 +422,11 @@ class MeasurementGameController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['weight_sorting_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -485,7 +481,7 @@ class MeasurementGameController extends Controller
                 'description' => 'Bấm giờ đúng 1 phút'
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -495,15 +491,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('precision_timing_level', 1);
         $question = $this->generatePrecisionTimingQuestion($level);
-        
+
         $duration = $request->input('duration');
         $error = abs($duration - $question['targetDuration']);
         $correct = $error <= $question['allowedError'];
-        
+
         if ($correct && $level < 5) {
             session(['precision_timing_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -587,7 +583,7 @@ class MeasurementGameController extends Controller
                 ]
             ]
         ];
-        
+
         $question = $questions[$level] ?? $questions[1];
         $question['level'] = $level;
         return $question;
@@ -597,10 +593,10 @@ class MeasurementGameController extends Controller
     {
         $level = session('conversion_table_level', 1);
         $question = $this->generateConversionTableQuestion($level);
-        
+
         $answers = json_decode($request->input('answers'), true);
         $correct = true;
-        
+
         foreach ($answers as $index => $answer) {
             $value = $question['values'][$index];
             $converted = $this->convertMeasurement(
@@ -608,17 +604,17 @@ class MeasurementGameController extends Controller
                 $value['unit'],
                 $question['target_unit'] ?? $question['conversions'][$value['unit']]['to']
             );
-            
+
             if (abs($converted - $answer) > 0.01) {
                 $correct = false;
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['conversion_table_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -635,7 +631,7 @@ class MeasurementGameController extends Controller
             'l_ml' => 1000,
             'ml_l' => 0.001
         ];
-        
+
         $key = "{$fromUnit}_{$toUnit}";
         return $value * ($conversions[$key] ?? 1);
     }
@@ -762,15 +758,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('weight_estimation_level', 1);
         $question = $this->generateWeightEstimationQuestion($level);
-        
+
         $answer = $request->input('answer');
         $difference = abs($answer - $question['actual_weight']);
         $correct = $difference <= $question['tolerance'];
-        
+
         if ($correct && $level < 5) {
             session(['weight_estimation_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -841,15 +837,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('time_comparison_level', 1);
         $question = $this->generateTimeComparisonQuestion($level);
-        
+
         $answer = $request->input('answer');
         $times = array_map(function($t) {
             return $t['hours'] * 60 + $t['minutes'];
         }, $question['times']);
-        
+
         $sortedTimes = $times;
         sort($sortedTimes);
-        
+
         // Validate answer
         if (!is_array($answer) || count($answer) !== count($times)) {
             return response()->json([
@@ -878,7 +874,7 @@ class MeasurementGameController extends Controller
                 ], 200);
             }
         }
-        
+
         $correct = true;
         foreach ($answer as $index => $position) {
             if ($times[$position] !== $sortedTimes[$index]) {
@@ -886,11 +882,11 @@ class MeasurementGameController extends Controller
                 break;
             }
         }
-        
+
         if ($correct && $level < 5) {
             session(['time_comparison_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -1018,15 +1014,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('perimeter_calculation_level', 1);
         $question = $this->generatePerimeterCalculationQuestion($level);
-        
+
         $answer = $request->input('answer');
         $perimeter = $this->calculatePerimeter($question['shape'], $question['sides']);
         $correct = $answer == $perimeter;
-        
+
         if ($correct && $level < 5) {
             session(['perimeter_calculation_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -1105,15 +1101,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('area_calculation_level', 1);
         $question = $this->generateAreaCalculationQuestion($level);
-        
+
         $answer = $request->input('answer');
         $area = $this->calculateArea($question['shape'], $question['dimensions']);
         $correct = $answer == $area;
-        
+
         if ($correct && $level < 5) {
             session(['area_calculation_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -1192,15 +1188,15 @@ class MeasurementGameController extends Controller
     {
         $level = session('angle_measurement_level', 1);
         $question = $this->generateAngleMeasurementQuestion($level);
-        
+
         $answer = $request->input('answer');
         $difference = abs($answer - $question['actual_angle']);
         $correct = $difference <= $question['tolerance'];
-        
+
         if ($correct && $level < 5) {
             session(['angle_measurement_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5,
@@ -1267,7 +1263,7 @@ class MeasurementGameController extends Controller
     {
         $level = session('advanced_time_level', 1);
         $question = $this->generateAdvancedTimeQuestion($level);
-        
+
         $answer = $request->input('answer');
         $correct = false;
 
@@ -1282,11 +1278,11 @@ class MeasurementGameController extends Controller
             $endTime = $this->addMinutesToTime($question['start_time'], $question['duration']);
             $correct = $answer === $endTime;
         }
-        
+
         if ($correct && $level < 5) {
             session(['advanced_time_level' => $level + 1]);
         }
-        
+
         return response()->json([
             'correct' => $correct,
             'next_level' => $correct && $level < 5
@@ -1313,4 +1309,4 @@ class MeasurementGameController extends Controller
         session()->forget('advanced_time_level');
         return redirect()->route('games.lop4.dailuongvadoluong.advanced_time');
     }
-} 
+}

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Games;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DaySoQuyLuatController extends Controller
+class DaySoQuyLuatController extends AbstractGroupGameController
 {
+    protected string $group = 'day_so_quy_luat';
+
     private function generateQuestion($level)
     {
         $questions = [
@@ -19,7 +20,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 3, 'denominator' => 6],
                         ['numerator' => 4, 'denominator' => 8],
                     ],
-                    'answer' => ['numerator' => 5, 'denominator' => 10]
+                    'answer'   => ['numerator' => 5, 'denominator' => 10]
                 ],
                 [
                     'sequence' => [
@@ -28,7 +29,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 6, 'denominator' => 9],
                         ['numerator' => 8, 'denominator' => 12],
                     ],
-                    'answer' => ['numerator' => 10, 'denominator' => 15]
+                    'answer'   => ['numerator' => 10, 'denominator' => 15]
                 ]
             ],
             // Cấp độ 2: Quy luật nhân/chia
@@ -40,7 +41,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 4, 'denominator' => 12],
                         ['numerator' => 8, 'denominator' => 24],
                     ],
-                    'answer' => ['numerator' => 16, 'denominator' => 48]
+                    'answer'   => ['numerator' => 16, 'denominator' => 48]
                 ],
                 [
                     'sequence' => [
@@ -49,7 +50,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 12, 'denominator' => 16],
                         ['numerator' => 24, 'denominator' => 32],
                     ],
-                    'answer' => ['numerator' => 48, 'denominator' => 64]
+                    'answer'   => ['numerator' => 48, 'denominator' => 64]
                 ]
             ],
             // Cấp độ 3: Quy luật phức tạp hơn
@@ -61,7 +62,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 5, 'denominator' => 6],
                         ['numerator' => 7, 'denominator' => 8],
                     ],
-                    'answer' => ['numerator' => 9, 'denominator' => 10]
+                    'answer'   => ['numerator' => 9, 'denominator' => 10]
                 ],
                 [
                     'sequence' => [
@@ -70,7 +71,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 6, 'denominator' => 9],
                         ['numerator' => 8, 'denominator' => 11],
                     ],
-                    'answer' => ['numerator' => 10, 'denominator' => 13]
+                    'answer'   => ['numerator' => 10, 'denominator' => 13]
                 ]
             ],
             // Cấp độ 4: Quy luật nâng cao
@@ -82,7 +83,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 5, 'denominator' => 7],
                         ['numerator' => 7, 'denominator' => 9],
                     ],
-                    'answer' => ['numerator' => 9, 'denominator' => 11]
+                    'answer'   => ['numerator' => 9, 'denominator' => 11]
                 ],
                 [
                     'sequence' => [
@@ -91,7 +92,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 8, 'denominator' => 11],
                         ['numerator' => 11, 'denominator' => 15],
                     ],
-                    'answer' => ['numerator' => 14, 'denominator' => 19]
+                    'answer'   => ['numerator' => 14, 'denominator' => 19]
                 ]
             ],
             // Cấp độ 5: Quy luật phức tạp nhất
@@ -103,7 +104,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 3, 'denominator' => 10],
                         ['numerator' => 4, 'denominator' => 17],
                     ],
-                    'answer' => ['numerator' => 5, 'denominator' => 26]
+                    'answer'   => ['numerator' => 5, 'denominator' => 26]
                 ],
                 [
                     'sequence' => [
@@ -112,7 +113,7 @@ class DaySoQuyLuatController extends Controller
                         ['numerator' => 5, 'denominator' => 3],
                         ['numerator' => 7, 'denominator' => 4],
                     ],
-                    'answer' => ['numerator' => 9, 'denominator' => 5]
+                    'answer'   => ['numerator' => 9, 'denominator' => 5]
                 ]
             ]
         ];
@@ -120,11 +121,11 @@ class DaySoQuyLuatController extends Controller
         // Lấy ngẫu nhiên một câu hỏi từ cấp độ hiện tại
         $levelQuestions = $questions[$level];
         $randomQuestion = $levelQuestions[array_rand($levelQuestions)];
-        
+
         return [
-            'level' => $level,
+            'level'    => $level,
             'sequence' => $randomQuestion['sequence'],
-            'answer' => $randomQuestion['answer']
+            'answer'   => $randomQuestion['answer']
         ];
     }
 
@@ -132,7 +133,7 @@ class DaySoQuyLuatController extends Controller
     {
         // Lấy cấp độ từ session hoặc mặc định là 1
         $level = session('pattern_level', 1);
-        
+
         // Tạo câu hỏi cho cấp độ hiện tại
         $question = $this->generateQuestion($level);
 
@@ -141,12 +142,12 @@ class DaySoQuyLuatController extends Controller
 
     public function checkAnswer(Request $request)
     {
-        $answer = $request->input('answer');
+        $answer        = $request->input('answer');
         $correctAnswer = $request->input('correct_answer');
-        $currentLevel = session('pattern_level', 1);
+        $currentLevel  = session('pattern_level', 1);
 
-        $isCorrect = $answer['numerator'] === $correctAnswer['numerator'] && 
-                    $answer['denominator'] === $correctAnswer['denominator'];
+        $isCorrect = $answer['numerator'] === $correctAnswer['numerator'] &&
+            $answer['denominator'] === $correctAnswer['denominator'];
 
         if ($isCorrect) {
             // Tăng cấp độ nếu chưa đạt cấp độ tối đa
@@ -156,10 +157,10 @@ class DaySoQuyLuatController extends Controller
         }
 
         return response()->json([
-            'correct' => $isCorrect,
+            'correct'    => $isCorrect,
             'next_level' => $isCorrect && $currentLevel < 5
         ]);
     }
 
-    
-} 
+
+}

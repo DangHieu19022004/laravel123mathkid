@@ -39,116 +39,116 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('kham-pha-phan-so')->name('fraction_exploration.')
             ->group(function () {
-                // Route::get('/', [KhamPhaPhanSoController::class, 'index'])
-                //     ->name('overview');
+                Route::get('/', [KhamPhaPhanSoController::class, 'index'])
+                    ->name('overview');
 
-                // // Game Táo
-                // Route::get('/qua-tao', [KhamPhaPhanSoController::class, 'appleGame'])
-                //     ->name('apple');
-                // Route::post('/qua-tao/kiem-tra', [KhamPhaPhanSoController::class, 'checkAppleAnswer'])
-                //     ->name('apple.check');
+                // Game Táo
+                Route::get('/qua-tao', [KhamPhaPhanSoController::class, 'appleGame'])
+                    ->name('apple');
+                Route::post('/qua-tao/kiem-tra', [KhamPhaPhanSoController::class, 'checkAppleAnswer'])
+                    ->name('apple.check');
 
-                // // Game Cân Bằng
-                // Route::get('/can-bang', [KhamPhaPhanSoController::class, 'balanceGame'])
-                //     ->name('balance');
-                // Route::post('/can-bang/kiem-tra', [KhamPhaPhanSoController::class, 'checkBalanceAnswer'])
-                //     ->name('balance.check');
+                // Game Cân Bằng
+                Route::get('/can-bang', [KhamPhaPhanSoController::class, 'balanceGame'])
+                    ->name('balance');
+                Route::post('/can-bang/kiem-tra', [KhamPhaPhanSoController::class, 'checkBalanceAnswer'])
+                    ->name('balance.check');
 
-                // // Game Dấu Ngoặc
-                // Route::get('/dau-ngoac', [KhamPhaPhanSoController::class, 'bracketGame'])
-                //     ->name('bracket');
-                // Route::post('/dau-ngoac/kiem-tra', [KhamPhaPhanSoController::class, 'checkBracketAnswer'])
-                //     ->name('bracket.check');
+                // Game Dấu Ngoặc
+                Route::get('/dau-ngoac', [KhamPhaPhanSoController::class, 'bracketGame'])
+                    ->name('bracket');
+                Route::post('/dau-ngoac/kiem-tra', [KhamPhaPhanSoController::class, 'checkBracketAnswer'])
+                    ->name('bracket.check');
 
-                // // Game Bánh Ngọt
-                // Route::get('/banh-ngot', [KhamPhaPhanSoController::class, 'cakeGame'])
-                //     ->name('cake');
-                // Route::post('/banh-ngot/kiem-tra', [KhamPhaPhanSoController::class, 'checkCakeAnswer'])
-                //     ->name('cake.check');
+                // Game Bánh Ngọt
+                Route::get('/banh-ngot', [KhamPhaPhanSoController::class, 'cakeGame'])
+                    ->name('cake');
+                Route::post('/banh-ngot/kiem-tra', [KhamPhaPhanSoController::class, 'checkCakeAnswer'])
+                    ->name('cake.check');
 
-                // // Game Thẻ Bài
-                // Route::get('/the-bai', [KhamPhaPhanSoController::class, 'cardsGame'])
-                //     ->name('cards');
-                // Route::post('/the-bai/kiem-tra', [KhamPhaPhanSoController::class, 'checkCardsAnswer'])
-                //     ->name('cards.check');
+                // Game Thẻ Bài
+                Route::get('/the-bai', [KhamPhaPhanSoController::class, 'cardsGame'])
+                    ->name('cards');
+                Route::post('/the-bai/kiem-tra', [KhamPhaPhanSoController::class, 'checkCardsAnswer'])
+                    ->name('cards.check');
 
-                // // Game So Sánh
-                // Route::get('/so-sanh', [KhamPhaPhanSoController::class, 'compareGame'])
-                //     ->name('compare');
-                // Route::post('/so-sanh/kiem-tra', [KhamPhaPhanSoController::class, 'checkCompareAnswer'])
-                //     ->name('compare.check');
+                // Game So Sánh
+                Route::get('/so-sanh', [KhamPhaPhanSoController::class, 'compareGame'])
+                    ->name('compare');
+                Route::post('/so-sanh/kiem-tra', [KhamPhaPhanSoController::class, 'checkCompareAnswer'])
+                    ->name('compare.check');
 
-                // // Game Phép Chia
-                // Route::get('/phep-chia', [KhamPhaPhanSoController::class, 'divisionGame'])
-                //     ->name('division');
-                // Route::post('/phep-chia/kiem-tra', [KhamPhaPhanSoController::class, 'checkDivisionAnswer'])
-                //     ->name('division.check');
+                // Game Phép Chia
+                Route::get('/phep-chia', [KhamPhaPhanSoController::class, 'divisionGame'])
+                    ->name('division');
+                Route::post('/phep-chia/kiem-tra', [KhamPhaPhanSoController::class, 'checkDivisionAnswer'])
+                    ->name('division.check');
 
-                // // Game Nhóm Bằng Nhau
-                // Route::get('/nhom-bang-nhau', [KhamPhaPhanSoController::class, 'equalGroupsGame'])
-                //     ->name('equal_groups');
+                // Game Nhóm Bằng Nhau
+                Route::get('/nhom-bang-nhau', [KhamPhaPhanSoController::class, 'equalGroupsGame'])
+                    ->name('equal_groups');
 
-                // // Game Chia Đều
-                // Route::get('/chia-deu', [KhamPhaPhanSoController::class, 'fairShare'])
-                //     ->name('fair_share');
+                // Game Chia Đều
+                Route::get('/chia-deu', [KhamPhaPhanSoController::class, 'fairShare'])
+                    ->name('fair_share');
 
-                // // Game Vườn Hoa
-                // Route::get('/vuon-hoa', [KhamPhaPhanSoController::class, 'gardenGame'])
-                //     ->name('garden');
-                // Route::post('/vuon-hoa/kiem-tra', [KhamPhaPhanSoController::class, 'checkGardenAnswer'])
-                //     ->name('garden.check');
+                // Game Vườn Hoa
+                Route::get('/vuon-hoa', [KhamPhaPhanSoController::class, 'gardenGame'])
+                    ->name('garden');
+                Route::post('/vuon-hoa/kiem-tra', [KhamPhaPhanSoController::class, 'checkGardenAnswer'])
+                    ->name('garden.check');
 
-                // // Game Thành Phố Bí Ẩn
-                // Route::get('/thanh-pho-bi-an', [KhamPhaPhanSoController::class, 'lostCityGame'])
-                //     ->name('lost_city');
-                // Route::post('/thanh-pho-bi-an/kiem-tra', [KhamPhaPhanSoController::class, 'checkLostCityAnswer'])
-                //     ->name('lost_city.check');
+                // Game Thành Phố Bí Ẩn
+                Route::get('/thanh-pho-bi-an', [KhamPhaPhanSoController::class, 'lostCityGame'])
+                    ->name('lost_city');
+                Route::post('/thanh-pho-bi-an/kiem-tra', [KhamPhaPhanSoController::class, 'checkLostCityAnswer'])
+                    ->name('lost_city.check');
 
-                // // Game Quy Luật
-                // Route::get('/quy-luat', [KhamPhaPhanSoController::class, 'patternGame'])
-                //     ->name('pattern');
-                // Route::post('/quy-luat/kiem-tra', [KhamPhaPhanSoController::class, 'checkPatternAnswer'])
-                //     ->name('pattern.check');
+                // Game Quy Luật
+                Route::get('/quy-luat', [KhamPhaPhanSoController::class, 'patternGame'])
+                    ->name('pattern');
+                Route::post('/quy-luat/kiem-tra', [KhamPhaPhanSoController::class, 'checkPatternAnswer'])
+                    ->name('pattern.check');
 
-                // // Game Phân Số
-                // Route::get('/phan-so', [KhamPhaPhanSoController::class, 'phanso'])
-                //     ->name('fraction');
+                // Game Phân Số
+                Route::get('/phan-so', [KhamPhaPhanSoController::class, 'phanso'])
+                    ->name('fraction');
 
-                // // Game Bánh Còn Lại
-                // Route::get('/banh-con-lai', [KhamPhaPhanSoController::class, 'remainingCakeGame'])
-                //     ->name('remaining_cake');
-                // Route::post('/banh-con-lai/kiem-tra', [KhamPhaPhanSoController::class, 'checkRemainingCakeAnswer'])
-                //     ->name('remaining_cake.check');
+                // Game Bánh Còn Lại
+                Route::get('/banh-con-lai', [KhamPhaPhanSoController::class, 'remainingCakeGame'])
+                    ->name('remaining_cake');
+                Route::post('/banh-con-lai/kiem-tra', [KhamPhaPhanSoController::class, 'checkRemainingCakeAnswer'])
+                    ->name('remaining_cake.check');
 
-                // // Game Ghép Câu
-                // Route::get('/ghep-cau', [KhamPhaPhanSoController::class, 'sentenceGame'])
-                //     ->name('sentence');
-                // Route::post('/ghep-cau/kiem-tra', [KhamPhaPhanSoController::class, 'checkSentenceAnswer'])
-                //     ->name('sentence.check');
+                // Game Ghép Câu
+                Route::get('/ghep-cau', [KhamPhaPhanSoController::class, 'sentenceGame'])
+                    ->name('sentence');
+                Route::post('/ghep-cau/kiem-tra', [KhamPhaPhanSoController::class, 'checkSentenceAnswer'])
+                    ->name('sentence.check');
 
-                // // Game Bầu Trời
-                // Route::get('/bau-troi', [KhamPhaPhanSoController::class, 'skyGame'])
-                //     ->name('sky');
-                // Route::post('/bau-troi/kiem-tra', [KhamPhaPhanSoController::class, 'checkSkyAnswer'])
-                //     ->name('sky.check');
+                // Game Bầu Trời
+                Route::get('/bau-troi', [KhamPhaPhanSoController::class, 'skyGame'])
+                    ->name('sky');
+                Route::post('/bau-troi/kiem-tra', [KhamPhaPhanSoController::class, 'checkSkyAnswer'])
+                    ->name('sky.check');
 
-                // // Game Tháp Phân Số
-                // Route::get('/thap-phan-so', [KhamPhaPhanSoController::class, 'towerGame'])
-                //     ->name('tower');
-                // Route::post('/thap-phan-so/kiem-tra', [KhamPhaPhanSoController::class, 'checkTowerAnswer'])
-                //     ->name('tower.check');
+                // Game Tháp Phân Số
+                Route::get('/thap-phan-so', [KhamPhaPhanSoController::class, 'towerGame'])
+                    ->name('tower');
+                Route::post('/thap-phan-so/kiem-tra', [KhamPhaPhanSoController::class, 'checkTowerAnswer'])
+                    ->name('tower.check');
 
-                // // Game Săn Từ
-                // Route::get('/san-tu', [KhamPhaPhanSoController::class, 'wordHuntGame'])
-                //     ->name('word_hunt');
-                // Route::post('/san-tu/kiem-tra', [KhamPhaPhanSoController::class, 'checkWordHuntAnswer'])
-                //     ->name('word_hunt.check');
+                // Game Săn Từ
+                Route::get('/san-tu', [KhamPhaPhanSoController::class, 'wordHuntGame'])
+                    ->name('word_hunt');
+                Route::post('/san-tu/kiem-tra', [KhamPhaPhanSoController::class, 'checkWordHuntAnswer'])
+                    ->name('word_hunt.check');
 
-                // // Game Bài Toán Lời Văn
-                // Route::get('/bai-toan-loi-van', [KhamPhaPhanSoController::class, 'wordProblemGame'])
-                //     ->name('word_problem');
-                // Route::post('/bai-toan-loi-van/kiem-tra', [KhamPhaPhanSoController::class, 'checkWordProblemAnswer'])
-                //     ->name('word_problem.check');
+                // Game Bài Toán Lời Văn
+                Route::get('/bai-toan-loi-van', [KhamPhaPhanSoController::class, 'wordProblemGame'])
+                    ->name('word_problem');
+                Route::post('/bai-toan-loi-van/kiem-tra', [KhamPhaPhanSoController::class, 'checkWordProblemAnswer'])
+                    ->name('word_problem.check');
             });
 
         // ===========================================
@@ -384,9 +384,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('bi-an-hinh-hoc')->name('geometry_mysteries.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.bi_an_hinh_hoc.bi_an_hinh_hoc');
-                })->name('overview');
+                Route::get('/', [HinhHocGameController::class, 'index'])->name('overview');
 
 //                Route::get('/tinh-dien-tich', [HinhHocGameController::class, 'areaCalculationGame'])
 //                    ->name('area_calculation');
@@ -403,9 +401,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('day-so-quy-luat')->name('number_sequence_patterns.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.day_so_quy_luat.day_so_quy_luat');
-                })->name('overview');
+                Route::get('/', [DaySoQuyLuatController::class, 'index'])->name('overview');
 
 //                Route::get('/tim-quy-luat', [DaySoQuyLuatController::class, 'patternGame'])
 //                    ->name('find_pattern');
@@ -418,9 +414,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('giai-toan-loi-van')->name('word_problem_solving.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.giai_toan_loi_van.giai_toan_loi_van');
-                })->name('overview');
+                Route::get('/', [GiaiToanLoiVanController::class, 'index'])->name('overview');
 
 //                Route::get('/thanh-pho-mat-tich', [GiaiToanLoiVanController::class, 'lostCity'])
 //                    ->name('lost_city');
@@ -437,9 +431,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('so-tu-nhien-va-cac-phep-tinh')->name('natural_numbers_and_operations.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.so_tu_nhien_va_cac_phep_tinh.so_tu_nhien_va_cac_phep_tinh');
-                })->name('overview');
+                Route::get('/', [SoTuNhienVaCacPhepTinhController::class, 'index'])->name('overview');
 
 //                Route::get('/gia-tri-chu-so', [SoTuNhienVaCacPhepTinhController::class, 'numberPlaceValueGame'])
 //                    ->name('place_value');
@@ -456,9 +448,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('thong-ke-bieu-do')->name('statistics_and_charts.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.thong_ke_bieu_do.thong_ke_bieu_do');
-                })->name('overview');
+                Route::get('/', [ThongKeBieuDoController::class, 'index'])->name('overview');
 
 //                Route::get('/thu-thap-du-lieu', [ThongKeBieuDoController::class, 'dataCollectionGame'])
 //                    ->name('data_collection');
@@ -475,9 +465,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         // ===========================================
         Route::prefix('thu-thach-do-luong')->name('measurement_challenges.')
             ->group(function () {
-                Route::get('/', static function () {
-                    return view('games.lop4.thu_thach_do_luong.thu_thach_do_luong');
-                })->name('overview');
+                Route::get('/', [ThuThachDoLuongController::class, 'index'])->name('overview');
 
 //                Route::get('/do-do-dai', [ThuThachDoLuongController::class, 'lengthMeasurementGame'])
 //                    ->name('length_measurement');

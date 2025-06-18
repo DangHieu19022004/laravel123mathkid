@@ -15,7 +15,7 @@ return [
 
                 ],
             ],
-            'kham_pha_phan_so'            => [
+            'kham_pha_phan_so'   => [
                 'icon'        => '🥧',
                 'title'       => 'Khám Phá Thế Giới Phân Số',
                 'description' => 'Khám phá thế giới phân số qua các trò chơi thú vị giúp hiểu rõ về phần, so sánh và thực hiện các phép tính với phân số một cách dễ dàng.',
@@ -137,7 +137,7 @@ return [
                     ],
                 ],
             ],
-            'hinh-hoc'           => [
+            'bi_an_hinh_hoc'     => [
                 'icon'        => '📐',
                 'title'       => 'Bí Ẩn Hình Học',
                 'description' => 'Giải mã các bí ẩn hình học thông qua việc tính chu vi, diện tích và thể tích của các hình khối khác nhau trong môi trường học tập tương tác.',
@@ -146,7 +146,7 @@ return [
 
                 ],
             ],
-            'do_luong_va_don_vi' => [
+            'thu_thach_do_luong' => [
                 'icon'        => '📏⚖️⏳',
                 'title'       => 'Thử Thách Đo Lường',
                 'description' => 'Tham gia các thử thách đo lường về độ dài, khối lượng, thời gian và dung tích với các đơn vị đo khác nhau để rèn luyện kỹ năng thực tế.',

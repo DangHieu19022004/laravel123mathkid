@@ -4,12 +4,12 @@
     <div class="container mx-auto px-4 py-8 relative z-10">
         <!-- Header Section -->
         <div class="text-center mb-12 animate-slide-up">
-            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-pulse mb-4 pt-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 pt-4">
                 {{ $title }}
             </h1>
             <div class="flex justify-center items-center mb-4">
                 <div class="text-3xl animate-bounce-slow">🎓</div>
-                <p class="text-xl md:text-2xl text-gray-700 ml-3 font-nunito">
+                <p class="text-xl md:text-2xl text-white ml-3 font-nunito">
                     {{ $description }}
                 </p>
                 <div class="text-3xl animate-bounce-slow ml-3" style="animation-delay: 0.5s;">📚</div>
