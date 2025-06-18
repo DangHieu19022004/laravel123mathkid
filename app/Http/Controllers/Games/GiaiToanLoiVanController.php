@@ -278,94 +278,56 @@ class GiaiToanLoiVanController extends Controller
     private function generateQuestion($level)
     {
         $questions = [
-            // Cấp độ 1: Bài toán đơn giản về cộng trừ
             1 => [
                 [
-                    'question' => 'Mẹ mua 5 quả cam và 3 quả táo. Hỏi mẹ mua tất cả bao nhiêu quả?',
-                    'options' => ['7 quả', '8 quả', '9 quả', '10 quả'],
-                    'answer' => '8 quả',
-                    'explanation' => 'Số quả mẹ mua = 5 + 3 = 8 quả'
-                ],
-                [
-                    'question' => 'Lớp 4A có 32 học sinh, trong đó có 15 học sinh nam. Hỏi lớp 4A có bao nhiêu học sinh nữ?',
-                    'options' => ['15 học sinh', '17 học sinh', '19 học sinh', '21 học sinh'],
-                    'answer' => '17 học sinh',
-                    'explanation' => 'Số học sinh nữ = 32 - 15 = 17 học sinh'
+                    'question' => 'Một cửa hàng có 24 quả cam. Họ đã bán được 1/3 số cam. Hỏi còn lại bao nhiêu quả cam?',
+                    'options' => ['16 quả', '18 quả', '20 quả', '22 quả'],
+                    'answer' => '16 quả',
+                    'explanation' => 'Số cam đã bán: 24 × 1/3 = 8 quả. Số cam còn lại: 24 - 8 = 16 quả.',
+                    'level' => 1
                 ]
             ],
-            // Cấp độ 2: Bài toán về nhân chia đơn giản
             2 => [
                 [
-                    'question' => 'Mỗi hộp có 6 viên kẹo. Hỏi 8 hộp như thế có bao nhiêu viên kẹo?',
-                    'options' => ['42 viên', '44 viên', '46 viên', '48 viên'],
-                    'answer' => '48 viên',
-                    'explanation' => 'Số viên kẹo = 6 × 8 = 48 viên'
-                ],
-                [
-                    'question' => 'Có 45 quyển vở chia đều cho 9 bạn. Hỏi mỗi bạn được bao nhiêu quyển vở?',
-                    'options' => ['4 quyển', '5 quyển', '6 quyển', '7 quyển'],
-                    'answer' => '5 quyển',
-                    'explanation' => 'Số vở mỗi bạn = 45 ÷ 9 = 5 quyển'
+                    'question' => 'Một bể nước chứa 120 lít nước. Người ta đã sử dụng 2/5 số nước. Hỏi còn lại bao nhiêu lít nước?',
+                    'options' => ['72 lít', '80 lít', '88 lít', '96 lít'],
+                    'answer' => '72 lít',
+                    'explanation' => 'Số nước đã sử dụng: 120 × 2/5 = 48 lít. Số nước còn lại: 120 - 48 = 72 lít.',
+                    'level' => 2
                 ]
             ],
-            // Cấp độ 3: Bài toán kết hợp các phép tính
             3 => [
                 [
-                    'question' => 'Một cửa hàng có 120 quyển sách. Ngày thứ nhất bán được 1/3 số sách, ngày thứ hai bán được 1/4 số sách còn lại. Hỏi cửa hàng còn lại bao nhiêu quyển sách?',
-                    'options' => ['60 quyển', '65 quyển', '70 quyển', '75 quyển'],
-                    'answer' => '60 quyển',
-                    'explanation' => 'Ngày 1 bán: 120 ÷ 3 = 40 quyển. Còn lại: 120 - 40 = 80 quyển. Ngày 2 bán: 80 ÷ 4 = 20 quyển. Còn lại: 80 - 20 = 60 quyển'
-                ],
-                [
-                    'question' => 'Một đội công nhân làm trong 3 ngày. Ngày thứ nhất làm được 1/4 công việc, ngày thứ hai làm được 1/3 công việc còn lại. Hỏi ngày thứ ba phải làm bao nhiêu phần công việc?',
-                    'options' => ['1/2 công việc', '1/3 công việc', '1/4 công việc', '1/6 công việc'],
-                    'answer' => '1/2 công việc',
-                    'explanation' => 'Ngày 1 làm: 1/4 công việc. Còn lại: 1 - 1/4 = 3/4 công việc. Ngày 2 làm: 3/4 × 1/3 = 1/4 công việc. Ngày 3 làm: 1 - 1/4 - 1/4 = 1/2 công việc'
+                    'question' => 'Một vườn cây có 150 cây. 3/5 số cây là cây ăn quả. Hỏi có bao nhiêu cây không phải cây ăn quả?',
+                    'options' => ['60 cây', '70 cây', '80 cây', '90 cây'],
+                    'answer' => '60 cây',
+                    'explanation' => 'Số cây ăn quả: 150 × 3/5 = 90 cây. Số cây không phải cây ăn quả: 150 - 90 = 60 cây.',
+                    'level' => 3
                 ]
             ],
-            // Cấp độ 4: Bài toán về tỉ số và tỉ lệ
             4 => [
                 [
-                    'question' => 'Tổng số tuổi của hai anh em là 24 tuổi. Biết tuổi em bằng 2/3 tuổi anh. Hỏi anh bao nhiêu tuổi?',
-                    'options' => ['12 tuổi', '14 tuổi', '16 tuổi', '18 tuổi'],
-                    'answer' => '14 tuổi',
-                    'explanation' => 'Tổng số phần: 2 + 3 = 5 phần. Tuổi anh: 24 ÷ 5 × 3 = 14 tuổi'
-                ],
-                [
-                    'question' => 'Một mảnh vườn hình chữ nhật có chiều dài gấp 3 lần chiều rộng. Nếu tăng chiều rộng thêm 2m thì diện tích tăng thêm 24m². Tính diện tích mảnh vườn ban đầu.',
-                    'options' => ['48m²', '54m²', '60m²', '72m²'],
-                    'answer' => '48m²',
-                    'explanation' => 'Gọi chiều rộng là x, chiều dài là 3x. Diện tích ban đầu: 3x². Diện tích mới: 3x(x+2) = 3x² + 6x. Tăng thêm: 6x = 24 → x = 4. Diện tích ban đầu: 3 × 4² = 48m²'
+                    'question' => 'Một cửa hàng có 180 sản phẩm. 4/9 số sản phẩm đã bán hết. Hỏi còn lại bao nhiêu sản phẩm?',
+                    'options' => ['100 sản phẩm', '110 sản phẩm', '120 sản phẩm', '130 sản phẩm'],
+                    'answer' => '100 sản phẩm',
+                    'explanation' => 'Số sản phẩm đã bán: 180 × 4/9 = 80 sản phẩm. Số sản phẩm còn lại: 180 - 80 = 100 sản phẩm.',
+                    'level' => 4
                 ]
             ],
-            // Cấp độ 5: Bài toán phức tạp
             5 => [
                 [
-                    'question' => 'Một bể nước có 3 vòi. Vòi 1 chảy đầy bể trong 6 giờ, vòi 2 chảy đầy bể trong 8 giờ, vòi 3 chảy đầy bể trong 12 giờ. Nếu mở cả 3 vòi cùng lúc thì sau bao lâu bể sẽ đầy?',
-                    'options' => ['2 giờ', '2 giờ 24 phút', '2 giờ 40 phút', '3 giờ'],
-                    'answer' => '2 giờ 24 phút',
-                    'explanation' => 'Trong 1 giờ: Vòi 1 chảy 1/6 bể, vòi 2 chảy 1/8 bể, vòi 3 chảy 1/12 bể. Cả 3 vòi chảy: 1/6 + 1/8 + 1/12 = 9/24 = 3/8 bể. Thời gian đầy bể: 1 ÷ 3/8 = 8/3 giờ = 2 giờ 24 phút'
-                ],
-                [
-                    'question' => 'Một người đi từ A đến B với vận tốc 40km/h. Khi về từ B đến A, người đó đi với vận tốc 60km/h. Tổng thời gian đi và về là 5 giờ. Tính quãng đường AB.',
-                    'options' => ['100km', '120km', '140km', '160km'],
-                    'answer' => '120km',
-                    'explanation' => 'Gọi quãng đường là x. Thời gian đi: x/40. Thời gian về: x/60. Tổng thời gian: x/40 + x/60 = 5. Giải phương trình: x = 120km'
+                    'question' => 'Một công ty có 300 nhân viên. 7/12 số nhân viên là nam. Hỏi có bao nhiêu nhân viên nữ?',
+                    'options' => ['125 nhân viên', '130 nhân viên', '135 nhân viên', '140 nhân viên'],
+                    'answer' => '125 nhân viên',
+                    'explanation' => 'Số nhân viên nam: 300 × 7/12 = 175 nhân viên. Số nhân viên nữ: 300 - 175 = 125 nhân viên.',
+                    'level' => 5
                 ]
             ]
         ];
 
-        // Lấy ngẫu nhiên một câu hỏi từ cấp độ hiện tại
-        $levelQuestions = $questions[$level];
-        $randomQuestion = $levelQuestions[array_rand($levelQuestions)];
-        
-        return [
-            'level' => $level,
-            'question' => $randomQuestion['question'],
-            'options' => $randomQuestion['options'],
-            'answer' => $randomQuestion['answer'],
-            'explanation' => $randomQuestion['explanation']
-        ];
+        // Lấy câu hỏi cho cấp độ hiện tại
+        $levelQuestions = $questions[$level] ?? $questions[1];
+        return $levelQuestions[0];
     }
 
     public function wordProblemGame(Request $request)
