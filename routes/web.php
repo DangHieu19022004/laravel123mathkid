@@ -157,7 +157,7 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
         Route::prefix('phan-so')->name('phan_so.')
             ->group(function () {
                 // Trang tổng quan game
-                Route::get('/', [GameController::class, 'gameHub'])->name('tong_quan');
+                Route::get('/', [GameController::class, 'index'])->name('tong_quan');
 
 //                // Game Bánh Ngọt
 //                Route::get('/banh-ngot', [GameController::class, 'cakeGame'])

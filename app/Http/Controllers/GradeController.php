@@ -10,7 +10,7 @@ class GradeController extends Controller
 {
     public function index(string $grade = 'lop4')
     {
-        $configGames = config("list-game.$grade", []);
+        $configGames = config("group-game.$grade", []);
         if (empty($configGames)) {
             abort(404);
         }
