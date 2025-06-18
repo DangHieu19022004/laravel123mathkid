@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+    <div class="mb-4">
+        <a href="{{ route('games.lop4.bi_an_hinh_hoc.index') }}" class="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-lg shadow hover:bg-purple-200 transition font-semibold"><span class="mr-2">←</span>Quay lại danh sách trò chơi</a>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">

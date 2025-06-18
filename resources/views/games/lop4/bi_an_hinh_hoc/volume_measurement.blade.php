@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('content')
 <div class="container" style="max-width: 500px; margin: 0 auto;">
+<div class="mb-4">
+        <a href="{{ route('games.lop4.bi_an_hinh_hoc.index') }}" class="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-lg shadow hover:bg-purple-200 transition font-semibold"><span class="mr-2">←</span>Quay lại danh sách trò chơi</a>
+    </div>
 
     <!-- Level Progress Bar -->
     <div class="level-progress mb-4">
@@ -107,14 +110,14 @@
 
     // Nút Tiếp tục
     nextBtn.addEventListener('click', () => {
-        window.location.href = '{{ route("games.lop4.dailuongvadoluong.volume_measurement") }}';
+        window.location.href = '{{ route("games.lop4.bi_an_hinh_hoc.volume_measurement") }}';
     });
 
     // Nút chơi lại
     document.getElementById('resetGame').addEventListener('click', () => {
         if (confirm('Bạn chắc chắn muốn chơi lại từ đầu?')) {
             localStorage.removeItem('volumeMeasurementLevel');
-            window.location.href = '{{ route("games.lop4.dailuongvadoluong.volume_measurement") }}';
+            window.location.href = '{{ route("games.lop4.bi_an_hinh_hoc.volume_measurement") }}';
         }
     });
 </script>

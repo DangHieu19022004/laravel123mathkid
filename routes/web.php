@@ -294,6 +294,7 @@ Route::prefix('games/lop4/bi-an-hinh-hoc')->name('games.lop4.bi_an_hinh_hoc.')->
     Route::get('/perimeter-calculation', [HinhHocGameController::class, 'perimeterCalculationGame'])->name('perimeter_calculation');
     Route::get('/angle-measurement', [HinhHocGameController::class, 'angleMeasurementGame'])->name('angle_measurement');
     Route::get('/volume-measurement', [HinhHocGameController::class, 'volumeMeasurementGame'])->name('volume_measurement');
+    Route::get('/area-measurement', [HinhHocGameController::class, 'areaMeasurementGame'])->name('area_measurement');
 });
 
 Route::prefix('games/lop4/day-so-quy-luat')->name('games.lop4.day_so_quy_luat.')->group(function () {

@@ -2,6 +2,9 @@
 
 @section('game_content')
 <div class="container mx-auto px-4 py-8 max-w-lg">
+    <div class="mb-4">
+        <a href="{{ route('games.lop4.bi_an_hinh_hoc.index') }}" class="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-lg shadow hover:bg-purple-200 transition font-semibold"><span class="mr-2">←</span>Quay lại danh sách trò chơi</a>
+    </div>
     <div class="text-center mb-6">
         <h1 class="text-3xl font-bold text-blue-600">Đo Góc - Cấp độ {{ $question['level'] }}</h1>
         <p class="text-gray-600 mt-2">Hãy đo <strong>{{ $question['angle_type'] }}</strong> dưới đây</p>
@@ -57,6 +60,15 @@ function renderBoard(angleDeg) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Nếu chưa có js_level trên URL, truyền từ localStorage lên để đồng bộ tiến trình
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('js_level')) {
+        const localLevel = parseInt(localStorage.getItem('angleMeasurementLevel') || '0') + 1;
+        url.searchParams.set('js_level', localLevel);
+        window.location.replace(url.toString());
+        return;
+    }
+
     const checkBtn = document.getElementById('check');
     const resetBtn = document.getElementById('resetGame');
     const nextBtn = document.getElementById('nextLevel');
@@ -81,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultDiv.textContent = '🎉 Chính xác!';
                 resultDiv.classList.remove('text-red-600');
                 resultDiv.classList.add('text-green-600');
+                localStorage.setItem('angleMeasurementLevel', {{ $question['level'] - 1 }});
                 if (data.next_level && nextBtn) nextBtn.classList.remove('hidden');
             } else {
                 resultDiv.textContent = '😕 Sai rồi! Đáp án đúng: {{ $question['actual_angle'] }}°';
@@ -94,13 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     resetBtn.addEventListener('click', function() {
-        // Redirect to server-side reset route to clear session and reload
-        window.location.href = '{{ route("games.lop4.dailuongvadoluong.angle_measurement.reset") }}';
+        window.location.reload();
     });
 
     if (nextBtn) {
         nextBtn.addEventListener('click', function() {
-            window.location.href = '{{ route("games.lop4.dailuongvadoluong.angle_measurement") }}';
+            localStorage.setItem('angleMeasurementLevel', {{ $question['level'] }});
+            window.location.href = '{{ route("games.lop4.bi_an_hinh_hoc.angle_measurement") }}';
         });
     }
 });
