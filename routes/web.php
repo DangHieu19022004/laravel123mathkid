@@ -446,14 +446,14 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
             ->group(function () {
                 Route::get('/', [ThongKeBieuDoController::class, 'index'])->name('overview');
 
-//                Route::get('/thu-thap-du-lieu', [ThongKeBieuDoController::class, 'dataCollectionGame'])
-//                    ->name('data_collection');
-//                Route::get('/bieu-do-cot', [ThongKeBieuDoController::class, 'barChartGame'])
-//                    ->name('bar_chart');
-//                Route::get('/bieu-do-duong', [ThongKeBieuDoController::class, 'lineChartGame'])
-//                    ->name('line_chart');
-//                Route::get('/bieu-do-tron', [ThongKeBieuDoController::class, 'pieChartGame'])
-//                    ->name('pie_chart');
+                Route::get('/thu-thap-du-lieu', [ThongKeBieuDoController::class, 'dataCollectionGame'])
+                    ->name('data_collection');
+                Route::get('/bieu-do-cot', [ThongKeBieuDoController::class, 'barChartGame'])
+                    ->name('bar_chart');
+                Route::get('/bieu-do-duong', [ThongKeBieuDoController::class, 'lineChartGame'])
+                    ->name('line_chart');
+                Route::get('/bieu-do-tron', [ThongKeBieuDoController::class, 'pieChartGame'])
+                    ->name('pie_chart');
             });
 
         // ===========================================

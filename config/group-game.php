@@ -181,7 +181,30 @@ return [
                 'description' => 'Học cách đọc, hiểu và phân tích dữ liệu thống kê thông qua các biểu đồ trực quan giúp phát triển kỹ năng phân tích và suy luận.',
                 'route'       => 'game.lop4.statistics_and_charts.overview',
                 'games'       => [
-
+                    'thu_thap_du_lieu' => [
+                        'icon'        => '📝',
+                        'title'       => 'Thu Thập Dữ Liệu',
+                        'description' => 'Thu thập và sắp xếp dữ liệu một cách trực quan, dễ hiểu.',
+                        'route'       => 'game.lop4.statistics_and_charts.data_collection',
+                    ],
+                    'bieu_do_cot'      => [
+                        'icon'        => '📊',
+                        'title'       => 'Biểu Đồ Cột',
+                        'description' => 'Khám phá cách đọc và vẽ biểu đồ cột đơn giản, sinh động.',
+                        'route'       => 'game.lop4.statistics_and_charts.bar_chart',
+                    ],
+                    'bieu_do_duong'    => [
+                        'icon'        => '📈',
+                        'title'       => 'Biểu Đồ Đường',
+                        'description' => 'Làm quen với biểu đồ đường qua các ví dụ trực quan, dễ nhớ.',
+                        'route'       => 'game.lop4.statistics_and_charts.line_chart',
+                    ],
+                    'bieu_do_tron'     => [
+                        'icon'        => '🥧',
+                        'title'       => 'Biểu Đồ Tròn',
+                        'description' => 'Tìm hiểu biểu đồ tròn và cách thể hiện dữ liệu bằng hình ảnh.',
+                        'route'       => 'game.lop4.statistics_and_charts.pie_chart',
+                    ],
                 ],
             ],
             'day_so_quy_luat'    => [
