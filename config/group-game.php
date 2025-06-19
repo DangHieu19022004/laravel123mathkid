@@ -166,7 +166,36 @@ return [
                 'description' => 'Giải mã các bí ẩn hình học thông qua việc tính chu vi, diện tích và thể tích của các hình khối khác nhau trong môi trường học tập tương tác.',
                 'route'       => 'game.lop4.geometry_mysteries.overview',
                 'games'       => [
-
+                    'dien_tich'    => [
+                        'icon'        => '🟥',
+                        'title'       => 'Tính Diện Tích',
+                        'description' => 'Tính diện tích các hình cơ bản qua ví dụ trực quan, dễ hiểu.',
+                        'route'       => 'game.lop4.geometry_mysteries.area_calculation',
+                    ],
+                    'chu_vi'       => [
+                        'icon'        => '📏',
+                        'title'       => 'Tính Chu Vi',
+                        'description' => 'Ôn tập cách tính chu vi các hình học thường gặp.',
+                        'route'       => 'game.lop4.geometry_mysteries.perimeter_calculation',
+                    ],
+                    'do_goc'       => [
+                        'icon'        => '📐',
+                        'title'       => 'Đo Góc',
+                        'description' => 'Đo và ước lượng góc bằng các công cụ quen thuộc.',
+                        'route'       => 'game.lop4.geometry_mysteries.angle_measurement',
+                    ],
+                    'do_dung_tich' => [
+                        'icon'        => '🥛',
+                        'title'       => 'Đo Dung Tích',
+                        'description' => 'Khám phá cách đo và so sánh dung tích các vật dụng.',
+                        'route'       => 'game.lop4.geometry_mysteries.volume_measurement',
+                    ],
+                    //                    'do_dien_tich' => [
+                    //                        'icon'        => '🟦📏',
+                    //                        'title'       => 'Đo Diện Tích',
+                    //                        'description' => 'Chọn hình có diện tích lớn nhất/nhỏ nhất.',
+                    //                        'route'       => 'game.lop4.geometry_mysteries.area_measurement',
+                    //                    ]
                 ],
             ],
             'thu_thach_do_luong'           => [

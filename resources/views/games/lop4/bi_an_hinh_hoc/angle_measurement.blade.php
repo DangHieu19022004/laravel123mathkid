@@ -1,108 +1,323 @@
 @extends('layouts.game')
 
 @section('game_content')
-<div class="container mx-auto px-4 py-8 max-w-lg">
-    <div class="text-center mb-6">
-        <h1 class="text-3xl font-bold text-blue-600">Đo Góc - Cấp độ {{ $question['level'] }}</h1>
-        <p class="text-gray-600 mt-2">Hãy đo <strong>{{ $question['angle_type'] }}</strong> dưới đây</p>
+    <div class="relative min-h-[80vh] flex justify-center items-center overflow-hidden">
+        <div class="relative z-10 bg-white/90 rounded-3xl shadow-2xl p-8 w-full max-w-lg border-4 border-gradient-animated animate-fade-in">
+            <div class="text-center mb-6">
+                <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-yellow-400 to-blue-500 drop-shadow mb-2 flex items-center justify-center gap-2 animate-title-bounce">
+                    <span class="animate-spin-slow">📐</span> Đo Góc <span class="animate-bounce">🧭</span>
+                </h1>
+                <p class="text-gray-700 text-lg font-bold tracking-wide animate-fade-in">
+                    Câu hỏi <span id="levelDisplay" class="text-pink-500 font-extrabold text-2xl">1</span> /
+                    <span id="maxLevelDisplay" class="text-blue-500 font-extrabold text-2xl">5</span>
+                </p>
+            </div>
+            <div id="questionBox" class="text-center mb-8"></div>
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <input id="answerInput" type="number" step="any" class="w-max p-3 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-pink-300 text-center text-lg font-semibold shadow transition-all duration-300 bg-gradient-to-r from-blue-100 via-pink-100 to-yellow-100 animate-input-glow" placeholder="Nhập số đo (độ)">
+            </div>
+            <div class="flex justify-center gap-4 mb-2">
+                <button id="checkBtn" class="w-40 h-14 bg-gradient-to-r from-green-400 via-yellow-300 to-pink-400 text-white rounded-xl hover:scale-110 active:scale-95 transition text-lg font-bold flex items-center justify-center gap-2 shadow-lg focus:outline-none focus:ring-4 focus:ring-pink-200 animate-btn-wave relative overflow-hidden">
+                    <span class="animate-pulse">✔️</span>Kiểm tra
+                </button>
+                <button id="resetBtn" class="w-40 h-14 bg-gradient-to-r from-yellow-400 via-pink-400 to-blue-400 text-white rounded-xl hover:scale-110 active:scale-95 transition text-lg font-bold flex items-center justify-center gap-2 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-200 animate-btn-wave relative overflow-hidden">
+                    <span class="animate-spin-slow">🔄</span>Chơi lại
+                </button>
+            </div>
+            <div id="particleBox" class="pointer-events-none absolute inset-0 z-20"></div>
+        </div>
     </div>
-
-    <div class="flex justify-center mb-6">
-        <div id="jxgbox" style="width: 320px; height: 320px; background: #fff;"></div>
-    </div>
-
-    <div class="flex items-center justify-center mb-4 space-x-2">
-        <input type="number" id="answer" min="0" max="360" class="w-24 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Độ">
-        <span class="text-lg font-medium">°</span>
-    </div>
-
-    <div class="flex justify-center gap-4 mb-4">
-        <button id="check" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Kiểm tra</button>
-        <button id="resetGame" class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">Chơi lại</button>
-        @if($question['level'] < 5)
-            <button id="nextLevel" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition hidden">Cấp độ Tiếp Theo ▶</button>
-        @endif
-    </div>
-
-    <div id="result" class="text-center text-xl font-semibold min-h-[2rem]"></div>
-</div>
 @endsection
 
-@section('scripts')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
-<script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
-<script>
-// Vẽ góc dựa vào dữ liệu từ backend
-function renderBoard(angleDeg) {
-    const board = JXG.JSXGraph.initBoard('jxgbox', {
-        boundingbox: [-1.2, 1.2, 1.2, -1.2],
-        axis: false,
-        showNavigation: false
-    });
-    // vạch chia
-    for (let i = 0; i < 360; i += 30) {
-        const rad = i * Math.PI / 180;
-        const p1 = [0.92 * Math.cos(rad), 0.92 * Math.sin(rad)];
-        const p2 = [Math.cos(rad), Math.sin(rad)];
-        board.create('segment', [p1, p2], {strokeColor: i % 90 ? '#bbb' : '#1976d2', strokeWidth: i % 90 ? 1 : 2, fixed: true});
-        board.create('text', [1.08 * Math.cos(rad), 1.08 * Math.sin(rad), i + '°'], {fontSize:13, color:'#1976d2', anchorX:'middle', anchorY:'middle', fixed:true});
-    }
-    const O = board.create('point', [0, 0], {fixed:true, size:0});
-    const A = board.create('point', [1, 0], {fixed:true, size:0});
-    board.create('line', [O, A], {straightFirst:false, straightLast:false, strokeWidth:3, color:'#1976d2'});
-    const radB = {{ $question['actual_angle'] }} * Math.PI / 180;
-    const B = board.create('point', [Math.cos(radB), Math.sin(radB)], {fixed:true, size:0});
-    board.create('line', [O, B], {straightFirst:false, straightLast:false, strokeWidth:3, color:'#1976d2'});
-    board.create('arc', [O, A, B], {strokeColor:'#ff9800', strokeWidth:3});
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const checkBtn = document.getElementById('check');
-    const resetBtn = document.getElementById('resetGame');
-    const nextBtn = document.getElementById('nextLevel');
-    const resultDiv = document.getElementById('result');
-
-    renderBoard({{ $question['actual_angle'] }});
-
-    checkBtn.addEventListener('click', async () => {
-        const ans = parseInt(document.getElementById('answer').value);
-        if (isNaN(ans)) {
-            alert('Vui lòng nhập đáp án!');
-            return;
+@push('styles')
+    <style>
+        /* Animated border gradient */
+        .border-gradient-animated {
+            border-image: linear-gradient(135deg, #f472b6, #facc15, #60a5fa, #a5b4fc, #f472b6) 1;
+            animation: border-rotate 4s linear infinite;
         }
-        try {
-            const res = await fetch('{{ route("games.lop4.dailuongvadoluong.angle_measurement.check") }}', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},
-                body: JSON.stringify({answer: ans})
-            });
-            const data = await res.json();
-            if (data.correct) {
-                resultDiv.textContent = '🎉 Chính xác!';
-                resultDiv.classList.remove('text-red-600');
-                resultDiv.classList.add('text-green-600');
-                if (data.next_level && nextBtn) nextBtn.classList.remove('hidden');
-            } else {
-                resultDiv.textContent = '😕 Sai rồi! Đáp án đúng: {{ $question['actual_angle'] }}°';
-                resultDiv.classList.remove('text-green-600');
-                resultDiv.classList.add('text-red-600');
+
+        @keyframes border-rotate {
+            0% {
+                border-image-source: linear-gradient(135deg, #f472b6, #facc15, #60a5fa, #a5b4fc, #f472b6);
             }
-        } catch (e) {
-            console.error(e);
-            alert('Lỗi server, vui lòng thử lại.');
+            100% {
+                border-image-source: linear-gradient(495deg, #f472b6, #facc15, #60a5fa, #a5b4fc, #f472b6);
+            }
         }
-    });
 
-    resetBtn.addEventListener('click', function() {
-        // Redirect to server-side reset route to clear session and reload
-        window.location.href = '{{ route("games.lop4.dailuongvadoluong.angle_measurement.reset") }}';
-    });
+        /* Title bounce */
+        .animate-title-bounce {
+            animation: title-bounce 2.2s infinite cubic-bezier(.68, -0.55, .27, 1.55);
+        }
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-            window.location.href = '{{ route("games.lop4.dailuongvadoluong.angle_measurement") }}';
+        @keyframes title-bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            20% {
+                transform: translateY(-12px) scale(1.08);
+            }
+            40% {
+                transform: translateY(6px) scale(0.98);
+            }
+            60% {
+                transform: translateY(-4px) scale(1.04);
+            }
+            80% {
+                transform: translateY(2px) scale(0.99);
+            }
+        }
+
+        /* Input glow */
+        .animate-input-glow {
+            animation: input-glow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes input-glow {
+            from {
+                box-shadow: 0 0 0 0 #f472b6;
+            }
+            to {
+                box-shadow: 0 0 16px 4px #f472b6;
+            }
+        }
+
+        /* Button wave */
+        .animate-btn-wave::before {
+            content: '';
+            position: absolute;
+            left: -50%;
+            top: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, #fff7 0%, #fff0 80%);
+            opacity: 0.3;
+            animation: btn-wave 2.5s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes btn-wave {
+            0% {
+                transform: scale(0.8) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.1) rotate(180deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(0.8) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+
+        /* Spin slow */
+        .animate-spin-slow {
+            animation: spin 3.5s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Wiggle degree sign */
+        .animate-wiggle {
+            animation: wiggle 1.5s infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        /* Shape correct/wrong (unchanged) */
+        @keyframes shape-correct {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 #22c55e44;
+            }
+            50% {
+                transform: scale(1.12);
+                box-shadow: 0 0 30px 10px #22c55e44;
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 #22c55e44;
+            }
+        }
+
+        @keyframes shape-wrong {
+            0% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-10px);
+            }
+            40% {
+                transform: translateX(10px);
+            }
+            60% {
+                transform: translateX(-8px);
+            }
+            80% {
+                transform: translateX(8px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .animate-shape-correct {
+            animation: shape-correct 0.7s;
+        }
+
+        .animate-shape-wrong {
+            animation: shape-wrong 0.5s;
+        }
+
+        /* Fade in */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.7s;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        const questions = @json($questions);
+        let currentIdx = 0;
+
+        const levelDisplay = document.getElementById('levelDisplay');
+        const maxLevelDisplay = document.getElementById('maxLevelDisplay');
+        const questionBox = document.getElementById('questionBox');
+        const answerInput = document.getElementById('answerInput');
+        const checkBtn = document.getElementById('checkBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const particleBox = document.getElementById('particleBox');
+
+        maxLevelDisplay.textContent = questions.length;
+
+        function renderQuestion(idx) {
+            const q = questions[idx];
+            levelDisplay.textContent = idx + 1;
+            answerInput.value = '';
+            answerInput.classList.remove('border-red-400', 'border-green-400');
+            // Render thông tin góc
+            let html = `<div id='shapeBox' class='inline-block p-4 border-4 border-gradient-animated rounded-2xl bg-gradient-to-br from-blue-100 via-pink-100 to-yellow-100 shadow-xl transition-all duration-300 animate-fade-in'>`;
+            html += `<div class='text-5xl mb-2 animate-spin-slow'>📐</div>`;
+            html += `<div class='text-lg font-bold text-pink-600 mb-2 animate-title-bounce'>${q.angle_type}</div>`;
+            html += `<div class='text-gray-700 font-semibold animate-fade-in'>Hãy nhập số đo (độ) của góc này (sai số ±${q.tolerance}°)</div>`;
+            html += '</div>';
+            questionBox.innerHTML = html;
+        }
+
+        // Particle effect for correct answer
+        function showParticles() {
+            if (!particleBox) return;
+            particleBox.innerHTML = '';
+            for (let i = 0; i < 24; i++) {
+                const p = document.createElement('div');
+                const colorArr = ['#f472b6', '#facc15', '#60a5fa', '#a5b4fc', '#34d399', '#f87171'];
+                const color = colorArr[Math.floor(Math.random() * colorArr.length)];
+                const size = Math.random() * 12 + 8;
+                const left = Math.random() * 90 + 5;
+                const top = Math.random() * 60 + 20;
+                const duration = Math.random() * 0.7 + 0.8;
+                p.style.position = 'absolute';
+                p.style.left = left + '%';
+                p.style.top = top + '%';
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.borderRadius = '50%';
+                p.style.background = color;
+                p.style.opacity = 0.7;
+                p.style.zIndex = 30;
+                p.style.pointerEvents = 'none';
+                p.style.transform = 'scale(0.7)';
+                p.style.transition = `all ${duration}s cubic-bezier(.68,-0.55,.27,1.55)`;
+                particleBox.appendChild(p);
+                setTimeout(() => {
+                    p.style.transform = 'scale(1.7) translateY(-60px)';
+                    p.style.opacity = 0;
+                }, 10);
+            }
+            setTimeout(() => {
+                particleBox.innerHTML = '';
+            }, 1500);
+        }
+
+        checkBtn.addEventListener('click', function () {
+            const q = questions[currentIdx];
+            const ans = parseFloat(answerInput.value);
+            const shapeBox = document.getElementById('shapeBox');
+            if (isNaN(ans)) {
+                answerInput.classList.add('border-red-400');
+                Swal.fire({icon: 'warning', title: 'Bạn chưa nhập đáp án!', confirmButtonText: 'OK'});
+                return;
+            }
+            if (Math.abs(ans - q.actual_angle) <= q.tolerance) {
+                answerInput.classList.remove('border-red-400');
+                answerInput.classList.add('border-green-400');
+                shapeBox.classList.remove('animate-shape-wrong');
+                shapeBox.classList.add('animate-shape-correct');
+                showParticles();
+                setTimeout(() => shapeBox.classList.remove('animate-shape-correct'), 800);
+                if (currentIdx < questions.length - 1) {
+                    Swal.fire({icon: 'success', title: '🎉 Chính xác!', showConfirmButton: false, timer: 1200});
+                    setTimeout(() => {
+                        currentIdx++;
+                        renderQuestion(currentIdx);
+                    }, 1200);
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '🎉 Hoàn thành!',
+                        text: 'Bạn đã hoàn thành tất cả câu hỏi!',
+                        confirmButtonText: 'Chơi lại'
+                    }).then(() => {
+                        currentIdx = 0;
+                        renderQuestion(currentIdx);
+                    });
+                }
+            } else {
+                answerInput.classList.remove('border-green-400');
+                answerInput.classList.add('border-red-400');
+                shapeBox.classList.remove('animate-shape-correct');
+                shapeBox.classList.add('animate-shape-wrong');
+                setTimeout(() => shapeBox.classList.remove('animate-shape-wrong'), 600);
+                Swal.fire({
+                    title: '❌ Sai!',
+                    text: `Đáp án đúng là ${q.actual_angle}° (sai số ±${q.tolerance}°)`,
+                    confirmButtonText: 'OK'
+                });
+            }
         });
-    }
-});
-</script>
-@endsection
+
+        resetBtn.addEventListener('click', function () {
+            currentIdx = 0;
+            renderQuestion(currentIdx);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderQuestion(currentIdx);
+        });
+    </script>
+@endpush

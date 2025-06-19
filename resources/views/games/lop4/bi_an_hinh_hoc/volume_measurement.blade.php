@@ -1,141 +1,168 @@
-@extends('layouts.app')
-@section('content')
-<div class="container" style="max-width: 500px; margin: 0 auto;">
+@extends('layouts.game')
 
-    <!-- Level Progress Bar -->
-    <div class="level-progress mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="mb-0">Cấp độ <span id="levelNum">1</span>/5</h4>
-            <div class="progress" style="width: 70%; height: 10px;">
-                <div id="progBar" class="progress-bar bg-primary" role="progressbar"
-                     style="width: 0%;"
-                     aria-valuenow="0"
-                     aria-valuemin="0"
-                     aria-valuemax="100">
-                </div>
+@section('game_content')
+    <div class="flex justify-center items-center min-h-[80vh] bg-gradient-to-br from-blue-200 via-blue-100 to-pink-100">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg border-2 border-blue-400 animate-fade-in">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold text-blue-700 drop-shadow mb-2 flex items-center justify-center gap-2">
+                    <span class="animate-bounce">🥛</span> So Sánh Dung Tích <span class="animate-bounce">🛢️</span>
+                </h1>
+                <p class="text-gray-600 text-lg">Câu hỏi <span id="levelDisplay">1</span> /
+                    <span id="maxLevelDisplay">5</span></p>
+            </div>
+            <div id="questionBox" class="text-center mb-8"></div>
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <span class="font-bold text-blue-700 text-xl">Chọn đáp án đúng:</span>
+            </div>
+            <div class="flex justify-center gap-4 mb-2">
+                <button id="resetBtn" class="w-40 h-14 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl hover:scale-105 active:scale-95 transition text-lg font-bold flex items-center justify-center gap-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                    <span>🔄</span>Chơi lại
+                </button>
             </div>
         </div>
     </div>
-
-    <h2 class="mb-4 text-center">So sánh dung tích</h2>
-    <div class="mb-3 text-center">
-        <strong>
-            @if($question['type'] === 'max')
-                Chọn vật <span class="text-primary">có dung tích lớn nhất</span>:
-            @else
-                Chọn vật <span class="text-primary">có dung tích nhỏ nhất</span>:
-            @endif
-        </strong>
-    </div>
-    <div class="row justify-content-center">
-        @foreach($question['objects'] as $i => $obj)
-            <div class="col-12 mb-4">
-                <button
-                  class="choose-btn btn w-100 py-4 d-flex flex-column align-items-center object-btn"
-                  data-index="{{ $i }}"
-                  style="background: #e0f7fa; border: none; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); transition: box-shadow 0.2s;">
-                    <div style="font-size: 3.2rem; line-height: 1;">{{ $obj['emoji'] }}</div>
-                    <div class="fw-semibold mt-2" style="font-size: 1.2rem; color: #222;">{{ $obj['object'] }}</div>
-                    <div class="text-secondary" style="font-size: 1rem;">{{ $obj['volume'] }} {{ $obj['unit'] }}</div>
-                </button>
-            </div>
-        @endforeach
-    </div>
-
-    <div id="result" class="text-center mt-3" style="font-size: 1.2rem; min-height: 48px;"></div>
-
-    <div class="text-center mt-4">
-        <button id="next-btn" class="btn btn-primary" style="display:none;">Tiếp tục</button>
-        <button id="resetGame" class="btn btn-secondary">Chơi lại</button>
-    </div>
-    <div id="toast" style="position: fixed; top: 32px; right: 32px; z-index: 9999; min-width: 220px; display: none;"></div>
-</div>
-
-<script>
-    // Khởi tạo cấp độ mặc định từ Blade vào JS
-    const initialLevel = @json($question['level'] ?? 1) - 1;
-    const totalLevels = 5;
-    let currentLevel = parseInt(localStorage.getItem('volumeMeasurementLevel') || initialLevel, 10);
-
-    // Cập nhật hiển thị cấp độ và thanh tiến độ
-    const levelNumEl = document.getElementById('levelNum');
-    const progBarEl  = document.getElementById('progBar');
-    const display    = currentLevel + 1;
-    const percent    = (display / totalLevels) * 100;
-    levelNumEl.textContent = display;
-    progBarEl.style.width  = percent + '%';
-    progBarEl.setAttribute('aria-valuenow', percent);
-
-    // Logic chọn đáp án
-    let answered      = false;
-    const answerIndex = @json($question['answer_index']);
-    const nextBtn     = document.getElementById('next-btn');
-
-    function showToast(html, bg) {
-        const toast = document.getElementById('toast');
-        toast.innerHTML        = html;
-        toast.style.background = bg;
-        toast.style.display    = 'block';
-        toast.style.color      = '#222';
-        toast.style.borderRadius = '12px';
-        toast.style.padding     = '18px 28px';
-        toast.style.boxShadow   = '0 4px 16px rgba(0,0,0,0.10)';
-        setTimeout(() => { toast.style.display = 'none'; }, 1500);
-    }
-
-    document.querySelectorAll('.choose-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (answered) return;
-            const idx = parseInt(this.dataset.index, 10);
-            if (idx === answerIndex) {
-                answered = true;
-                this.style.border = '2px solid #28a745';
-                showToast('🎉 <strong class="text-success">Chính xác!</strong>', '#e0f7fa');
-
-                if (display < totalLevels) {
-                    currentLevel++;
-                    localStorage.setItem('volumeMeasurementLevel', currentLevel);
-                    nextBtn.style.display = 'inline-block';
-                }
-            } else {
-                this.style.border = '2px solid #dc3545';
-                showToast('😢 <strong class="text-danger">Chưa đúng, thử lại!</strong>', '#ffebee');
-                nextBtn.style.display = 'none';
-            }
-        });
-    });
-
-    // Nút Tiếp tục
-    nextBtn.addEventListener('click', () => {
-        window.location.href = '{{ route("games.lop4.dailuongvadoluong.volume_measurement") }}';
-    });
-
-    // Nút chơi lại
-    document.getElementById('resetGame').addEventListener('click', () => {
-        if (confirm('Bạn chắc chắn muốn chơi lại từ đầu?')) {
-            localStorage.removeItem('volumeMeasurementLevel');
-            window.location.href = '{{ route("games.lop4.dailuongvadoluong.volume_measurement") }}';
-        }
-    });
-</script>
-
-<style>
-.object-btn:hover, .object-btn:focus {
-    box-shadow: 0 4px 16px rgba(0,188,212,0.15);
-    background: #b2ebf2;
-}
-.level-progress {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.progress {
-    background-color: #e9ecef;
-    border-radius: 5px;
-}
-.progress-bar {
-    transition: width 0.3s ease;
-}
-</style>
 @endsection
+
+@push('styles')
+    <style>
+        @keyframes shape-correct {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 #22c55e44;
+            }
+            50% {
+                transform: scale(1.12);
+                box-shadow: 0 0 30px 10px #22c55e44;
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 #22c55e44;
+            }
+        }
+
+        @keyframes shape-wrong {
+            0% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-10px);
+            }
+            40% {
+                transform: translateX(10px);
+            }
+            60% {
+                transform: translateX(-8px);
+            }
+            80% {
+                transform: translateX(8px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .animate-shape-correct {
+            animation: shape-correct 0.7s;
+        }
+
+        .animate-shape-wrong {
+            animation: shape-wrong 0.5s;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.7s;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script src="/js/sweetalert2.min.js"></script>
+    <script>
+        const questions = @json($questions);
+        let currentIdx = 0;
+        let answered = false;
+
+        const levelDisplay = document.getElementById('levelDisplay');
+        const maxLevelDisplay = document.getElementById('maxLevelDisplay');
+        const questionBox = document.getElementById('questionBox');
+        const resetBtn = document.getElementById('resetBtn');
+
+        maxLevelDisplay.textContent = questions.length;
+
+        function renderQuestion(idx) {
+            answered = false;
+            const q = questions[idx];
+            levelDisplay.textContent = idx + 1;
+            // Render các object để chọn
+            let html = '<div class="flex flex-wrap justify-center gap-6">';
+            q.objects.forEach((o, i) => {
+                html += `<button class='object-card group relative flex flex-col items-center justify-center w-32 h-40 bg-gradient-to-br from-blue-100 to-blue-200 border-4 border-blue-300 rounded-2xl shadow-lg hover:scale-105 transition cursor-pointer' data-idx='${i}'>
+            <span class='text-5xl mb-2'>${o.emoji}</span>
+            <span class='font-bold text-lg text-blue-700 mb-1'>${o.object}</span>
+            <span class='text-gray-600'>${o.volume} ${o.unit}</span>
+        </button>`;
+            });
+            html += '</div>';
+            html += `<div class='mt-6 text-lg font-semibold text-blue-700'>${q.type === 'max' ? 'Chọn vật có dung tích lớn nhất' : 'Chọn vật có dung tích nhỏ nhất'}</div>`;
+            questionBox.innerHTML = html;
+            // Gắn sự kiện chọn đáp án
+            document.querySelectorAll('.object-card').forEach(btn => {
+                btn.onclick = function () {
+                    if (answered) return;
+                    const idxBtn = parseInt(this.getAttribute('data-idx'));
+                    if (idxBtn === q.answer_index) {
+                        this.classList.add('border-green-400', 'animate-shape-correct');
+                        setTimeout(() => this.classList.remove('animate-shape-correct'), 800);
+                        answered = true;
+                        if (currentIdx < questions.length - 1) {
+                            Swal.fire({icon: 'success', title: '🎉 Chính xác!', showConfirmButton: false, timer: 1200});
+                            setTimeout(() => {
+                                currentIdx++;
+                                renderQuestion(currentIdx);
+                            }, 1200);
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '🎉 Hoàn thành!',
+                                text: 'Bạn đã hoàn thành tất cả câu hỏi!',
+                                confirmButtonText: 'Chơi lại'
+                            }).then(() => {
+                                currentIdx = 0;
+                                renderQuestion(currentIdx);
+                            });
+                        }
+                    } else {
+                        this.classList.add('border-red-400', 'animate-shape-wrong');
+                        setTimeout(() => this.classList.remove('animate-shape-wrong', 'border-red-400'), 600);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '❌ Sai!',
+                            text: 'Hãy thử lại!',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            });
+        }
+
+        resetBtn.addEventListener('click', function () {
+            currentIdx = 0;
+            renderQuestion(currentIdx);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderQuestion(currentIdx);
+        });
+    </script>
+@endpush

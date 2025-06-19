@@ -386,14 +386,14 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
             ->group(function () {
                 Route::get('/', [HinhHocGameController::class, 'index'])->name('overview');
 
-//                Route::get('/tinh-dien-tich', [HinhHocGameController::class, 'areaCalculationGame'])
-//                    ->name('area_calculation');
-//                Route::get('/tinh-chu-vi', [HinhHocGameController::class, 'perimeterCalculationGame'])
-//                    ->name('perimeter_calculation');
-//                Route::get('/do-goc', [HinhHocGameController::class, 'angleMeasurementGame'])
-//                    ->name('angle_measurement');
-//                Route::get('/do-the-tich', [HinhHocGameController::class, 'volumeMeasurementGame'])
-//                    ->name('volume_measurement');
+                Route::get('/tinh-dien-tich', [HinhHocGameController::class, 'areaCalculationGame'])
+                    ->name('area_calculation');
+                Route::get('/tinh-chu-vi', [HinhHocGameController::class, 'perimeterCalculationGame'])
+                    ->name('perimeter_calculation');
+                Route::get('/do-goc', [HinhHocGameController::class, 'angleMeasurementGame'])
+                    ->name('angle_measurement');
+                Route::get('/do-the-tich', [HinhHocGameController::class, 'volumeMeasurementGame'])
+                    ->name('volume_measurement');
             });
 
         // ===========================================
