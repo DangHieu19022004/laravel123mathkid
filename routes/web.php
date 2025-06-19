@@ -429,14 +429,14 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
             ->group(function () {
                 Route::get('/', [SoTuNhienVaCacPhepTinhController::class, 'index'])->name('overview');
 
-//                Route::get('/gia-tri-chu-so', [SoTuNhienVaCacPhepTinhController::class, 'numberPlaceValueGame'])
-//                    ->name('place_value');
-//                Route::get('/cong-tru', [SoTuNhienVaCacPhepTinhController::class, 'additionSubtractionGame'])
-//                    ->name('addition_subtraction');
-//                Route::get('/nhan-chia', [SoTuNhienVaCacPhepTinhController::class, 'multiplicationDivisionGame'])
-//                    ->name('multiplication_division');
-//                Route::get('/phep-tinh-hon-hop', [SoTuNhienVaCacPhepTinhController::class, 'mixedOperationsGame'])
-//                    ->name('mixed_operations');
+                Route::get('/gia-tri-chu-so', [SoTuNhienVaCacPhepTinhController::class, 'numberPlaceValueGame'])
+                    ->name('number_place_value');
+                Route::get('/cong-tru', [SoTuNhienVaCacPhepTinhController::class, 'additionSubtractionGame'])
+                    ->name('addition_subtraction');
+                Route::get('/nhan-chia', [SoTuNhienVaCacPhepTinhController::class, 'multiplicationDivisionGame'])
+                    ->name('multiplication_division');
+                Route::get('/phep-tinh-hon-hop', [SoTuNhienVaCacPhepTinhController::class, 'mixedOperationsGame'])
+                    ->name('mixed_operations');
             });
 
         // ===========================================

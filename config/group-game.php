@@ -6,16 +6,39 @@ return [
         'description' => 'Khám phá thế giới toán học thú vị với các trò chơi tương tác giúp học sinh lớp 4 rèn luyện kỹ năng tính toán và tư duy logic một cách hiệu quả.',
         'route'       => 'game.lop4.overview',
         'group-game'  => [
-            'so_tu_nhien'        => [
+            'so_tu_nhien_va_cac_phep_tinh' => [
                 'icon'        => '🔢',
                 'title'       => 'Số Tự Nhiên và Các Phép Tính',
                 'description' => 'Rèn luyện kỹ năng thực hiện các phép tính cơ bản với số tự nhiên thông qua các trò chơi tương tác giúp học sinh nắm vững kiến thức toán học.',
                 'route'       => 'game.lop4.natural_numbers_and_operations.overview',
                 'games'       => [
-
+                    'gia_tri_hang'      => [
+                        'icon'        => '🔍',
+                        'title'       => 'Giá Trị Hàng',
+                        'description' => 'Khám phá giá trị các hàng trong số tự nhiên một cách trực quan.',
+                        'route'       => 'game.lop4.natural_numbers_and_operations.number_place_value',
+                    ],
+                    'cong_tru'          => [
+                        'icon'        => '➕➖',
+                        'title'       => 'Cộng Trừ',
+                        'description' => 'Luyện tập phép cộng và phép trừ với số tự nhiên.',
+                        'route'       => 'game.lop4.natural_numbers_and_operations.addition_subtraction',
+                    ],
+                    'nhan_chia'         => [
+                        'icon'        => '✖️➗',
+                        'title'       => 'Nhân Chia',
+                        'description' => 'Luyện tập phép nhân và phép chia số tự nhiên.',
+                        'route'       => 'game.lop4.natural_numbers_and_operations.multiplication_division',
+                    ],
+                    'phep_tinh_hon_hop' => [
+                        'icon'        => '🧮',
+                        'title'       => 'Phép Tính Hỗn Hợp',
+                        'description' => 'Thực hành các phép tính kết hợp nhanh, chính xác.',
+                        'route'       => 'game.lop4.natural_numbers_and_operations.mixed_operations',
+                    ],
                 ],
             ],
-            'kham_pha_phan_so'   => [
+            'kham_pha_phan_so'             => [
                 'icon'        => '🥧',
                 'title'       => 'Khám Phá Thế Giới Phân Số',
                 'description' => 'Khám phá thế giới phân số qua các trò chơi thú vị giúp hiểu rõ về phần, so sánh và thực hiện các phép tính với phân số một cách dễ dàng.',
@@ -137,7 +160,7 @@ return [
                     ],
                 ],
             ],
-            'bi_an_hinh_hoc'     => [
+            'bi_an_hinh_hoc'               => [
                 'icon'        => '📐',
                 'title'       => 'Bí Ẩn Hình Học',
                 'description' => 'Giải mã các bí ẩn hình học thông qua việc tính chu vi, diện tích và thể tích của các hình khối khác nhau trong môi trường học tập tương tác.',
@@ -146,7 +169,7 @@ return [
 
                 ],
             ],
-            'thu_thach_do_luong' => [
+            'thu_thach_do_luong'           => [
                 'icon'        => '📏⚖️⏳',
                 'title'       => 'Thử Thách Đo Lường',
                 'description' => 'Tham gia các thử thách đo lường về độ dài, khối lượng, thời gian và dung tích với các đơn vị đo khác nhau để rèn luyện kỹ năng thực tế.',
@@ -155,7 +178,7 @@ return [
 
                 ],
             ],
-            'giai_toan_loi_van'  => [
+            'giai_toan_loi_van'            => [
                 'icon'        => '💡',
                 'title'       => 'Giải Toán Có Lời Văn Siêu Đẳng',
                 'description' => 'Phát triển tư duy logic và kỹ năng giải quyết vấn đề thông qua các bài toán có lời văn với nhiều tình huống thực tế đa dạng và thú vị.',
@@ -175,7 +198,7 @@ return [
                     ],
                 ],
             ],
-            'thong_ke_bieu_do'   => [
+            'thong_ke_bieu_do'             => [
                 'icon'        => '📊',
                 'title'       => 'Thống Kê: Biểu đồ và Số liệu',
                 'description' => 'Học cách đọc, hiểu và phân tích dữ liệu thống kê thông qua các biểu đồ trực quan giúp phát triển kỹ năng phân tích và suy luận.',
@@ -207,7 +230,7 @@ return [
                     ],
                 ],
             ],
-            'day_so_quy_luat'    => [
+            'day_so_quy_luat'              => [
                 'icon'        => '🧠',
                 'title'       => 'Dãy Số Có Quy Luật',
                 'description' => 'Khám phá các quy luật toán học thú vị trong dãy số, rèn luyện khả năng quan sát, phân tích và dự đoán các mẫu số học một cách logic.',
