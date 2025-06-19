@@ -32,8 +32,6 @@ abstract class AbstractGroupGameController
         TwitterCard::setTitle($title);
         OpenGraph::setTitle($title);
 
-        SEOMeta::setRobots('all');
-
         return view($this->view, compact('title', 'description', 'listInfoGame'));
     }
 }

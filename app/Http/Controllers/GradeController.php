@@ -23,8 +23,6 @@ class GradeController extends Controller
         TwitterCard::setTitle($seoTitle);
         OpenGraph::setTitle($seoTitle);
 
-        SEOMeta::setRobots('all');
-
         return view('games.lop4.index', compact('configGames'));
     }
 }
