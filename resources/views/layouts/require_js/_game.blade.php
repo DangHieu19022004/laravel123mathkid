@@ -1,3 +1,6 @@
+<!-- SweetAlert2 for better alerts -->
+<script type="text/javascript" src="{{ asset('js/sweetalert2.min.js') }}"></script>
+
 <!-- Custom Scripts -->
 <script>
     // Common game functions

@@ -161,7 +161,18 @@ return [
                 'description' => 'Phát triển tư duy logic và kỹ năng giải quyết vấn đề thông qua các bài toán có lời văn với nhiều tình huống thực tế đa dạng và thú vị.',
                 'route'       => 'game.lop4.word_problem_solving.overview',
                 'games'       => [
-
+                    'thanh_pho_bi_an'  => [
+                        'icon'        => '🏰',
+                        'title'       => 'Thành Phố Bí Ẩn',
+                        'description' => 'Khám phá thành phố cổ đầy bí ẩn! Giải các bài toán để mở khóa từng con đường và khôi phục vẻ đẹp của thành phố đã bị lãng quên.',
+                        'route'       => 'game.lop4.word_problem_solving.lost_city',
+                    ],
+                    'bai_toan_loi_van' => [
+                        'icon'        => '📚',
+                        'title'       => 'Bài Toán Lời Văn',
+                        'description' => 'Rèn luyện tư duy logic qua các tình huống thực tế! Giải các bài toán về phân số trong cuộc sống hàng ngày, từ chia bánh đến tính toán thời gian.',
+                        'route'       => 'game.lop4.word_problem_solving.word_problem',
+                    ],
                 ],
             ],
             'thong_ke_bieu_do'   => [

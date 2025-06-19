@@ -416,14 +416,10 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
             ->group(function () {
                 Route::get('/', [GiaiToanLoiVanController::class, 'index'])->name('overview');
 
-//                Route::get('/thanh-pho-mat-tich', [GiaiToanLoiVanController::class, 'lostCity'])
-//                    ->name('lost_city');
-//                Route::post('/thanh-pho-mat-tich/kiem-tra', [GiaiToanLoiVanController::class, 'checkLostCityAnswer'])
-//                    ->name('lost_city.check');
-//                Route::get('/bai-toan-loi-van', [GiaiToanLoiVanController::class, 'wordProblemGame'])
-//                    ->name('word_problem');
-//                Route::post('/bai-toan-loi-van/kiem-tra', [GiaiToanLoiVanController::class, 'checkAnswer'])
-//                    ->name('word_problem.check');
+                Route::get('/thanh-pho-mat-tich', [GiaiToanLoiVanController::class, 'lostCity'])
+                    ->name('lost_city');
+                Route::get('/bai-toan-loi-van', [GiaiToanLoiVanController::class, 'wordProblemGame'])
+                    ->name('word_problem');
             });
 
         // ===========================================
