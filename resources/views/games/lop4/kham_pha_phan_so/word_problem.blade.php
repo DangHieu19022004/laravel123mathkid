@@ -1,244 +1,227 @@
 @extends('layouts.game')
 
-@section('title', 'Bài Toán Có Lời Văn')
+@section('content')
+<div class="min-h-screen flex flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-200 p-4 font-sans">
+    <div class="w-full max-w-6xl bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-4 md:p-8 flex flex-col lg:flex-row items-center justify-center gap-8 animate-fade-in" style="background-image: url('https://www.transparenttextures.com/patterns/notebook-dark.png');">
 
-@section('game_content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Cấp độ {{ $question['level'] }}</h3>
+        <!-- Left Side: Story & Input -->
+        <div class="w-full lg:w-1/2 flex flex-col items-center">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 mb-2 mx-auto text-purple-600 drop-shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A9.707 9.707 0 006 21a9.735 9.735 0 003.25-.555.75.75 0 00.5-.707V5.24a.75.75 0 00-1-.707zM12.75 4.533A9.707 9.707 0 0118 3a9.735 9.735 0 013.25.555.75.75 0 01.5.707v14.25a.75.75 0 01-1 .707A9.707 9.707 0 0118 21a9.735 9.735 0 01-3.25-.555.75.75 0 01-.5-.707V5.24a.75.75 0 011-.707z" />
+                    </svg>
                 </div>
-                <div class="card-body">
-                    <!-- Story Section -->
-                    <div class="story-section mb-4">
-                        <div class="bg-light p-4 rounded shadow-sm">
-                            <p class="h5 mb-0">{{ $question['story'] }}</p>
-                        </div>
-                    </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-purple-800 drop-shadow">Giải Toán Có Lời Văn</h1>
+                <p class="text-purple-600 mt-1 font-semibold">Đọc kỹ đề bài và điền đáp án nhé!</p>
+            </div>
 
-                    <!-- Input Form -->
-                    <form id="answer-form" class="mb-4">
-                        <div class="row justify-content-center">
-                            <div class="col-md-6">
-                                <label class="form-label">Nhập câu trả lời của bạn:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="numerator" placeholder="Tử số" min="0" required>
-                                    <div class="input-group-text">/</div>
-                                    <input type="number" class="form-control" id="denominator" placeholder="Mẫu số" min="1" required>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-check"></i> Kiểm tra
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                    <!-- Visualization Section -->
-                    <div class="visualization-section mb-4">
-                        <div class="text-center">
-                            <canvas id="visualCanvas" width="300" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Hints Section -->
-                    <div class="hints-section mb-4">
-                        <div class="accordion" id="hintsAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hint1">
-                                        <i class="fas fa-lightbulb"></i> Gợi ý 1
-                                    </button>
-                                </h2>
-                                <div id="hint1" class="accordion-collapse collapse" data-bs-parent="#hintsAccordion">
-                                    <div class="accordion-body">
-                                        Đọc kỹ đề bài và xác định các số liệu quan trọng.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hint2">
-                                        <i class="fas fa-lightbulb"></i> Gợi ý 2
-                                    </button>
-                                </h2>
-                                <div id="hint2" class="accordion-collapse collapse" data-bs-parent="#hintsAccordion">
-                                    <div class="accordion-body">
-                                        Vẽ sơ đồ hoặc hình vẽ để minh họa bài toán.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feedback Message -->
-                    <div id="feedback" class="alert d-none"></div>
-
-                    <!-- Navigation Buttons -->
-                    <div class="text-center mt-4">
-                        <a href="{{ route('games.lop4.phanso.word_problem.reset') }}" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> Chơi lại
-                        </a>
-                        <a href="{{ route('games.lop4.phanso') }}" class="btn btn-primary">
-                            <i class="fas fa-home"></i> Về trang chính
-                        </a>
-                    </div>
+            <!-- Progress Bar -->
+            <div class="w-full max-w-md my-4">
+                <div class="w-full bg-purple-200/80 rounded-full h-4 border-2 border-purple-300/50 shadow-inner">
+                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-400 to-purple-500 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
+            </div>
+
+            <!-- Story Box -->
+            <div id="story-box" class="w-full max-w-md bg-amber-50 border-l-8 border-amber-300 p-5 rounded-xl shadow-lg my-4 text-gray-800 text-lg leading-relaxed">
+                <!-- Story text will be injected by JS -->
+            </div>
+
+            <!-- Answer Input -->
+            <div class="flex items-center justify-center gap-4 mt-4">
+                <input type="number" id="numerator" placeholder="Tử số" class="w-36 text-center font-bold p-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 transition">
+                <div class="text-4xl font-light text-gray-400">/</div>
+                <input type="number" id="denominator" placeholder="Mẫu số" class="w-36 text-center font-bold p-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 transition">
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex items-center gap-4 mt-8">
+                <button id="check-btn" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg transition-all duration-200 text-lg disabled:bg-gray-400 disabled:cursor-not-allowed">Kiểm tra</button>
+                <button id="replay-btn" class="hidden px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white font-bold rounded-full shadow-lg transition-all duration-200">Chơi lại</button>
+            </div>
+        </div>
+
+        <!-- Right Side: Visualization -->
+        <div class="w-full lg:w-1/2 h-96 flex items-center justify-center p-4">
+            <div id="visualization-box" class="w-full h-full max-w-md max-h-md flex items-center justify-center transition-all duration-500">
+                <!-- SVG Visualization will be injected here -->
             </div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('answer-form');
+document.addEventListener('DOMContentLoaded', function () {
+    const questions = @json($questions);
+    let currentLevel = 0;
+
+    // DOM Elements
+    const progressBar = document.getElementById('progress-bar');
+    const storyBox = document.getElementById('story-box');
     const numeratorInput = document.getElementById('numerator');
     const denominatorInput = document.getElementById('denominator');
-    const feedback = document.getElementById('feedback');
-    const canvas = document.getElementById('visualCanvas');
-    const ctx = canvas.getContext('2d');
-    let isAnswered = false;
+    const checkBtn = document.getElementById('check-btn');
+    const replayBtn = document.getElementById('replay-btn');
+    const visualizationBox = document.getElementById('visualization-box');
 
-    // Draw initial visualization
-    function drawVisualization() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = '#666';
-        ctx.lineWidth = 2;
+    // --- SVG Visualization Functions ---
+    function createPieSVG(totalParts) {
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('class', 'w-full h-full drop-shadow-lg');
 
-        // Draw based on problem type (can be customized based on the story)
-        const story = '{{ $question["story"] }}';
-        if (story.includes('pizza') || story.includes('bánh')) {
-            drawCircle();
-        } else if (story.includes('chocolate') || story.includes('thanh')) {
-            drawRectangle();
-        } else {
-            drawGenericContainer();
-        }
-    }
+        const radius = 45;
+        const cx = 50;
+        const cy = 50;
 
-    function drawCircle() {
-        ctx.beginPath();
-        ctx.arc(150, 100, 80, 0, 2 * Math.PI);
-        ctx.stroke();
-        // Draw divisions based on denominator
-        const totalParts = {{ $question['denominator'] }};
         for (let i = 0; i < totalParts; i++) {
-            ctx.beginPath();
-            ctx.moveTo(150, 100);
-            ctx.lineTo(
-                150 + 80 * Math.cos(2 * Math.PI * i / totalParts),
-                100 + 80 * Math.sin(2 * Math.PI * i / totalParts)
-            );
-            ctx.stroke();
+            const angle1 = (i / totalParts) * 2 * Math.PI - Math.PI / 2;
+            const angle2 = ((i + 1) / totalParts) * 2 * Math.PI - Math.PI / 2;
+
+            const x1 = cx + radius * Math.cos(angle1);
+            const y1 = cy + radius * Math.sin(angle1);
+            const x2 = cx + radius * Math.cos(angle2);
+            const y2 = cy + radius * Math.sin(angle2);
+
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute('d', `M${cx},${cy} L${x1},${y1} A${radius},${radius} 0 0,1 ${x2},${y2} Z`);
+            path.setAttribute('class', 'slice transition-all duration-300');
+            path.setAttribute('fill', '#E5E7EB'); // gray-200
+            path.setAttribute('stroke', '#9CA3AF'); // gray-400
+            path.setAttribute('stroke-width', '0.5');
+            svg.appendChild(path);
         }
+        return svg;
     }
 
-    function drawRectangle() {
-        ctx.strokeRect(50, 50, 200, 100);
-        // Draw divisions
-        const totalParts = {{ $question['denominator'] }};
-        const width = 200 / totalParts;
-        for (let i = 1; i < totalParts; i++) {
-            ctx.beginPath();
-            ctx.moveTo(50 + i * width, 50);
-            ctx.lineTo(50 + i * width, 150);
-            ctx.stroke();
+    function createBarSVG(totalParts) {
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('viewBox', `0 0 ${totalParts * 12} 24`);
+        svg.setAttribute('class', 'w-full h-24 drop-shadow-lg');
+
+        for (let i = 0; i < totalParts; i++) {
+            const rect = document.createElementNS(svgNS, "rect");
+            rect.setAttribute('x', i * 12 + 1);
+            rect.setAttribute('y', 2);
+            rect.setAttribute('width', 10);
+            rect.setAttribute('height', 20);
+            rect.setAttribute('rx', 2);
+            rect.setAttribute('class', 'slice transition-all duration-300');
+            rect.setAttribute('fill', '#E5E7EB'); // gray-200
+            rect.setAttribute('stroke', '#9CA3AF'); // gray-400
+            rect.setAttribute('stroke-width', '0.2');
+            svg.appendChild(rect);
         }
+        return svg;
     }
 
-    function drawGenericContainer() {
-        ctx.strokeRect(50, 50, 200, 100);
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#666';
-        ctx.textAlign = 'center';
-        ctx.fillText('Minh họa bài toán', 150, 100);
-    }
+    function updateVisualization() {
+        const num = parseInt(numeratorInput.value) || 0;
+        const den = parseInt(denominatorInput.value) || 0;
+        const question = questions[currentLevel];
+        const slices = visualizationBox.querySelectorAll('.slice');
 
-    // Initial draw
-    drawVisualization();
+        if (den !== question.total_parts) {
+            slices.forEach((slice, i) => {
+                slice.setAttribute('fill', '#FECACA'); // red-200
+            });
+            return;
+        }
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (isAnswered) return;
-
-        const answer = {
-            numerator: parseInt(numeratorInput.value),
-            denominator: parseInt(denominatorInput.value)
-        };
-
-        // Disable form
-        numeratorInput.disabled = true;
-        denominatorInput.disabled = true;
-        form.querySelector('button').disabled = true;
-        isAnswered = true;
-
-        // Send answer to server
-        fetch('{{ route("games.lop4.phanso.word_problem.check") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                numerator: answer.numerator,
-                denominator: answer.denominator
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
-            
-            if (data.correct) {
-                feedback.classList.add('alert-success');
-                feedback.innerHTML = 'Đúng rồi! Bạn đã giải đúng bài toán! 🎉';
-                
-                // If there's a next level, redirect after 1.5 seconds
-                if (data.next_level) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                }
+        slices.forEach((slice, i) => {
+            if (i < num) {
+                slice.setAttribute('fill', '#818CF8'); // indigo-400
             } else {
-                feedback.classList.add('alert-danger');
-                feedback.innerHTML = 'Chưa đúng. Hãy đọc kỹ đề bài và thử lại! 🤔';
-                
-                // Reset after 1.5 seconds
-                setTimeout(() => {
-                    isAnswered = false;
-                    numeratorInput.disabled = false;
-                    denominatorInput.disabled = false;
-                    form.querySelector('button').disabled = false;
-                    numeratorInput.value = '';
-                    denominatorInput.value = '';
-                    feedback.classList.add('d-none');
-                }, 1500);
+                slice.setAttribute('fill', '#E5E7EB'); // gray-200
             }
         });
+    }
+
+    // --- Game Logic ---
+    function showLevel(level) {
+        const question = questions[level];
+
+        // Update UI
+        progressBar.style.width = `${((level) / questions.length) * 100}%`;
+        storyBox.innerHTML = `<p>${question.story}</p>`;
+        numeratorInput.value = '';
+        denominatorInput.value = '';
+        numeratorInput.focus();
+
+        // Create visualization
+        visualizationBox.innerHTML = '';
+        let svg;
+        if (question.type === 'pie') {
+            svg = createPieSVG(question.total_parts);
+        } else {
+            svg = createBarSVG(question.total_parts);
+        }
+        visualizationBox.appendChild(svg);
+        updateVisualization();
+    }
+
+    function checkAnswer() {
+        const userNumerator = parseInt(numeratorInput.value);
+        const userDenominator = parseInt(denominatorInput.value);
+        const correctAnswer = questions[currentLevel].answer;
+
+        const isCorrect = userNumerator === correctAnswer.numerator && userDenominator === correctAnswer.denominator;
+
+        if (isCorrect) {
+            progressBar.style.width = `${((currentLevel + 1) / questions.length) * 100}%`;
+            Swal.fire({
+                icon: 'success',
+                title: 'Chính xác! 🥳',
+                text: 'Bạn giải toán giỏi quá!',
+                timer: 2000,
+                showConfirmButton: false,
+            });
+
+            setTimeout(() => {
+                if (currentLevel < questions.length - 1) {
+                    currentLevel++;
+                    showLevel(currentLevel);
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Hoàn thành xuất sắc! 🏆',
+                        html: 'Bạn đã giải hết các bài toán. <br>Một nhà toán học tài ba!',
+                        confirmButtonText: 'Tuyệt vời!',
+                    });
+                    checkBtn.classList.add('hidden');
+                    replayBtn.classList.remove('hidden');
+                }
+            }, 2000);
+        } else {
+             Swal.fire({
+                icon: 'error',
+                title: 'Chưa đúng rồi... 🧐',
+                text: 'Hãy đọc lại đề bài và kiểm tra lại phép tính của bạn nhé!',
+                confirmButtonText: 'Thử lại',
+            });
+        }
+    }
+
+    // Event Listeners
+    checkBtn.addEventListener('click', checkAnswer);
+    replayBtn.addEventListener('click', () => {
+        currentLevel = 0;
+        showLevel(0);
+        progressBar.style.width = '0%';
+        checkBtn.classList.remove('hidden');
+        replayBtn.classList.add('hidden');
     });
+    numeratorInput.addEventListener('input', updateVisualization);
+    denominatorInput.addEventListener('input', updateVisualization);
+
+    // Initial game start
+    showLevel(currentLevel);
 });
 </script>
-
-<style>
-.story-section {
-    border-left: 4px solid #007bff;
-}
-.input-group input[type="number"] {
-    width: 80px;
-}
-.accordion-button:not(.collapsed) {
-    background-color: #e7f1ff;
-    color: #0056b3;
-}
-.accordion-button:focus {
-    box-shadow: none;
-    border-color: rgba(0,123,255,.25);
-}
-.visualization-section canvas {
-    max-width: 100%;
-    height: auto;
-}
-</style>
-@endsection 
+@endpush

@@ -1,248 +1,173 @@
-@extends('layouts.app')
+@extends('layouts.game')
 
 @section('content')
-<div class="game-container">
-    <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 mb-4">Dọn Vườn Tối Giản 🌱</h1>
-        <div class="card d-inline-block mb-4">
-            <div class="card-body">
-                <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
-                <p class="h5 text-muted">
-                    Rút gọn phân số: <strong>{{ $question['numerator'] }}/{{ $question['denominator'] }}</strong>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Game Area -->
-    <div class="row justify-content-center mb-5">
-        <!-- Instructions -->
-        <div class="col-12 mb-4">
-            <div class="alert alert-info">
-                <h3 class="h5 mb-3">🎯 Hướng dẫn chơi:</h3>
-                <ul class="text-start mb-0">
-                    <li>Click vào các ô để gộp thành ô lớn hơn</li>
-                    <li>Hoặc chọn phân số tối giản từ các lựa chọn bên dưới</li>
-                    <li>Mỗi ô đại diện cho 1 phần của phân số</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Garden Grid -->
-        <div class="col-12 mb-4">
-            <div class="garden-grid" style="--rows: {{ $question['gridRows'] }}; --cols: {{ $question['gridCols'] }}">
-                @for ($i = 0; $i < $question['denominator']; $i++)
-                    <div class="garden-cell @if($i < $question['numerator']) selected @endif" data-index="{{ $i }}"></div>
-                @endfor
-            </div>
-        </div>
-
-        <!-- Answer Options -->
-        <div class="col-12">
-            <div class="row g-3 justify-content-center">
-                @php
-                    $options = [
-                        [$question['simplifiedNumerator'], $question['simplifiedDenominator']],
-                        [$question['numerator'] + 1, $question['denominator']],
-                        [$question['numerator'], $question['denominator'] - 1],
-                        [$question['simplifiedNumerator'] + 1, $question['simplifiedDenominator']]
-                    ];
-                    shuffle($options);
-                @endphp
-
-                @foreach ($options as $option)
-                    <div class="col-md-3">
-                        <button class="btn btn-outline-primary w-100 fraction-option"
-                                data-numerator="{{ $option[0] }}"
-                                data-denominator="{{ $option[1] }}">
-                            {{ $option[0] }}/{{ $option[1] }}
-                        </button>
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-200 via-green-100 to-yellow-100 py-8">
+        <div class="w-full max-w-xl bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center">
+            <h1 class="text-4xl font-extrabold text-green-700 mb-2 flex items-center gap-2">
+                <span>Dọn Vườn Tối Giản</span> <span class="text-3xl">🌱</span>
+            </h1>
+            <p class="text-lg text-gray-600 mb-6 text-center">Rèn luyện kỹ năng rút gọn phân số qua trò chơi trực quan, sinh động!</p>
+            <div class="flex flex-col items-center w-full">
+                <div class="mb-4 w-full flex flex-col items-center">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-base font-semibold text-blue-700 bg-blue-100 rounded px-3 py-1">Cấp độ <span id="level">1</span>/5</span>
                     </div>
-                @endforeach
+                    <div class="text-xl font-bold text-pink-600">Rút gọn phân số: <span id="fraction">2/4</span></div>
+                </div>
+                <div class="w-full flex flex-col items-center mb-4">
+                    <div class="mb-2 text-base text-gray-700 bg-yellow-50 border-l-4 border-yellow-400 px-4 py-2 rounded shadow">
+                        <span class="font-semibold">Hướng dẫn:</span> Chọn các ô cây tương ứng hoặc chọn đáp án đúng bên dưới để rút gọn phân số!
+                    </div>
+                    <div id="garden-grid" class="grid gap-2 bg-green-50 rounded-xl shadow-inner p-4 transition-all duration-300"></div>
+                </div>
+                <div class="w-full flex flex-col items-center mb-4">
+                    <div id="options-row" class="flex flex-wrap gap-4 justify-center w-full"></div>
+                </div>
+                <button id="resetBtn" class="mt-2 px-6 py-2 rounded-full bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold shadow hover:scale-105 transition">Chơi lại từ đầu</button>
             </div>
         </div>
     </div>
-
-    <!-- Controls -->
-    <div class="text-center">
-        <div id="message" class="alert d-none my-3"></div>
-
-        <form id="resetForm" action="{{ route('games.lop4.phanso.garden.reset') }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="btn btn-link text-decoration-none">
-                Chơi lại từ đầu
-            </button>
-        </form>
-
-        <a href="{{ route('games.lop4.phanso') }}" class="btn btn-link text-decoration-none">
-            ← Quay lại danh sách
-        </a>
-    </div>
-</div>
+@endsection
 
 @push('scripts')
-<script>
-const CHECK_URL = '{{ route('games.lop4.phanso.garden.check') }}';
-const CSRF_TOKEN = '{{ csrf_token() }}';
-const CORRECT_NUMERATOR = {{ $question['simplifiedNumerator'] }};
-const CORRECT_DENOMINATOR = {{ $question['simplifiedDenominator'] }};
+    <script>
+        const QUESTIONS = @json(array_values($questions));
+        let level = 1;
+        let selectedCells = 0;
 
-document.addEventListener('DOMContentLoaded', function() {
-    const fractionOptions = document.querySelectorAll('.fraction-option');
-    const messageDiv = document.getElementById('message');
-    let selectedCells = document.querySelectorAll('.garden-cell.selected').length;
+        function renderGame() {
+            const q = QUESTIONS[level - 1];
+            document.getElementById('level').textContent = level;
+            document.getElementById('fraction').textContent = `${q.numerator}/${q.denominator}`;
+            renderGrid(q);
+            renderOptions(q);
+        }
 
-    // Handle fraction option clicks
-    fractionOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const numerator = parseInt(this.dataset.numerator);
-            const denominator = parseInt(this.dataset.denominator);
-            checkAnswer(numerator, denominator);
-        });
-    });
-
-    // Handle garden cell clicks
-    document.querySelectorAll('.garden-cell').forEach(cell => {
-        cell.addEventListener('click', function() {
-            this.classList.toggle('selected');
-            selectedCells = document.querySelectorAll('.garden-cell.selected').length;
-            
-            // Check if selection matches any fraction option
-            fractionOptions.forEach(option => {
-                const numerator = parseInt(option.dataset.numerator);
-                const denominator = {{ $question['denominator'] }};
-                if (selectedCells === numerator) {
-                    checkAnswer(numerator, denominator);
-                }
-            });
-        });
-    });
-
-    function checkAnswer(numerator, denominator) {
-        const formData = new FormData();
-        formData.append('numerator', numerator);
-        formData.append('denominator', denominator);
-        formData.append('correct_numerator', CORRECT_NUMERATOR);
-        formData.append('correct_denominator', CORRECT_DENOMINATOR);
-        formData.append('_token', CSRF_TOKEN);
-
-        fetch(CHECK_URL, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': CSRF_TOKEN
+        function renderGrid(q) {
+            const grid = document.getElementById('garden-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateRows = `repeat(${q.gridRows}, minmax(0, 1fr))`;
+            grid.style.gridTemplateColumns = `repeat(${q.gridCols}, minmax(0, 1fr))`;
+            selectedCells = q.numerator;
+            for (let i = 0; i < q.denominator; i++) {
+                const cell = document.createElement('div');
+                cell.className = `flex items-center justify-center text-3xl font-bold rounded-xl aspect-square w-14 h-14 cursor-pointer border-2 border-green-300 bg-white shadow transition-all duration-200 hover:scale-110 ${i < q.numerator ? 'bg-green-200 border-green-500 scale-105' : ''}`;
+                cell.innerHTML = i < q.numerator ? '🌱' : '';
+                cell.dataset.index = i;
+                if (i < q.numerator) cell.classList.add('selected');
+                cell.addEventListener('click', function () {
+                    cell.classList.toggle('bg-green-200');
+                    cell.classList.toggle('border-green-500');
+                    cell.classList.toggle('scale-105');
+                    cell.classList.toggle('selected');
+                    if (cell.classList.contains('selected')) {
+                        cell.innerHTML = '🌱';
+                        selectedCells++;
+                    } else {
+                        cell.innerHTML = '';
+                        selectedCells--;
+                    }
+                    checkGridSelection(q);
+                });
+                grid.appendChild(cell);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            messageDiv.classList.remove('d-none');
-            
-            if (data.correct) {
-                messageDiv.className = 'alert alert-success animate-bounce';
-                messageDiv.innerHTML = `
-                    <h4 class="alert-heading">🎉 Tuyệt vời!</h4>
-                    <p class="mb-0">Phân số ${numerator}/${denominator} là dạng tối giản của 
-                    {{ $question['numerator'] }}/{{ $question['denominator'] }}</p>
-                `;
-                
-                if (typeof confetti !== 'undefined') {
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { y: 0.6 }
-                    });
-                }
+        }
 
-                if (data.next_level) {
+        function renderOptions(q) {
+            let options = [
+                [q.simplifiedNumerator, q.simplifiedDenominator],
+                [q.numerator + 1, q.denominator],
+                [q.numerator, q.denominator - 1],
+                [q.simplifiedNumerator + 1, q.simplifiedDenominator]
+            ];
+            options = shuffle(options);
+            const row = document.getElementById('options-row');
+            row.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'w-32 py-4 rounded-2xl bg-gradient-to-br from-pink-200 via-yellow-100 to-green-200 text-xl font-bold text-green-800 border-2 border-green-300 shadow-lg hover:from-green-200 hover:to-pink-100 hover:scale-105 transition fraction-option';
+                btn.dataset.numerator = opt[0];
+                btn.dataset.denominator = opt[1];
+                btn.textContent = `${opt[0]}/${opt[1]}`;
+                btn.addEventListener('click', function () {
+                    checkAnswer(opt[0], opt[1], q);
+                });
+                row.appendChild(btn);
+            });
+        }
+
+        function checkGridSelection(q) {
+            if (selectedCells > 0 && selectedCells <= q.denominator) {
+                const options = document.querySelectorAll('.fraction-option');
+                options.forEach(option => {
+                    const numerator = parseInt(option.dataset.numerator);
+                    const denominator = parseInt(option.dataset.denominator);
+                    if (selectedCells === numerator && q.denominator === denominator) {
+                        checkAnswer(numerator, denominator, q);
+                    }
+                });
+            }
+        }
+
+        function checkAnswer(numerator, denominator, q) {
+            const correct = numerator === q.simplifiedNumerator && denominator === q.simplifiedDenominator;
+            if (correct) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '🎉 Tuyệt vời!',
+                    html: `<div class='text-lg'>Phân số <b>${numerator}/${denominator}</b> là dạng tối giản của <b>${q.numerator}/${q.denominator}</b></div>`,
+                    showConfirmButton: false,
+                    timer: 1800,
+                    background: '#f0fff4',
+                });
+                if (level < QUESTIONS.length) {
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                        level++;
+                        renderGame();
+                    }, 1800);
+                } else {
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Hoàn thành!',
+                            html: '<div class="text-lg">Bạn đã hoàn thành tất cả các cấp độ! 🎊</div>',
+                            confirmButtonText: 'Chơi lại',
+                            background: '#f0f9ff',
+                        }).then(() => {
+                            level = 1;
+                            renderGame();
+                        });
+                    }, 1800);
                 }
             } else {
-                messageDiv.className = 'alert alert-warning';
-                messageDiv.innerHTML = `
-                    <h4 class="alert-heading">⚠️ Hãy thử lại!</h4>
-                    <p class="mb-0">Phân số ${numerator}/${denominator} chưa phải là dạng tối giản.</p>
-                    <hr>
-                    <p class="mb-0">💡 Gợi ý: Tìm ước số chung lớn nhất của tử số và mẫu số.</p>
-                `;
+                Swal.fire({
+                    icon: 'warning',
+                    title: '⚠️ Hãy thử lại!',
+                    html: `<div class='text-lg'>Phân số <b>${numerator}/${denominator}</b> chưa phải là dạng tối giản.<br><hr><span class='text-base'>💡 Gợi ý: Tìm ước số chung lớn nhất của tử số và mẫu số.</span></div>`,
+                    timer: 1800,
+                    showConfirmButton: false,
+                    background: '#fffbea',
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            messageDiv.classList.remove('d-none');
-            messageDiv.className = 'alert alert-danger';
-            messageDiv.textContent = 'Có lỗi xảy ra, vui lòng thử lại!';
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderGame();
+            document.getElementById('resetBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                level = 1;
+                renderGame();
+            });
         });
-    }
-});
-</script>
+    </script>
 @endpush
-
-@push('styles')
-<style>
-.garden-grid {
-    display: grid;
-    grid-template-rows: repeat(var(--rows), 1fr);
-    grid-template-columns: repeat(var(--cols), 1fr);
-    gap: 10px;
-    max-width: 600px;
-    margin: 0 auto;
-    aspect-ratio: var(--cols) / var(--rows);
-}
-
-.garden-cell {
-    background: #e9ecef;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.garden-cell::after {
-    content: '🌱';
-    font-size: 1.5rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.garden-cell.selected {
-    background: #d4edda;
-    border-color: #28a745;
-}
-
-.garden-cell.selected::after {
-    opacity: 1;
-}
-
-.garden-cell:hover {
-    transform: scale(1.05);
-}
-
-.fraction-option {
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    transition: all 0.3s ease;
-}
-
-.fraction-option:hover {
-    transform: translateY(-2px);
-}
-
-.animate-bounce {
-    animation: bounce 0.5s;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-</style>
-@endpush
-@endsection 

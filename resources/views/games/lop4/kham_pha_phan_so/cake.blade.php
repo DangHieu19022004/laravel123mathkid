@@ -1,233 +1,133 @@
-@extends('layouts.app')
+@extends('layouts.game')
 
 @section('content')
-<div class="game-container">
-    <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 mb-4">Chia Bánh Sinh Nhật 🎂</h1>
-        <div class="card d-inline-block mb-4">
-            <div class="card-body">
-                <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
-                <p class="h5 text-muted">
-                    Hãy chọn <strong>{{ $question['numerator'] }}/{{ $question['denominator'] }}</strong> phần của chiếc bánh
-                </p>
+    <div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-pink-100 to-yellow-100">
+        <div class="max-w-2xl mx-auto mt-10 px-8 py-16 rounded-3xl shadow-2xl bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100 border-4 border-yellow-200">
+            <div class="text-center mb-6">
+                <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-blue-400 drop-shadow">Chia Bánh 🎂</h1>
+                <div class="flex items-center justify-center gap-2 mt-2">
+                    <span class="text-xl font-bold text-pink-500">Cấp độ</span>
+                    <span id="level-label" class="text-2xl font-extrabold bg-gradient-to-r from-yellow-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"></span>
+                    <span class="text-xl">/5 ⭐</span>
+                </div>
+            </div>
+            <!-- Hướng dẫn chơi -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-300 rounded-xl p-4 mb-6 shadow flex flex-col">
+                <div class="font-bold text-yellow-700 mb-2 flex items-center gap-2">
+                    <span class="text-lg">🎯</span> Hướng dẫn chơi:
+                </div>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 pl-2 text-left">
+                    <li>Mỗi cấp độ sẽ có một chiếc bánh được chia thành nhiều miếng</li>
+                    <li>Bạn cần chọn đúng số miếng bánh theo yêu cầu</li>
+                    <li>Nhấn "Xác nhận" để kiểm tra kết quả</li>
+                    <li>Nhấn "Chơi lại" để bắt đầu lại từ đầu</li>
+                </ul>
+            </div>
+            <div class="flex flex-col items-center mb-8">
+                <div id="cake-area" class="flex flex-wrap gap-2 justify-center"></div>
+                <div class="mt-4 text-lg font-bold text-blue-700">
+                    Chọn đúng <span id="numerator-label"></span> miếng bánh!
+                </div>
+            </div>
+            <div id="message" class="hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4"></div>
+            <div class="flex flex-row gap-4 justify-center items-center mt-2">
+                <button id="submit-btn" class="px-8 py-3 rounded-full bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold text-xl shadow-lg hover:from-green-500 hover:to-blue-500 transition">Xác nhận</button>
+                <button id="reset-btn" class="px-8 py-3 rounded-full bg-gradient-to-r from-pink-400 to-yellow-300 text-white font-bold text-xl shadow-lg hover:from-pink-500 hover:to-yellow-400 transition">Chơi lại</button>
             </div>
         </div>
-
-        <!-- Instructions -->
-        <div class="alert alert-info d-inline-block">
-            <h3 class="h5 mb-3">🎯 Hướng dẫn chơi:</h3>
-            <ul class="text-start mb-0">
-                <li>Chiếc bánh được chia thành {{ $question['denominator'] }} phần bằng nhau</li>
-                <li>Bạn cần chọn đúng {{ $question['numerator'] }} phần</li>
-                <li>Click vào từng phần bánh để chọn hoặc bỏ chọn</li>
-                <li>Các phần được chọn sẽ có màu vàng</li>
-            </ul>
-        </div>
     </div>
-
-    <div class="cake-container mb-5" id="cake-container">
-        <!-- Cake will be drawn here by JavaScript -->
-    </div>
-
-    <!-- Controls -->
-    <div class="text-center">
-        <button id="check-answer" class="btn btn-game mb-3">
-            Kiểm tra
-        </button>
-
-        <div id="message" class="alert d-none my-3"></div>
-
-        <form id="resetForm" action="{{ url(route('games.lop4.phanso.cake.reset')) }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="btn btn-link text-decoration-none">
-                Chơi lại từ đầu
-            </button>
-        </form>
-
-        <a href="{{ url(route('games.lop4.phanso')) }}" class="btn btn-link text-decoration-none">
-            ← Quay lại danh sách
-        </a>
-    </div>
-</div>
+@endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const pieces = {{ $question['denominator'] }};
-    const numerator = {{ $question['numerator'] }};
-    const selectedPieces = new Set();
-    const CHECK_URL = '{{ url(route('games.lop4.phanso.cake.check')) }}';
-    const CSRF_TOKEN = '{{ csrf_token() }}';
+    <script>
+        let questions = @json($questions);
+        let currentLevel = 1;
+        let selectedPieces = [];
 
-    function drawCake() {
-        const container = document.getElementById('cake-container');
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute('viewBox', '0 0 400 400');
-        svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '100%');
-        
-        // Draw cake plate
-        const plate = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        plate.setAttribute('cx', '200');
-        plate.setAttribute('cy', '200');
-        plate.setAttribute('r', '190');
-        plate.setAttribute('fill', '#fce7f3');
-        plate.setAttribute('stroke', '#f472b6');
-        plate.setAttribute('stroke-width', '8');
-        svg.appendChild(plate);
-
-        // Draw cake base
-        const base = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        base.setAttribute('cx', '200');
-        base.setAttribute('cy', '200');
-        base.setAttribute('r', '170');
-        base.setAttribute('fill', '#fbcfe8');
-        svg.appendChild(base);
-        
-        // Draw cake pieces
-        const radius = 150;
-        for (let i = 0; i < pieces; i++) {
-            const angle = (360 / pieces) * i;
-            const nextAngle = (360 / pieces) * (i + 1);
-            
-            const startX = 200 + radius * Math.cos(angle * Math.PI / 180);
-            const startY = 200 + radius * Math.sin(angle * Math.PI / 180);
-            const endX = 200 + radius * Math.cos(nextAngle * Math.PI / 180);
-            const endY = 200 + radius * Math.sin(nextAngle * Math.PI / 180);
-
-            const piece = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            piece.setAttribute('d', `M200,200 L${startX},${startY} A${radius},${radius} 0 0,1 ${endX},${endY} Z`);
-            piece.setAttribute('fill', '#fdf2f8');
-            piece.setAttribute('stroke', '#db2777');
-            piece.setAttribute('stroke-width', '2');
-            piece.setAttribute('class', 'cake-piece');
-            piece.setAttribute('data-index', i);
-            
-            piece.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                if (selectedPieces.has(index)) {
-                    selectedPieces.delete(index);
-                    this.setAttribute('fill', '#fdf2f8');
-                } else {
-                    selectedPieces.add(index);
-                    this.setAttribute('fill', '#ffc107');
-                }
-            });
-            
-            svg.appendChild(piece);
+        function renderCake() {
+            const q = questions[currentLevel - 1];
+            document.getElementById('level-label').textContent = currentLevel;
+            document.getElementById('numerator-label').textContent = q.numerator;
+            selectedPieces = [];
+            const cakeArea = document.getElementById('cake-area');
+            cakeArea.innerHTML = '';
+            for (let i = 0; i < q.denominator; i++) {
+                const piece = document.createElement('button');
+                piece.type = 'button';
+                piece.className = 'w-16 h-16 rounded-full border-2 border-yellow-400 bg-transparent hover:bg-yellow-100 transition focus:outline-none flex items-center justify-center';
+                piece.innerHTML = `
+                    <svg width="48" height="48" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M90.595742 591.482946l597.480328-454.389857S933.474816 275.667884 933.474816 462.01006L90.595742 591.482946z" fill="#EACC53" />
+                        <path d="M90.595742 591.482946V941.941707L933.474816 812.398264V461.939503z" fill="#F5AD1A" />
+                        <path d="M90.595742 791.583821v97.298698L933.474816 759.409633v-97.369255zM468.642458 268.894371s-33.79701 127.426721 179.568663 98.215944c78.318749-12.276993 225.642665-16.863226 202.640943-98.215944-12.276993-29.140219-37.395439-53.129746-43.745608-55.458141 6.350169-12.065321 24.765658-45.509543-17.85103-64.489493-24.201199-8.043547-48.8963-11.500861-63.925033-14.393716-15.522635-6.914628-31.680287-30.48081-12.62978-51.789154-21.308344-3.457314-85.16282 2.892855-122.628815 70.204644-12.62978-1.128919-51.224695-2.328395-61.032178 21.872804-7.479088 21.308344-2.892855 37.959898 2.892854 48.33184-19.544408 3.598429-54.046992 21.167229-63.290016 45.721216z" fill="#F5ECDA" />
+                        <path d="M667.049955 236.50851m-67.452904 0a67.452904 67.452904 0 1 0 134.905809 0 67.452904 67.452904 0 1 0-134.905809 0Z" fill="#5B2B20" />
+                        <path d="M239.330807 519.161579m-17.85103 0a17.85103 17.85103 0 1 0 35.70206 0 17.85103 17.85103 0 1 0-35.70206 0Z" fill="#774621" />
+                        <path d="M286.251499 479.790533m-17.85103 0a17.85103 17.85103 0 1 0 35.70206 0 17.85103 17.85103 0 1 0-35.70206 0Z" fill="#774621" />
+                        <path d="M494.184249 483.459519m-17.851031 0a17.85103 17.85103 0 1 0 35.702061 0 17.85103 17.85103 0 1 0-35.702061 0Z" fill="#774621" />
+                    </svg>
+                `;
+                piece.onclick = function () {
+                    if (selectedPieces.includes(i)) {
+                        selectedPieces = selectedPieces.filter(idx => idx !== i);
+                        piece.classList.remove('ring-4', 'ring-pink-400', 'bg-pink-200');
+                    } else if (selectedPieces.length < q.numerator) {
+                        selectedPieces.push(i);
+                        piece.classList.add('ring-4', 'ring-pink-400', 'bg-pink-200');
+                    }
+                };
+                cakeArea.appendChild(piece);
+            }
+            document.getElementById('message').className = 'hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4';
+            document.getElementById('message').textContent = '';
         }
 
-        container.innerHTML = '';
-        container.appendChild(svg);
-    }
-
-    drawCake();
-
-    // Check answer handler
-    document.getElementById('check-answer').addEventListener('click', function() {
-        const formData = new FormData();
-        formData.append('selected_pieces', JSON.stringify(Array.from(selectedPieces)));
-        formData.append('numerator', numerator);
-        formData.append('_token', CSRF_TOKEN);
-
-        fetch(CHECK_URL, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': CSRF_TOKEN,
-                'Accept': 'application/json'
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
+        function checkCakeAnswer() {
+            const q = questions[currentLevel - 1];
             const messageDiv = document.getElementById('message');
-            messageDiv.classList.remove('d-none');
-            
-            if (data.correct) {
-                messageDiv.className = 'alert alert-success animate-bounce';
-                messageDiv.textContent = '🎉 Tuyệt vời! Cùng tiếp tục nào! 🎉';
-                
-                if (typeof confetti !== 'undefined') {
-                    confetti({
-                        particleCount: 150,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#ff69b4', '#ff1493', '#ff69b4', '#dda0dd']
-                    });
-                }
-
-                if (data.next_level) {
+            if (selectedPieces.length === q.numerator) {
+                messageDiv.className = 'block text-green-700 bg-green-100 border-2 border-green-300 text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4 animate-fadein shadow-lg';
+                messageDiv.textContent = '🎉 Chính xác! Tiếp tục nào!';
+                if (currentLevel < questions.length) {
                     setTimeout(() => {
-                        window.location.reload();
+                        currentLevel++;
+                        renderCake();
                     }, 2000);
                 }
             } else {
-                messageDiv.className = 'alert alert-warning';
-                messageDiv.innerHTML = `
-                    <h4 class="alert-heading">⚠️ Hãy thử lại!</h4>
-                    <p class="mb-0">Bạn đã chọn ${selectedPieces.size} phần, nhưng cần chọn ${numerator} phần.</p>
-                    <hr>
-                    <p class="mb-0">💡 Gợi ý: Hãy đếm số phần bánh bạn đã chọn và so sánh với yêu cầu.</p>
-                `;
+                messageDiv.className = 'block text-red-700 bg-red-100 border-2 border-red-300 text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4 animate-fadein shadow-lg';
+                messageDiv.textContent = '⚠️ Chưa đúng số miếng bánh, hãy thử lại!';
+                setTimeout(() => {
+                    messageDiv.className = 'hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4';
+                }, 2000);
             }
-        })
-        .catch(error => {
-            console.error('Error details:', error);
-            const messageDiv = document.getElementById('message');
-            messageDiv.classList.remove('d-none');
-            messageDiv.className = 'alert alert-danger';
-            messageDiv.textContent = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
+        }
+
+        function resetCakeGame() {
+            currentLevel = 1;
+            renderCake();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderCake();
+            document.getElementById('submit-btn').onclick = checkCakeAnswer;
+            document.getElementById('reset-btn').onclick = resetCakeGame;
         });
-    });
-});
-</script>
+    </script>
 @endpush
 
 @push('styles')
-<style>
-.btn-game {
-    background: linear-gradient(45deg, #ff69b4, #ff1493);
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 1.2rem;
-    transition: transform 0.2s;
-}
-.btn-game:hover {
-    transform: scale(1.05);
-    color: white;
-}
-.animate-bounce {
-    animation: bounce 0.5s;
-}
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-.cake-container {
-    width: 400px;
-    max-width: 100%;
-    margin: 0 auto;
-}
-.cake-piece {
-    cursor: pointer;
-    transition: fill 0.3s;
-}
-.cake-piece:hover {
-    fill: #ffe4e1;
-}
-</style>
+    <style>
+        .animate-fadein {
+            animation: fadein 0.7s;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 @endpush
-@endsection 

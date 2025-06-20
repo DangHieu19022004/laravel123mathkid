@@ -1,6 +1,6 @@
 @extends('layouts.game')
 
-@section('game_content')
+@section('content')
     <div class="container mx-auto px-4 py-8 relative z-10">
         <!-- Header Section -->
         <div class="text-center mb-12 animate-slide-up">

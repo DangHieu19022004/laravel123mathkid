@@ -1,174 +1,177 @@
-@extends('layouts.app')
+@extends('layouts.game')
 
 @section('content')
-<div class="game-container">
-    <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 mb-4">Biểu Thức Ngoặc 🎯</h1>
-        <div class="card d-inline-block mb-4">
-            <div class="card-body">
-                <h2 class="h4 mb-3">Cấp độ {{ $question['level'] }}/5</h2>
-                <p class="h5 text-muted">
-                    Tính giá trị của biểu thức: {{ $question['expression'] }}
-                </p>
+    <div class="min-h-screen flex flex-col items-center bg-gradient-to-br from-pink-100 to-yellow-100">
+        <div class="max-w-2xl mx-auto mt-10 p-6 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-100 via-pink-100 to-yellow-100 border-4 border-blue-200">
+            <!-- Tiêu đề -->
+            <div class="text-center mb-6">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-yellow-400 drop-shadow animate-glow">Biểu Thức Ngoặc 🎯</h1>
+                <div class="flex items-center justify-center gap-3 mt-4">
+                    <span class="text-2xl font-bold text-purple-500">Cấp độ</span>
+                    <span id="level-label" class="text-3xl font-extrabold bg-gradient-to-r from-blue-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg"></span>
+                    <span class="text-2xl">/5 ⭐</span>
+                </div>
+            </div>
+            <!-- Biểu thức -->
+            <div class="flex items-center w-full justify-center mb-8">
+                <div class="px-6 py-4 rounded-2xl shadow-lg bg-gradient-to-r from-yellow-100 to-pink-100 border-2 border-yellow-300">
+                    <span id="expression-label" class="text-xl md:text-2xl font-bold text-blue-700"></span>
+                </div>
+            </div>
+            <!-- Đáp án -->
+            <div id="options-area" class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8"></div>
+            <!-- Thông báo -->
+            <div id="message" class="hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4"></div>
+            <!-- Nút chơi lại -->
+            <div class="flex flex-col items-center gap-2">
+                <button id="reset-btn" class="px-8 py-3 rounded-full bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold text-xl shadow-lg hover:from-green-500 hover:to-blue-500 transition">🔄 Chơi lại từ đầu</button>
             </div>
         </div>
-
-        <!-- Instructions -->
-        <div class="alert alert-info d-inline-block">
-            <h3 class="h5 mb-3">🎯 Hướng dẫn chơi:</h3>
-            <ul class="text-start mb-0">
-                <li>Tính giá trị biểu thức trong ngoặc trước</li>
-                <li>Thực hiện phép tính theo thứ tự: nhân/chia trước, cộng/trừ sau</li>
-                <li>Chọn đáp án đúng từ các lựa chọn bên dưới</li>
-            </ul>
-        </div>
     </div>
-
-    <!-- Options -->
-    <div class="row g-4 justify-content-center mb-5">
-        @foreach($question['options'] as $option)
-        <div class="col-md-3">
-            <button onclick="checkAnswer({{ json_encode($option) }})" class="btn btn-game w-100 option-btn">
-                {{ $option['numerator'] }}/{{ $option['denominator'] }}
-            </button>
-        </div>
-        @endforeach
-    </div>
-
-    <!-- Controls -->
-    <div class="text-center">
-        <div id="message" class="alert d-none my-3"></div>
-
-        <form id="resetForm" action="{{ route('games.lop4.phanso.bracket.reset') }}" method="POST" class="mt-3">
-            @csrf
-            <button type="submit" class="btn btn-link text-decoration-none">
-                Chơi lại từ đầu
-            </button>
-        </form>
-
-        <a href="{{ route('games.lop4.phanso') }}" class="btn btn-link text-decoration-none">
-            ← Quay lại danh sách
-        </a>
-    </div>
-</div>
+@endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const CHECK_URL = '{{ route("games.lop4.phanso.bracket.check") }}';
-    const CSRF_TOKEN = '{{ csrf_token() }}';
-    let isAnswered = false;
+    <script>
+        // Mảng câu hỏi truyền từ backend
+        let questions = @json($questions);
+        let currentLevel = 1;
 
-    window.checkAnswer = function(answer) {
-        if (isAnswered) return;
-        
-        const messageDiv = document.getElementById('message');
-        const buttons = document.querySelectorAll('.option-btn');
-        
-        // Disable all buttons
-        buttons.forEach(btn => btn.disabled = true);
-        
-        fetch(CHECK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': CSRF_TOKEN,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ answer: answer })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            isAnswered = true;
-            messageDiv.classList.remove('d-none');
-            
-            if (data.correct) {
-                messageDiv.className = 'alert alert-success animate-bounce';
+        function renderQuestion() {
+            const q = questions[currentLevel - 1];
+            document.getElementById('level-label').textContent = currentLevel;
+            document.getElementById('expression-label').textContent = `Tính giá trị của biểu thức: ${q.expression}`;
+            // Render options
+            const optionsArea = document.getElementById('options-area');
+            optionsArea.innerHTML = '';
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'option-btn w-full py-4 rounded-2xl font-extrabold text-xl shadow-md bg-gradient-to-br from-pink-200 via-yellow-100 to-blue-200 border-2 border-pink-300 text-blue-700 hover:scale-105 hover:from-blue-200 hover:to-yellow-100 transition-all duration-200 focus:outline-none';
+                btn.innerHTML = `${option.numerator}/${option.denominator}`;
+                btn.onclick = () => checkAnswer(option, btn);
+                optionsArea.appendChild(btn);
+            });
+            // Reset message
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4';
+            messageDiv.textContent = '';
+        }
+
+        function checkAnswer(answer, btn) {
+            const q = questions[currentLevel - 1];
+            const correct = answer.numerator == q.answer.numerator && answer.denominator == q.answer.denominator;
+            const messageDiv = document.getElementById('message');
+            const buttons = document.querySelectorAll('.option-btn');
+            // Disable all buttons
+            buttons.forEach(b => b.disabled = true);
+            if (correct) {
+                btn.classList.add('ring-4', 'ring-green-400', 'animate-bounce');
+                messageDiv.className = 'block text-green-700 bg-green-100 border-2 border-green-300 text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4 animate-fadein shadow-lg';
                 messageDiv.textContent = '🎉 Tuyệt vời! Cùng tiếp tục nào! 🎉';
-                
                 if (typeof confetti !== 'undefined') {
                     confetti({
-                        particleCount: 150,
+                        particleCount: 120,
                         spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#ff69b4', '#ff1493', '#ff69b4', '#dda0dd']
+                        origin: {y: 0.6},
+                        colors: ['#f472b6', '#fde68a', '#38bdf8', '#4ade80', '#fbbf24']
                     });
                 }
-
-                if (data.next_level) {
+                if (currentLevel < questions.length) {
                     setTimeout(() => {
-                        window.location.reload();
+                        btn.classList.remove('ring-4', 'ring-green-400', 'animate-bounce');
+                        currentLevel++;
+                        renderQuestion();
                     }, 2000);
                 }
             } else {
-                messageDiv.className = 'alert alert-warning';
+                btn.classList.add('ring-4', 'ring-red-400', 'animate-shake');
+                messageDiv.className = 'block text-red-700 bg-red-100 border-2 border-red-300 text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4 animate-fadein shadow-lg';
                 messageDiv.innerHTML = `
-                    <h4 class="alert-heading">⚠️ Hãy thử lại!</h4>
-                    <p class="mb-0">Đáp án chưa chính xác.</p>
-                    <hr>
-                    <p class="mb-0">💡 Gợi ý: Hãy tính từng bước theo thứ tự:</p>
-                    <ul class="mb-0">
-                        <li>1. Tính giá trị trong ngoặc trước</li>
-                        <li>2. Thực hiện phép nhân/chia trước</li>
-                        <li>3. Thực hiện phép cộng/trừ sau</li>
-                    </ul>
-                `;
-                
-                // Re-enable buttons after 2 seconds
+            <span class="text-2xl">⚠️</span> Đáp án chưa chính xác.<br>
+            <span class="text-base font-normal">💡 Gợi ý: Tính trong ngoặc trước, nhân/chia trước, cộng/trừ sau.</span>
+        `;
                 setTimeout(() => {
-                    isAnswered = false;
-                    buttons.forEach(btn => btn.disabled = false);
-                    messageDiv.classList.add('d-none');
+                    btn.classList.remove('ring-4', 'ring-red-400', 'animate-shake');
+                    messageDiv.className = 'hidden text-center text-lg font-bold rounded-2xl py-3 px-4 mb-4';
+                    buttons.forEach(b => b.disabled = false);
                 }, 2000);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            messageDiv.classList.remove('d-none');
-            messageDiv.className = 'alert alert-danger';
-            messageDiv.textContent = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
-            buttons.forEach(btn => btn.disabled = false);
+        }
+
+        function resetGame() {
+            currentLevel = 1;
+            renderQuestion();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderQuestion();
+            document.getElementById('reset-btn').onclick = resetGame;
         });
-    }
-});
-</script>
+    </script>
 @endpush
 
 @push('styles')
-<style>
-.btn-game {
-    background: linear-gradient(45deg, #4CAF50, #8BC34A);
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 1.2rem;
-    transition: transform 0.2s;
-}
-.btn-game:hover {
-    transform: scale(1.05);
-    color: white;
-    background: linear-gradient(45deg, #8BC34A, #4CAF50);
-}
-.btn-game:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-    background: linear-gradient(45deg, #9E9E9E, #757575);
-}
-.animate-bounce {
-    animation: bounce 0.5s;
-}
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-</style>
+    <style>
+        .animate-glow {
+            text-shadow: 0 0 8px #f472b6, 0 0 16px #38bdf8;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 8px #f472b6, 0 0 16px #38bdf8;
+            }
+            to {
+                text-shadow: 0 0 16px #fde68a, 0 0 32px #38bdf8;
+            }
+        }
+
+        .animate-bounce {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-8px);
+            }
+            40% {
+                transform: translateX(8px);
+            }
+            60% {
+                transform: translateX(-6px);
+            }
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
+        .animate-fadein {
+            animation: fadein 0.7s;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 @endpush
-@endsection 

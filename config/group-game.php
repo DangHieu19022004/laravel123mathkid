@@ -116,12 +116,12 @@ return [
                         'description' => 'Khám phá các quy luật ẩn giấu! Tìm ra chuỗi phân số logic và hoàn thành dãy số để mở khóa cấp độ mới.',
                         'route'       => 'game.lop4.fraction_exploration.pattern',
                     ],
-                    'phan_so'          => [
-                        'icon'        => '🔣',
-                        'title'       => 'Phân Số Tổng Hợp',
-                        'description' => 'Tổng hợp mọi kiến thức về phân số! Ôn luyện và nâng cao kỹ năng qua các dạng bài tập đa dạng và thú vị.',
-                        'route'       => 'game.lop4.fraction_exploration.fraction',
-                    ],
+//                    'phan_so'          => [
+//                        'icon'        => '🔣',
+//                        'title'       => 'Phân Số Tổng Hợp',
+//                        'description' => 'Tổng hợp mọi kiến thức về phân số! Ôn luyện và nâng cao kỹ năng qua các dạng bài tập đa dạng và thú vị.',
+//                        'route'       => 'game.lop4.fraction_exploration.fraction',
+//                    ],
                     'banh_con_lai'     => [
                         'icon'        => '🍩',
                         'title'       => 'Miếng Bánh Cuối Cùng',
