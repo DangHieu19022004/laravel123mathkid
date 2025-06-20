@@ -20,37 +20,67 @@
         <!-- Games Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             @foreach($listInfoGame as $gameInfo)
-                <div class="animate-slide-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
-                    <a href="{{ route($gameInfo['route']) }}"
-                       class="game-card group block bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-2 border-transparent hover:border-purple-300 overflow-hidden h-full flex flex-col">
+                @if (!empty($gameInfo['status']))
+                    <div class="animate-slide-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                        <a href="{{ route($gameInfo['route']) }}"
+                           class="game-card group block bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-2 border-transparent hover:border-purple-300 overflow-hidden h-full flex flex-col">
 
+                            <!-- Card Header with Icon -->
+                            <div class="p-6 text-center relative flex-shrink-0">
+                                <div class="text-6xl mb-4 group-hover:animate-wiggle transition-all duration-300 transform group-hover:scale-110">
+                                    {{ $gameInfo['icon'] }}
+                                </div>
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="px-6 pb-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-purple-700 mb-3 group-hover:text-purple-800 transition-colors duration-300 font-nunito flex-shrink-0">
+                                    {{ $gameInfo['title'] }}
+                                </h3>
+                                <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-300 leading-relaxed flex-1 min-h-[4.5rem]">
+                                    {{ $gameInfo['description'] }}
+                                </p>
+                            </div>
+
+                            <!-- Play Button -->
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full p-2 shadow-lg">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @else
+                    <div class="game-card group block bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-lg h-full flex flex-col relative">
                         <!-- Card Header with Icon -->
                         <div class="p-6 text-center relative flex-shrink-0">
-                            <div class="text-6xl mb-4 group-hover:animate-wiggle transition-all duration-300 transform group-hover:scale-110">
+                            <div class="text-6xl mb-4 transition-all duration-300 transform">
                                 {{ $gameInfo['icon'] }}
                             </div>
                         </div>
-
                         <!-- Card Content -->
                         <div class="px-6 pb-6 flex-1 flex flex-col">
-                            <h3 class="text-xl font-bold text-purple-700 mb-3 group-hover:text-purple-800 transition-colors duration-300 font-nunito flex-shrink-0">
+                            <h3 class="text-xl font-bold text-purple-700 mb-3 font-nunito flex-shrink-0">
                                 {{ $gameInfo['title'] }}
                             </h3>
-                            <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-300 leading-relaxed flex-1 min-h-[4.5rem]">
+                            <p class="text-gray-600 leading-relaxed flex-1 min-h-[4.5rem]">
                                 {{ $gameInfo['description'] }}
                             </p>
                         </div>
-
-                        <!-- Play Button -->
-                        <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full p-2 shadow-lg">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                        <!-- Coming Soon Label -->
+                        <div class="absolute top-0 right-0">
+                            <div class="bg-gradient-to-r from-yellow-400 to-pink-400 text-white text-xs font-bold px-3 py-1 rounded-bl-2xl shadow-lg flex items-center space-x-1 animate-bounce">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3"></path>
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"></circle>
                                 </svg>
+                                <span>Sắp ra mắt</span>
                             </div>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                @endif
             @endforeach
         </div>
 
