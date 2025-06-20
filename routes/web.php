@@ -431,13 +431,27 @@ Route::prefix('tro-choi/lop4')->name('game.lop4.')
             ->group(function () {
                 Route::get('/', [ThuThachDoLuongController::class, 'index'])->name('overview');
 
-//                Route::get('/do-do-dai', [ThuThachDoLuongController::class, 'lengthMeasurementGame'])
-//                    ->name('length_measurement');
-//                Route::get('/do-khoi-luong', [ThuThachDoLuongController::class, 'weightMeasurementGame'])
-//                    ->name('weight_measurement');
-//                Route::get('/do-thoi-gian', [ThuThachDoLuongController::class, 'timeMeasurementGame'])
-//                    ->name('time_measurement');
-//                Route::get('/tinh-tien', [ThuThachDoLuongController::class, 'moneyCalculationGame'])
-//                    ->name('money_calculation');
+                Route::get('/thoi-gian-nang-cao', [ThuThachDoLuongController::class, 'advancedTimeGame'])
+                    ->name('advanced_time');
+                Route::get('/can-tao-can-cam', [ThuThachDoLuongController::class, 'fruitWeighingGame'])
+                    ->name('fruit_weighing');
+                Route::get('/chuyen-doi-don-vi', [ThuThachDoLuongController::class, 'unitConversionGame'])
+                    ->name('unit_conversion');
+                Route::get('/bang-quy-doi', [ThuThachDoLuongController::class, 'conversionTableGame'])
+                    ->name('conversion_table');
+                Route::get('/so-sanh-khoang-cach', [ThuThachDoLuongController::class, 'distanceComparisonGame'])
+                    ->name('distance_comparison');
+                Route::get('/do-do-dai', [ThuThachDoLuongController::class, 'lengthMeasurementGame'])
+                    ->name('length_measurement');
+                Route::get('/bam-gio-chinh-xac', [ThuThachDoLuongController::class, 'precisionTimingGame'])
+                    ->name('precision_timing');
+                Route::get('/phieu-luu-thoi-gian', [ThuThachDoLuongController::class, 'timeAdventureGame'])
+                    ->name('time_adventure');
+                Route::get('/so-sanh-thoi-gian', [ThuThachDoLuongController::class, 'timeComparisonGame'])
+                    ->name('time_comparison');
+                Route::get('/uoc-luong-khoi-luong', [ThuThachDoLuongController::class, 'weightEstimationGame'])
+                    ->name('weight_estimation');
+                Route::get('/sap-xep-khoi-luong', [ThuThachDoLuongController::class, 'weightSortingGame'])
+                    ->name('weight_sorting');
             });
     });
