@@ -291,10 +291,19 @@ Route::prefix('games/lop4/dailuongvadoluong')->name('games.lop4.dailuongvadoluon
 Route::prefix('games/lop4/bi-an-hinh-hoc')->name('games.lop4.bi_an_hinh_hoc.')->group(function () {
     Route::get('/', function() { return view('games.lop4.bi_an_hinh_hoc.bi_an_hinh_hoc'); })->name('index');
     Route::get('/area-calculation', [HinhHocGameController::class, 'areaCalculationGame'])->name('area_calculation');
+    Route::post('/area-calculation/check', [HinhHocGameController::class, 'checkAreaCalculationAnswer'])->name('area_calculation.check');
+
     Route::get('/perimeter-calculation', [HinhHocGameController::class, 'perimeterCalculationGame'])->name('perimeter_calculation');
+    Route::post('/perimeter-calculation/check', [HinhHocGameController::class, 'checkPerimeterCalculationAnswer'])->name('perimeter_calculation.check');
+
     Route::get('/angle-measurement', [HinhHocGameController::class, 'angleMeasurementGame'])->name('angle_measurement');
+    Route::post('/angle-measurement/check', [HinhHocGameController::class, 'checkAngleMeasurementAnswer'])->name('angle_measurement.check');
+
     Route::get('/volume-measurement', [HinhHocGameController::class, 'volumeMeasurementGame'])->name('volume_measurement');
+    Route::post('/volume-measurement/check', [HinhHocGameController::class, 'checkVolumeMeasurementAnswer'])->name('volume_measurement.check');
+
     Route::get('/area-measurement', [HinhHocGameController::class, 'areaMeasurementGame'])->name('area_measurement');
+    Route::post('/area-measurement/check', [HinhHocGameController::class, 'checkAreaMeasurementAnswer'])->name('area_measurement.check');
 });
 
 Route::prefix('games/lop4/day-so-quy-luat')->name('games.lop4.day_so_quy_luat.')->group(function () {

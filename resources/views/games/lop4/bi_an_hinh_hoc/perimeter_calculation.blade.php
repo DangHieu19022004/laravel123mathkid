@@ -39,7 +39,8 @@ const levels = [
     { shape: 'hình thang', sides: [6, 4, 5, 5], unit: 'cm', compute: s => s.reduce((a, b) => a + b, 0) },
     { shape: 'ngũ giác đều', sides: [6], unit: 'cm', compute: s => s[0] * 5 }
 ];
-let currentLevel = parseInt(localStorage.getItem('perimeterLevel') || '0');
+let currentLevel = parseInt(localStorage.getItem('perimeterLevel'));
+if (isNaN(currentLevel) || currentLevel < 1) currentLevel = 1;
 const maxLevel = levels.length;
 
 // DOM elements
@@ -60,8 +61,8 @@ function saveLevel() {
 }
 
 function renderQuestion() {
-    const q = levels[currentLevel];
-    levelDisplay.textContent = currentLevel + 1;
+    const q = levels[currentLevel - 1];
+    levelDisplay.textContent = currentLevel;
     unitDisplayEl.textContent = q.unit;
     answerInput.value = '';
     messageBox.textContent = '';
@@ -96,7 +97,7 @@ function renderQuestion() {
 }
 
 checkBtn.addEventListener('click', () => {
-    const q = levels[currentLevel];
+    const q = levels[currentLevel - 1];
     const ans = parseFloat(answerInput.value);
     if (isNaN(ans)) {
         alert('Vui lòng nhập đáp án!');
@@ -107,7 +108,7 @@ checkBtn.addEventListener('click', () => {
     if (Math.abs(ans - correctAns) < 1e-6) {
         messageBox.textContent = '🎉 Chính xác!';
         messageBox.classList.add('text-green-600');
-        if (currentLevel < maxLevel - 1) {
+        if (currentLevel < maxLevel) {
             nextBtn.classList.remove('hidden');
         }
     } else {
@@ -117,13 +118,16 @@ checkBtn.addEventListener('click', () => {
 });
 
 nextBtn.addEventListener('click', () => {
-    currentLevel++;
-    saveLevel();
-    renderQuestion();
+    if (currentLevel < maxLevel) {
+        currentLevel++;
+        saveLevel();
+        renderQuestion();
+    }
+    nextBtn.classList.add('hidden');
 });
 
 resetBtn.addEventListener('click', () => {
-    currentLevel = 0;
+    currentLevel = 1;
     saveLevel();
     renderQuestion();
 });

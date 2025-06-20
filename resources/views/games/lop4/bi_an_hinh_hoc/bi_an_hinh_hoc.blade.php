@@ -108,17 +108,16 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy level từ localStorage, nếu chưa có thì là 1
-    let areaLevel = parseInt(localStorage.getItem('areaGameLevel')||'0') + 1;
-    let perimeterLevel = parseInt(localStorage.getItem('perimeterLevel')||'0') + 1;
-    let angleLevel = parseInt(localStorage.getItem('angleMeasurementLevel')||'0') + 1;
-    let volumeLevel = parseInt(localStorage.getItem('volumeMeasurementLevel')||'0') + 1;
-    let areaMeasurementLevel = parseInt(localStorage.getItem('areaMeasurementLevel')||'0') + 1;
-    // Giới hạn tối đa 5
-    areaLevel = Math.min(areaLevel, 5);
-    perimeterLevel = Math.min(perimeterLevel, 5);
-    angleLevel = Math.min(angleLevel, 5);
-    volumeLevel = Math.min(volumeLevel, 5);
-    areaMeasurementLevel = Math.min(areaMeasurementLevel, 5);
+    function getLevel(key) {
+        let val = parseInt(localStorage.getItem(key));
+        if (isNaN(val) || val < 1) return 1;
+        return Math.min(val, 5);
+    }
+    let areaLevel = getLevel('areaGameLevel');
+    let perimeterLevel = getLevel('perimeterLevel');
+    let angleLevel = getLevel('angleMeasurementLevel');
+    let volumeLevel = getLevel('volumeMeasurementLevel');
+    let areaMeasurementLevel = getLevel('areaMeasurementLevel');
     // Hiển thị label
     document.getElementById('area-level-label').textContent = areaLevel;
     document.getElementById('perimeter-level-label').textContent = perimeterLevel;
@@ -133,4 +132,4 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('area-measurement-progress-bar').style.width = (areaMeasurementLevel/5*100) + '%';
 });
 </script>
-@endsection 
+@endsection

@@ -96,12 +96,15 @@ class HinhHocGameController extends Controller
             ], 400);
         }
     }
-    public function areaCalculationGame()
-    {
-        $level = session('area_calculation_level', 1);
-        $question = $this->generateAreaCalculationQuestion($level);
-        return view('games.lop4.bi_an_hinh_hoc.area_calculation', compact('question'));
+    public function areaCalculationGame(Request $request)
+{
+    $level = $request->input('level', session('area_calculation_level', 1));
+    $question = $this->generateAreaCalculationQuestion($level);
+    if ($request->ajax()) {
+        return response()->json($question);
     }
+    return view('games.lop4.bi_an_hinh_hoc.area_calculation', compact('question'));
+}
     private function generateAreaCalculationQuestion($level)
     {
         $questions = [
@@ -178,15 +181,18 @@ class HinhHocGameController extends Controller
             'level' => $level
         ];
     }
-    public function angleMeasurementGame()
-    {
-        $sessionLevel = session('angle_measurement_level', 1);
-        $jsLevel = request()->has('js_level') ? max((int)request('js_level'), 1) : 1;
-        $level = max($sessionLevel, $jsLevel);
-        session(['angle_measurement_level' => $level]);
-        $question = $this->generateAngleMeasurementQuestion($level);
-        return view('games.lop4.bi_an_hinh_hoc.angle_measurement', compact('question'));
+    public function angleMeasurementGame(Request $request)
+{
+    $jsLevel = $request->has('js_level') ? max((int)$request->input('js_level'), 1) : session('angle_measurement_level', 1);
+    session(['angle_measurement_level' => $jsLevel]);
+    $question = $this->generateAngleMeasurementQuestion($jsLevel);
+
+    if ($request->expectsJson() || $request->has('js_level')) {
+        return response()->json($question);
     }
+
+    return view('games.lop4.bi_an_hinh_hoc.angle_measurement', compact('question'));
+}
     private function generateAngleMeasurementQuestion($level)
     {
         $questions = [
@@ -200,4 +206,125 @@ class HinhHocGameController extends Controller
         $question['level'] = $level;
         return $question;
     }
-} 
+    public function checkAreaCalculationAnswer(Request $request)
+    {
+        try {
+            $level = $request->input('level', 1); // Lấy level từ request thay vì session
+            $question = $this->generateAreaCalculationQuestion($level);
+
+            // Tính đáp án đúng
+            $correctAnswer = null;
+            switch ($question['shape']) {
+                case 'hình vuông':
+                    $correctAnswer = pow($question['dimensions']['cạnh'], 2);
+                    break;
+                case 'hình chữ nhật':
+                    $correctAnswer = $question['dimensions']['chiều dài'] * $question['dimensions']['chiều rộng'];
+                    break;
+                case 'tam giác':
+                    $correctAnswer = ($question['dimensions']['đáy'] * $question['dimensions']['chiều cao']) / 2;
+                    break;
+                case 'hình thang':
+                    $correctAnswer = (($question['dimensions']['đáy lớn'] + $question['dimensions']['đáy nhỏ']) * $question['dimensions']['chiều cao']) / 2;
+                    break;
+                case 'hình bình hành':
+                    $correctAnswer = $question['dimensions']['đáy'] * $question['dimensions']['chiều cao'];
+                    break;
+            }
+
+            $userAnswer = (float) $request->input('answer');
+            $correct = abs($userAnswer - $correctAnswer) < 0.01;
+
+            if ($correct && $level < 5) {
+                session(['area_calculation_level' => $level + 1]);
+            }
+
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function checkPerimeterCalculationAnswer(Request $request)
+    {
+        try {
+            $level = session('perimeter_calculation_level', 1);
+            $question = $this->generatePerimeterCalculationQuestion($level);
+
+            // Tính đáp án đúng
+            $correctAnswer = array_sum($question['sides']);
+
+            $userAnswer = (float) $request->input('answer');
+            $correct = abs($userAnswer - $correctAnswer) < 0.01;
+
+            if ($correct && $level < 5) {
+                session(['perimeter_calculation_level' => $level + 1]);
+            }
+
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function checkVolumeMeasurementAnswer(Request $request)
+    {
+        try {
+            $question = $this->generateCompareVolumeQuestion();
+            $selectedIndex = (int) $request->input('selected_index');
+            $correct = $selectedIndex === $question['answer_index'];
+
+            $level = session('volume_measurement_level', 1);
+            if ($correct && $level < 5) {
+                session(['volume_measurement_level' => $level + 1]);
+            }
+
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function checkAngleMeasurementAnswer(Request $request)
+    {
+        try {
+            $level = $request->input('level', 1);
+            $question = $this->generateAngleMeasurementQuestion($level);
+
+            $userAnswer = (float) $request->input('answer');
+            $correct = abs($userAnswer - $question['actual_angle']) <= $question['tolerance'];
+
+            if ($correct && $level < 5) {
+                session(['angle_measurement_level' => $level + 1]);
+            }
+
+            return response()->json([
+                'correct' => $correct,
+                'next_level' => $correct && $level < 5
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'details' => $e->getMessage()
+            ], 400);
+        }
+    }
+}
