@@ -1,7 +1,7 @@
 @extends('layouts.game')
 
-@section('game_content')
-    <div class="relative min-h-[80vh] flex justify-center items-center overflow-hidden">
+@section('content')
+    <div class="relative min-h-screen flex justify-center items-center overflow-hidden">
         <div class="relative z-10 bg-white/90 rounded-3xl shadow-2xl p-8 w-full max-w-lg border-4 border-gradient-animated animate-fade-in">
             <div class="text-center mb-6">
                 <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-yellow-400 to-blue-500 drop-shadow mb-2 flex items-center justify-center gap-2 animate-title-bounce">

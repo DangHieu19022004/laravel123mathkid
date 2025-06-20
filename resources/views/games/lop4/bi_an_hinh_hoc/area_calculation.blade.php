@@ -1,7 +1,7 @@
 @extends('layouts.game')
 
-@section('game_content')
-    <div class="flex items-center justify-center min-h-[80vh]">
+@section('content')
+    <div class="flex items-center justify-center min-h-screen">
         <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg border-2 border-blue-400 animate-fade-in">
             <div class="text-center mb-6">
                 <h1 class="text-3xl font-extrabold text-blue-700 drop-shadow mb-2 flex items-center justify-center gap-2">
